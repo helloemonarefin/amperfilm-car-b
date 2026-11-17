@@ -12,6 +12,12 @@ import type { SplitProps } from '../components/sections/Split.astro';
 import type { ServicesProps } from '../components/sections/Services.astro';
 import type { ModelsProps } from '../components/sections/Models.astro';
 import type { StepsProps } from '../components/sections/Steps.astro';
+import type { ReviewsProps } from '../components/sections/Reviews.astro';
+import type { FaqProps } from '../components/sections/Faq.astro';
+import type { FinalCtaProps } from '../components/sections/FinalCta.astro';
+import { reviews } from './reviews';
+import { faq } from './faq';
+import ctaPhoto from '../assets/images/cta/cta.jpg';
 import { installs } from './installs';
 import { services } from './services';
 import modelY from '../assets/images/models/model-y.jpg';
@@ -20,7 +26,7 @@ import rivian from '../assets/images/models/rivian.jpg';
 import ppfPhoto from '../assets/images/services/ppf.jpg';
 import type { SectionEntry } from '../lib/sections';
 import type { ImageMetadata } from 'astro';
-import { site } from './site';
+import { site, telHref } from './site';
 import deliveryWeek from '../assets/images/home/delivery-week.jpg';
 
 const thousands = new Intl.NumberFormat('en-US');
@@ -71,7 +77,10 @@ export type HomeSection =
   | SectionEntry<'split', SplitProps>
   | SectionEntry<'services', ServicesProps>
   | SectionEntry<'models', ModelsProps>
-  | SectionEntry<'steps', StepsProps>;
+  | SectionEntry<'steps', StepsProps>
+  | SectionEntry<'reviews', ReviewsProps>
+  | SectionEntry<'faq', FaqProps>
+  | SectionEntry<'cta', FinalCtaProps>;
 
 export const home: { title: string; description: string; sections: HomeSection[] } = {
   title: `${site.brand}${site.mark} — EV paint protection film, tint and coating in Austin`,
@@ -278,6 +287,60 @@ export const home: { title: string; description: string; sections: HomeSection[]
           { icon: 'shield-plain', title: 'We protect it', text: `Most packages done in ${site.turnaroundHours} hours. We text photos while we work.` },
           { icon: 'key', title: 'Drive protected', text: 'Walkthrough at pickup, care guide in your inbox, warranty registered in your name.' },
         ],
+      },
+    },
+    {
+      kind: 'reviews',
+      numbered: true,
+      props: {
+        label: 'Reviews',
+        title: { strong: 'From people', soft: 'who drive what you drive.' },
+        rating: { value: String(site.rating), source: `from ${site.reviewCount} ${site.reviewSource} reviews`, stars: 5 },
+        photoLabel: 'Their car',
+        items: reviews,
+      },
+    },
+    {
+      kind: 'faq',
+      numbered: true,
+      props: {
+        title: { strong: 'Questions', soft: 'EV owners ask us.' },
+        intro: "Still unsure? Text us your model and we'll answer within the hour.",
+        cta: { label: site.phone, href: telHref },
+        items: faq.slice(0, 6),
+        group: 'faq-home',
+      },
+    },
+    {
+      kind: 'cta',
+      numbered: false,
+      props: {
+        id: 'get-price',
+        icon: 'chat',
+        title: 'Your EV, protected this week.',
+        text: 'Get your exact price in 60 seconds. No call needed.',
+        pills: [{ label: 'PPF' }, { icon: 'bolt' }, { label: 'Ceramic tint' }, { label: 'Ceramic coating' }],
+        visual: {
+          image: ctaPhoto,
+          icon: 'bolt',
+          caption: ['Pick your car.', 'See your exact price.'],
+          number: '60',
+          unit: 'sec',
+          numberSize: 'lg',
+          label: 'Time to your price',
+          progress: 1,
+        },
+        form: {
+          name: 'get-price',
+          carLabel: 'Car',
+          packageLabel: 'Package',
+          contactLabel: 'Phone or email',
+          contactPlaceholder: '(512) 555-0000',
+          defaultModel: 'model-y',
+          defaultPackage: 'delivery-day',
+          submit: 'Show my price',
+          note: "We text you back. We don't spam.",
+        },
       },
     },
   ],

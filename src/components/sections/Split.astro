@@ -14,6 +14,8 @@ import Wordmark from '../ui/Wordmark.astro';
 
 export interface SplitProps {
   id: string;
+  /** 'promise' (Guarantee: 768/672, panel 380 offset +24) or 'cta' (Final CTA: 772/668, centred 340 panel, body text, form slot). */
+  variant?: 'promise' | 'cta';
   icon: IconName;
   /** `h2-dark`, ≤ 32 characters. */
   title: string;
@@ -41,15 +43,15 @@ export interface SplitProps {
   };
 }
 
-const { id, icon, title, text, fine, pills = [], visual } = Astro.props as SplitProps;
+const { id, variant = 'promise', icon, title, text, fine, pills = [], visual } = Astro.props as SplitProps;
 const titleId = `${id}-title`;
 ---
 
-<section class="split" id={id} aria-labelledby={titleId}>
+<section class:list={['split', `split--${variant}`]} id={id} aria-labelledby={titleId}>
   <div class="split__dark">
-    <span class="split__icon" data-reveal><Icon name={icon} /></span>
+    <span class="split__icon" data-reveal><Icon name={icon} size={variant === 'cta' ? 26 : 28} /></span>
     <h2 id={titleId} class="t-h2-dark" data-reveal>{title}</h2>
-    <p class="t-body-lg split__text" data-reveal>{text}</p>
+    <p class:list={[variant === 'cta' ? 't-body' : 't-body-lg', 'split__text']} data-reveal>{text}</p>
     {fine && <p class="t-meta lh-snug split__fine" data-reveal>{fine}</p>}
     <slot />
     {pills.length > 0 && (
@@ -75,7 +77,7 @@ const titleId = `${id}-title`;
         <span class="t-unit split__unit">{visual.unit}</span>
       </p>
       <p class="t-meta t-medium split__label" data-reveal>{visual.label}</p>
-      <div class="split__bar" data-reveal role="img" aria-label={`${Math.round(visual.progress * 100)}%`}>
+      <div class="split__bar" data-reveal role="img" aria-label={`${Math.round(visual.progress * 100)}%`} style={variant === 'cta' ? '--bar-h: var(--cta-bar-h)' : undefined}>
         <span class="split__fill" style={`--p: ${visual.progress}`}></span>
       </div>
       {visual.axis && (
@@ -129,7 +131,7 @@ const titleId = `${id}-title`;
   .split__num { display: flex; align-items: baseline; gap: var(--proof-gap); white-space: nowrap; }
   .split__unit { color: var(--text-on-dark-strong); }
   .split__label { color: var(--text-on-dark-strong); }
-  .split__bar { position: relative; width: 100%; height: var(--promise-bar-h); overflow: hidden; border-radius: var(--radius-media); background: var(--border-on-dark); }
+  .split__bar { position: relative; width: 100%; height: var(--bar-h, var(--promise-bar-h)); overflow: hidden; border-radius: var(--radius-media); background: var(--border-on-dark); }
   .split__fill {
     position: absolute; inset: 0 auto 0 0; width: calc(var(--p) * 100%);
     border-radius: var(--radius-media); background: var(--bg-accent);
@@ -143,9 +145,16 @@ const titleId = `${id}-title`;
   }
   .split__axis { display: flex; justify-content: space-between; width: 100%; color: var(--text-on-dark-strong); font-weight: var(--fw-medium); text-transform: none; letter-spacing: 0; }
 
+  /* Final CTA */
+  .split--cta .split__dark { gap: var(--space-6); }
+  .split--cta .split__pills { gap: var(--space-3); }
+  .split--cta .split__panel { gap: var(--menu-card-gap); }
+
   @media (min-width: 1024px) {
     .split { grid-template-columns: var(--split-cols); min-height: var(--split-h); }
     .split__dark { padding: var(--split-pad); }
+    .split--cta { grid-template-columns: var(--cta-cols); min-height: var(--cta-h); --promise-w: var(--cta-panel-w); --promise-y: var(--cta-panel-y); --promise-dx: 0px; }
+    .split--cta .split__dark { padding: var(--cta-pad); }
     .split__pills { margin-top: auto; }
     .split__visual { display: block; padding: 0; }
     /* Centred with auto margins, shifted right by --promise-dx like the panel

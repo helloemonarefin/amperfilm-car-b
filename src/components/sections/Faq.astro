@@ -1,0 +1,112 @@
+---
+// FAQ — DESIGN_SYSTEM §7, Figma 337:870 (Home) / 347:8062 (FAQ page).
+// Left 560 rail: (0n) index, two-tone h2 (≤ 460), body text, dark phone
+// button. Right: items with 10% dividers (the first also on top), 28 / 0
+// padding: `faq-q` question + 36 round toggle (open = dark with "−",
+// closed = outline with "+"), answer `body` at 60%, max 560.
+// Accordion: native <details>/<summary> (works without JS). Home: one open
+// at a time (name attribute), the first open as in Figma. FAQ page: all
+// open and independent (`allOpen`). Height animates where
+// ::details-content + interpolate-size are supported; elsewhere instant.
+import SectionHeader, { type TwoTone } from '../ui/SectionHeader.astro';
+import Button from '../ui/Button.astro';
+import { formatIndex } from '../../lib/sections';
+import type { FaqItem } from '../../content/faq';
+
+export interface FaqProps {
+  index?: number;
+  title: TwoTone;
+  /** ≤ 90 characters. */
+  intro: string;
+  cta: { label: string; href: string };
+  items: FaqItem[];
+  /** FAQ page: every item open, independent. */
+  allOpen?: boolean;
+  /** Group name for the exclusive accordion (Home). */
+  group?: string;
+}
+const { index, title, intro, cta, items, allOpen = false, group = 'faq' } = Astro.props as FaqProps;
+---
+
+<section class="faq" id="faq" aria-labelledby="faq-title">
+  <div class="faq__side">
+    {index != null && <p class="t-meta t-medium c-tertiary faq__index" data-reveal>{formatIndex(index)}</p>}
+    <SectionHeader id="faq-title" title={title} class="faq__head" />
+    <p class="t-body c-secondary faq__intro" data-reveal>{intro}</p>
+    <Button variant="dark" label={cta.label} href={cta.href} data-reveal />
+  </div>
+
+  <div class="faq__list">
+    {items.map((it, i) => (
+      <details class="faq__item" name={allOpen ? undefined : group} open={allOpen || i === 0} data-reveal>
+        <summary class="faq__q">
+          <span class="t-faq-q">{it.q}</span>
+          <span class="faq__toggle" aria-hidden="true"><span></span><span></span></span>
+        </summary>
+        <p class="t-body c-secondary faq__a">{it.a}</p>
+      </details>
+    ))}
+  </div>
+</section>
+
+<style>
+  .faq { display: grid; border-top: 1px solid var(--border-rail); }
+  .faq__side { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6); padding: var(--space-6) var(--side-pad) var(--space-10); }
+  .faq__side :global(.faq__head) { padding: 0; margin-top: var(--space-6); }
+  .faq__side :global(.faq__head .section-head__title) { max-width: var(--faq-title-max); }
+  .faq__intro { max-width: var(--faq-text-max); }
+
+  .faq__list { padding: 0 var(--side-pad) var(--section-pad-bottom); }
+  .faq__item { border-bottom: 1px solid var(--border-rail); }
+  .faq__item:first-child { border-top: 1px solid var(--border-rail); }
+
+  .faq__q {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-6);
+    padding-block: var(--space-7);
+    cursor: pointer;
+    list-style: none;
+  }
+  .faq__q::-webkit-details-marker { display: none; }
+  .faq__item[open] .faq__q { padding-bottom: var(--menu-card-gap); }
+
+  /* Toggle: outline "+" closed → dark "−" open; the vertical bar collapses. */
+  .faq__toggle {
+    position: relative; flex: none;
+    width: var(--faq-toggle); height: var(--faq-toggle);
+    border: 1px solid var(--border-default); border-radius: var(--radius-pill);
+    color: var(--text-primary);
+    transition: background-color var(--m-faq-time) var(--ease-smooth), border-color var(--m-faq-time) var(--ease-smooth), color var(--m-faq-time) var(--ease-smooth);
+  }
+  .faq__toggle span {
+    position: absolute; left: 50%; top: 50%;
+    width: var(--faq-bar-w); height: var(--faq-bar-h);
+    margin: calc(var(--faq-bar-h) / -2) 0 0 calc(var(--faq-bar-w) / -2);
+    border-radius: var(--faq-bar-h); background: currentColor;
+    transition: rotate var(--m-faq-time) var(--ease-smooth), scale var(--m-faq-time) var(--ease-smooth);
+  }
+  .faq__toggle span:last-child { rotate: 90deg; }
+  .faq__item[open] .faq__toggle { background: var(--bg-inverse); border-color: var(--bg-inverse); color: var(--text-on-dark); }
+  .faq__item[open] .faq__toggle span:last-child { rotate: 180deg; scale: 0 1; }
+  @media (hover: hover) and (pointer: fine) {
+    .faq__item:not([open]) .faq__q:hover .faq__toggle { border-color: var(--text-primary); }
+  }
+  .faq__q:focus-visible { outline-offset: var(--space-1); border-radius: var(--radius-sm); }
+
+  .faq__a { max-width: var(--faq-answer-max); padding-bottom: var(--space-7); line-height: var(--lh-body-lg); }
+
+  /* Smooth open/close where supported (progressive enhancement). */
+  .faq__item { interpolate-size: allow-keywords; }
+  .faq__item::details-content {
+    block-size: 0; overflow: clip;
+    transition: block-size var(--m-faq-time) var(--ease-smooth), content-visibility var(--m-faq-time) allow-discrete;
+  }
+  .faq__item[open]::details-content { block-size: auto; }
+
+  @media (min-width: 1024px) {
+    .faq { grid-template-columns: var(--faq-side-w) minmax(0, 1fr); }
+    .faq__side { padding: var(--space-6) var(--space-14) var(--space-28) var(--side-pad); border-right: 1px solid var(--border-rail); }
+    /* Figma: a 64 spacer between index and title, plus the column gap on both sides. */
+    .faq__side :global(.faq__head) { margin-top: calc(var(--faq-gap-top) + var(--space-6)); }
+    .faq__list { padding: var(--space-28) var(--side-pad) var(--space-28) var(--space-14); }
+  }
+</style>

@@ -1,0 +1,67 @@
+---
+// Final CTA — DESIGN_SYSTEM §7, Figma 337:918. The split section (dark half
+// with the "get your price" form + image half with the 60-second glass
+// timer). Netlify form with a honeypot, real labels, native selects styled
+// like the design. Options come from pricing.ts.
+import Split, { type SplitProps } from './Split.astro';
+import Field from '../ui/Field.astro';
+import Button from '../ui/Button.astro';
+import { pricing, modelLabel } from '../../content/pricing';
+
+export interface FinalCtaProps extends Omit<SplitProps, 'variant' | 'fine'> {
+  form: {
+    name: string;
+    carLabel: string;
+    packageLabel: string;
+    contactLabel: string;
+    contactPlaceholder: string;
+    /** Default selections (pricing.ts ids). */
+    defaultModel: string;
+    defaultPackage: string;
+    submit: string;
+    /** Note next to the button (≤ 40 characters). */
+    note: string;
+  };
+}
+const { form, ...split } = Astro.props as FinalCtaProps;
+const packages = [
+  ...pricing.bundles.map((b) => ({ id: b.id, name: b.name })),
+  ...pricing.packages.map((p) => ({ id: p.id, name: p.name })),
+];
+---
+
+<Split {...split} variant="cta">
+  <form class="cta-form" name={form.name} method="POST" data-netlify="true" netlify-honeypot="bot-field">
+    <input type="hidden" name="form-name" value={form.name} />
+    <p class="sr-only"><label>Leave this empty: <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+    <div class="cta-form__row">
+      <div data-reveal>
+        <Field id="cta-car" name="car" label={form.carLabel} select>
+          {pricing.models.map((m) => <option value={m.id} selected={m.id === form.defaultModel}>{m.name}</option>)}
+          <option value="other">{pricing.other.label}</option>
+        </Field>
+      </div>
+      <div data-reveal>
+        <Field id="cta-package" name="package" label={form.packageLabel} select>
+          {packages.map((p) => <option value={p.id} selected={p.id === form.defaultPackage}>{p.name}</option>)}
+        </Field>
+      </div>
+    </div>
+    <div data-reveal>
+      <Field id="cta-contact" name="contact" label={form.contactLabel} placeholder={form.contactPlaceholder} autocomplete="tel" required />
+    </div>
+    <div class="cta-form__submit">
+      <Button type="submit" variant="white" label={form.submit} data-reveal />
+      <p class="t-meta lh-snug cta-form__note" data-reveal>{form.note}</p>
+    </div>
+  </form>
+</Split>
+
+<style>
+  .cta-form { display: flex; flex-direction: column; gap: var(--space-7); width: 100%; padding-top: var(--space-6); }
+  .cta-form__row { display: grid; gap: var(--space-7); }
+  /* Figma: 24 from the last field to the button row (the form's gap is 28). */
+  .cta-form__submit { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-5); margin-top: calc(var(--space-6) - var(--space-7)); }
+  .cta-form__note { color: var(--text-on-dark-tertiary); }
+  @media (min-width: 768px) { .cta-form__row { grid-template-columns: 1fr 1fr; gap: var(--space-8); } }
+</style>

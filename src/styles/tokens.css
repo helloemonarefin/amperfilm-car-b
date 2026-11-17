@@ -368,6 +368,29 @@
   --steps-status-w: 372px;
   --tint-steps: rgb(var(--brand-accent-rgb) / 0.18);
 
+  /* Final CTA visual (Figma 337:958): centred 340 panel at y 201. */
+  --cta-cols: 772fr 668fr;
+  --cta-h: 635px;
+  --cta-pad: 56px 64px 40px 40px;
+  --cta-panel-w: 340px; --cta-panel-y: 201px; --cta-bar-h: 12px;
+
+  /* Reviews (Figma 337:784). */
+  --reviews-person-w: 360px;
+  --reviews-photo-w: 320px;
+  --review-avatar: 48px;
+  --review-photo-w: 256px; --review-photo-h: 170px;
+  --review-pad: 44px 56px;
+  --reviews-pb: 96px;
+  --reviews-title-max: 700px;
+
+  /* FAQ (Figma 337:870). */
+  --faq-side-w: 560px;
+  --faq-title-max: 460px; --faq-text-max: 400px; --faq-answer-max: 560px;
+  --faq-toggle: 36px;
+  --faq-bar-w: 9.33px; --faq-bar-h: 1.8px; /* Figma plus/minus: 16 icon, 3.33 → 12.67 line, 1.8 stroke */
+  --faq-gap-top: 64px;
+  --m-faq-time: 0.4s;
+
   /* Stacking order. */
   --z-sticky: 40; --z-menu: 50; --z-skip: 100;
 }

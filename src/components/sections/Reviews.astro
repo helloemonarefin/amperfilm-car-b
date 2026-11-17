@@ -1,0 +1,110 @@
+---
+// Reviews — DESIGN_SYSTEM §7 "Review row", Figma 337:784.
+// Meta bar + header (two-tone h2 left, num-md rating + stars + source right),
+// then rows on rails: person 360 (avatar 48 — the first accent-filled —,
+// name, soft model tag, 5 stars) | quote | car photo 320 column (256 × 170,
+// "THEIR CAR" pill). 96 below the rows.
+// Mobile: each row stacks person → quote → photo.
+import { Image } from 'astro:assets';
+import SectionMeta from '../ui/SectionMeta.astro';
+import SectionHeader, { type TwoTone } from '../ui/SectionHeader.astro';
+import Pill from '../ui/Pill.astro';
+import Icon from '../ui/Icon.astro';
+import type { Review } from '../../content/reviews';
+
+export interface ReviewsProps {
+  index?: number;
+  label: string;
+  title: TwoTone;
+  rating: { value: string; source: string; stars: number };
+  /** "Their car" pill. */
+  photoLabel: string;
+  /** Exactly 3 on Home. */
+  items: Review[];
+}
+const { index, label, title, rating, photoLabel, items } = Astro.props as ReviewsProps;
+const starsLabel = (n: number) => `${n} out of 5 stars`;
+---
+
+<section class="reviews" id="reviews" aria-labelledby="reviews-title">
+  <SectionMeta index={index} label={label} />
+  <div class="container">
+    <SectionHeader id="reviews-title" title={title} class="reviews__head">
+      <div slot="aside" class="reviews__rating">
+        <span class="t-num-md" data-reveal>{rating.value}</span>
+        <span class="reviews__rating-meta">
+          <span class="reviews__stars" role="img" aria-label={starsLabel(rating.stars)} data-reveal>
+            {Array.from({ length: rating.stars }, () => <Icon name="star" />)}
+          </span>
+          <span class="t-small c-secondary lh-snug" data-reveal>{rating.source}</span>
+        </span>
+      </div>
+    </SectionHeader>
+  </div>
+
+  <ul class="reviews__rows frame" role="list">
+    {items.map((r) => (
+      <li class="review">
+        <div class="review__person">
+          <span class:list={['review__avatar', { 'is-featured': r.featured }]} aria-hidden="true" data-reveal>{r.name.charAt(0)}</span>
+          <span class="review__who">
+            <span class="t-name" data-reveal>{r.name}</span>
+            <Pill variant="soft-round" data-reveal>{r.model}</Pill>
+            <span class="reviews__stars reviews__stars--sm" role="img" aria-label={starsLabel(r.stars)} data-reveal>
+              {Array.from({ length: r.stars }, () => <Icon name="star" size={14} />)}
+            </span>
+          </span>
+        </div>
+        <blockquote class="review__quote">
+          <p class="t-quote" data-reveal>{r.quote}</p>
+        </blockquote>
+        <div class="review__photo-col">
+          <div class="review__photo" data-reveal>
+            <Image src={r.photo} alt={r.photoAlt} widths={[256, 512]} sizes="(min-width: 1024px) 256px, 100vw" />
+            <Pill variant="white" class="review__photo-pill">{photoLabel}</Pill>
+          </div>
+        </div>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .reviews { padding-bottom: var(--section-pad-bottom); }
+  .reviews__rating { display: flex; align-items: center; gap: var(--space-4); }
+  .reviews__rating-meta { display: flex; flex-direction: column; gap: var(--proof-gap); }
+  .reviews__stars { display: flex; gap: var(--gap-hair); color: var(--text-primary); }
+  .reviews :global(.reviews__head .section-head__title) { max-width: var(--reviews-title-max); }
+
+  .reviews__rows { border-top: 1px solid var(--border-rail); }
+  .review { display: grid; border-bottom: 1px solid var(--border-rail); }
+  .review__person { display: flex; gap: var(--menu-card-gap); padding: var(--space-8) var(--side-pad) 0; }
+  .review__avatar {
+    display: grid; place-items: center; flex: none;
+    width: var(--review-avatar); height: var(--review-avatar);
+    border: 1px solid var(--border-rail); border-radius: var(--radius-pill);
+    background: var(--bg-card); color: var(--text-primary);
+    font-size: var(--fs-title); font-weight: var(--fw-medium); line-height: var(--lh-tight);
+  }
+  .review__avatar.is-featured { background: var(--bg-accent); color: var(--text-on-accent); }
+  .review__who { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+  .review__quote { margin: 0; padding: var(--space-6) var(--side-pad); }
+  .review__photo-col { padding: 0 var(--side-pad) var(--space-8); }
+  .review__photo { position: relative; overflow: hidden; width: 100%; aspect-ratio: 256 / 170; border-radius: var(--radius-media); }
+  .review__photo :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .review__photo :global(.review__photo-pill) { position: absolute; top: var(--gap-tight); left: var(--gap-tight); padding: var(--pill-py-xs) var(--pill-px-md); font-size: var(--fs-eyebrow-sm); }
+
+  @media (min-width: 768px) {
+    .review { grid-template-columns: minmax(0, 1fr) auto; }
+    .review__person { grid-column: 1 / -1; }
+    .review__photo-col { padding: var(--space-6) var(--side-pad) var(--space-8) 0; }
+    .review__photo { width: var(--review-photo-w); }
+  }
+  @media (min-width: 1024px) {
+    .reviews { padding-bottom: var(--reviews-pb); }
+    .review { grid-template-columns: var(--reviews-person-w) minmax(0, 1fr) var(--reviews-photo-w); }
+    .review__person { grid-column: auto; padding: var(--space-11) 0 0 var(--side-pad); border-right: 1px solid var(--border-rail); }
+    .review__quote { padding: var(--review-pad); }
+    .review__photo-col { display: flex; justify-content: flex-end; padding: var(--space-6) var(--side-pad) var(--space-6) var(--space-6); border-left: 1px solid var(--border-rail); }
+  }
+</style>

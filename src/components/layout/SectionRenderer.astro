@@ -12,6 +12,9 @@ import Split from '../sections/Split.astro';
 import Services from '../sections/Services.astro';
 import Models from '../sections/Models.astro';
 import Steps from '../sections/Steps.astro';
+import Reviews from '../sections/Reviews.astro';
+import Faq from '../sections/Faq.astro';
+import FinalCta from '../sections/FinalCta.astro';
 import { numberSections, type SectionEntry } from '../../lib/sections';
 
 interface Props { sections: SectionEntry[] }
@@ -27,6 +30,9 @@ const map: Record<string, any> = {
   services: Services,
   models: Models,
   steps: Steps,
+  reviews: Reviews,
+  faq: Faq,
+  cta: FinalCta,
 };
 
 const entries = numberSections(Astro.props.sections);
