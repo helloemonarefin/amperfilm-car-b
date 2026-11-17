@@ -31,6 +31,9 @@ const { points, solution } = Astro.props as WhyProps;
     <div class="why__visual">
       <Image class="why__ring" src={ring} alt="" widths={[860, 1720]} sizes="(min-width: 1360px) 860px, 560px" aria-hidden="true" />
       <span class="glow glow--diagram why__glow" aria-hidden="true"></span>
+      <!-- Liquid glow (owner, 2026-11-17): replaces the CSS glow when JS runs
+           and motion is allowed. -->
+      <canvas class="why__liquid" width="300" height="300" aria-hidden="true" data-liquid></canvas>
       <div class="why__solution" data-reveal>
         <p class="t-meta t-medium c-strong">{solution.label}</p>
         <h2 id="why-title" class="t-h3-lg">{solution.title.map((l, i) => <>{i > 0 && <br />}{l}</>)}</h2>
@@ -79,6 +82,19 @@ const { points, solution } = Astro.props as WhyProps;
     inset: var(--diagram-glow-inset);
     opacity: 0.55;
   }
+  /* Covers the whole circle so moving blobs never hit the canvas edge;
+     the base glow is drawn at its Figma size (700 of 860) inside it. */
+  .why__liquid {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    filter: blur(calc(var(--glow-diagram-blur) / 2));
+    pointer-events: none;
+  }
+  .why__visual.is-liquid .why__liquid { display: block; }
+  .why__visual.is-liquid .why__glow { display: none; }
   .why__solution {
     position: relative;
     display: flex; flex-direction: column; gap: var(--space-3);
@@ -139,3 +155,97 @@ const { points, solution } = Astro.props as WhyProps;
     }
   }
 </style>
+
+<script>
+  // Liquid glow (owner, 2026-11-17). A soft blue base glow plus four
+  // "liquid" blobs drawn on a small canvas (CSS blur makes them soft).
+  // Idle: the blobs drift slowly around the centre. Hover: each blob is
+  // pulled toward the pointer on its own spring, so they stretch and
+  // trail like liquid; leaving lets them flow back. Runs only while the
+  // section is on screen; skipped under reduced motion (CSS glow stays).
+  const visual = document.querySelector<HTMLElement>('.why__visual');
+  const canvas = visual?.querySelector<HTMLCanvasElement>('[data-liquid]');
+  const ctx = canvas?.getContext('2d');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (visual && canvas && ctx && !reduce) {
+    const W = canvas.width;
+    const GLOW = 700 / 860; // Figma glow diameter relative to the circle
+    const REACH = 0.2;      // max blob travel from the centre (canvas units)
+    const rgb = getComputedStyle(document.documentElement).getPropertyValue('--brand-accent-rgb').trim().split(/\s+/).join(',');
+    const col = (a: number) => `rgba(${rgb},${a})`;
+
+    type Blob = { x: number; y: number; vx: number; vy: number; angle: number; orbit: number; speed: number; k: number; r: number };
+    const blobs: Blob[] = [0, 1, 2, 3].map((i) => ({
+      x: 0.5, y: 0.5, vx: 0, vy: 0,
+      angle: (i / 4) * Math.PI * 2,
+      orbit: 0.06 + (i % 2) * 0.04,
+      speed: 0.0025 + i * 0.0007,
+      k: 0.012 + i * 0.008,          // spring stiffness: different per blob → trailing
+      r: 0.3 + (i % 3) * 0.04,
+    }));
+    const pointer = { x: 0.5, y: 0.5, inside: false };
+    let energy = 0; // 0 idle → 1 hovering
+    let running = false;
+    let raf = 0;
+
+    const draw = () => {
+      energy += ((pointer.inside ? 1 : 0) - energy) * 0.05;
+      ctx.clearRect(0, 0, W, W);
+
+      // Base glow (Figma: accent 100% → 55% radial, 55% layer opacity).
+      const R0 = (W / 2) * GLOW;
+      const base = ctx.createRadialGradient(W / 2, W / 2, 0, W / 2, W / 2, R0);
+      base.addColorStop(0, col(0.55));
+      base.addColorStop(0.85, col(0.3));
+      base.addColorStop(1, col(0));
+      ctx.fillStyle = base;
+      ctx.beginPath(); ctx.arc(W / 2, W / 2, R0, 0, Math.PI * 2); ctx.fill();
+
+      for (const b of blobs) {
+        b.angle += b.speed * (1 + energy * 2);
+        const homeX = 0.5 + Math.cos(b.angle) * b.orbit;
+        const homeY = 0.5 + Math.sin(b.angle * 1.3) * b.orbit;
+        // Pull toward the pointer, but keep the blob inside the circle.
+        let px = pointer.x - 0.5, py = pointer.y - 0.5;
+        const d = Math.hypot(px, py);
+        if (d > REACH) { px *= REACH / d; py *= REACH / d; }
+        const tx = homeX + (0.5 + px - homeX) * energy * 0.85;
+        const ty = homeY + (0.5 + py - homeY) * energy * 0.85;
+        b.vx = (b.vx + (tx - b.x) * b.k) * 0.9;
+        b.vy = (b.vy + (ty - b.y) * b.k) * 0.9;
+        b.x += b.vx; b.y += b.vy;
+        // Stretch along the motion for a liquid feel.
+        const speed = Math.min(Math.hypot(b.vx, b.vy) * 40, 0.6);
+        const ang = Math.atan2(b.vy, b.vx);
+        const r = b.r * W * GLOW * (0.7 + energy * 0.35);
+        ctx.save();
+        ctx.translate(b.x * W, b.y * W);
+        ctx.rotate(ang);
+        ctx.scale(1 + speed, 1 - speed * 0.4);
+        const g = ctx.createRadialGradient(0, 0, 0, 0, 0, r);
+        g.addColorStop(0, col(0.22 + energy * 0.3));
+        g.addColorStop(1, col(0));
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      }
+      if (running) raf = requestAnimationFrame(draw);
+    };
+
+    const start = () => { if (!running) { running = true; raf = requestAnimationFrame(draw); } };
+    const stop = () => { running = false; cancelAnimationFrame(raf); };
+
+    new IntersectionObserver(([e]) => (e.isIntersecting ? start() : stop()), { rootMargin: '100px' }).observe(visual);
+
+    visual.addEventListener('pointermove', (e) => {
+      const r = canvas.getBoundingClientRect();
+      pointer.x = (e.clientX - r.left) / r.width;
+      pointer.y = (e.clientY - r.top) / r.height;
+      pointer.inside = true;
+    });
+    visual.addEventListener('pointerleave', () => { pointer.inside = false; });
+
+    visual.classList.add('is-liquid');
+  }
+</script>

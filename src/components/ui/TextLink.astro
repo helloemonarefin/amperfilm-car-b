@@ -4,14 +4,15 @@
 // spread across the card width, top divider, 16 top padding.
 // The whole row is one link; the round button is decorative.
 import RoundButton from './RoundButton.astro';
+import ArrowSwap from './ArrowSwap.astro';
 interface Props { label: string; href?: string; class?: string }
 const { label, href, class: className } = Astro.props;
 const Tag = href ? 'a' : 'div';
 ---
 
-<Tag class:list={['tlink', className]} href={href}>
+<Tag class:list={['tlink', 'arrow-trigger', className]} href={href}>
   <span class="t-link">{label}</span>
-  <RoundButton as="span" icon="arrow-up-right" iconSize={14} size="md" variant="dark" class="tlink__btn" />
+  <RoundButton as="span" size="md" variant="dark" class="tlink__btn"><ArrowSwap icon="arrow-up-right" size={14} dir="diag" /></RoundButton>
 </Tag>
 
 <style>

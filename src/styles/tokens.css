@@ -226,6 +226,12 @@
   --m-menu-item-time: 0.5s;
   --m-menu-item-distance: 12px;
   --m-menu-item-stagger: var(--m-reveal-stagger);
+  /* Arrow swap on hover (owner, 2026-11-17): arrow out, second arrow in. */
+  --m-arrow-time: 0.45s;
+  --m-arrow-ease: var(--ease-smooth);
+  /* Menu row hover background (owner: 12–20% white). */
+  --menu-link-hover-bg: rgb(255 255 255 / 0.12);
+  --menu-link-hover-x: 12px;      /* background bleeds past the text column */
   /* Hamburger ↔ cross morph (owner, 2026-11-17). */
   --m-burger-time: 0.35s;
   --m-burger-ease: var(--ease-smooth);

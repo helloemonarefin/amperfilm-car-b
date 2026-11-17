@@ -1,0 +1,49 @@
+---
+// Arrow swap — hover interaction (owner, 2026-11-17).
+// Two copies of an arrow in a clipped box. When the nearest `.arrow-trigger`
+// ancestor is hovered or keyboard-focused, the first arrow leaves in the
+// arrow's direction and the second slides in from the opposite side while
+// fading 0 → 1. `dir="right"` for →, `dir="diag"` for ↗ (leaves top-right,
+// enters from bottom-left). Decorative (aria-hidden).
+import Icon, { type IconName } from './Icon.astro';
+
+interface Props {
+  icon: IconName;
+  size?: number;
+  dir?: 'right' | 'diag';
+  class?: string;
+}
+const { icon, size, dir = 'right', class: className } = Astro.props;
+---
+
+<span class:list={['aswap', `aswap--${dir}`, className]} aria-hidden="true">
+  <Icon name={icon} size={size} class="aswap__a" />
+  <Icon name={icon} size={size} class="aswap__b" />
+</span>
+
+<style>
+  .aswap { position: relative; display: inline-grid; flex: none; overflow: hidden; }
+  .aswap :global(.aswap__a), .aswap :global(.aswap__b) {
+    grid-area: 1 / 1;
+    transition:
+      translate var(--m-arrow-time) var(--m-arrow-ease),
+      opacity var(--m-arrow-time) var(--m-arrow-ease);
+  }
+  /* Waiting just outside the box, on the side it enters from. */
+  .aswap--right :global(.aswap__b) { translate: -100% 0; opacity: 0; }
+  .aswap--diag :global(.aswap__b) { translate: -100% 100%; opacity: 0; }
+
+  /* Trigger: hover on pointer devices, keyboard focus everywhere,
+     plus .is-hover for the styleguide. */
+  @media (hover: hover) and (pointer: fine) {
+    :global(.arrow-trigger:hover) .aswap--right :global(.aswap__a) { translate: 100% 0; opacity: 0; }
+    :global(.arrow-trigger:hover) .aswap--diag :global(.aswap__a) { translate: 100% -100%; opacity: 0; }
+    :global(.arrow-trigger:hover) .aswap :global(.aswap__b) { translate: 0 0; opacity: 1; }
+  }
+  :global(.arrow-trigger:focus-visible) .aswap--right :global(.aswap__a),
+  :global(.arrow-trigger.is-hover) .aswap--right :global(.aswap__a) { translate: 100% 0; opacity: 0; }
+  :global(.arrow-trigger:focus-visible) .aswap--diag :global(.aswap__a),
+  :global(.arrow-trigger.is-hover) .aswap--diag :global(.aswap__a) { translate: 100% -100%; opacity: 0; }
+  :global(.arrow-trigger:focus-visible) .aswap :global(.aswap__b),
+  :global(.arrow-trigger.is-hover) .aswap :global(.aswap__b) { translate: 0 0; opacity: 1; }
+</style>

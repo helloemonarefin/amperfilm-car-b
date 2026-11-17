@@ -4,7 +4,7 @@
 // Variants: dark, white, ghost, ghost-white, and `cta` (white, 56 tall,
 // padding 24/8, ends in a 40px accent circle with a white arrow).
 // Hover is a colour change only (200ms). Hover colours are PROPOSED tokens.
-import Icon from './Icon.astro';
+import ArrowSwap from './ArrowSwap.astro';
 
 interface Props {
   label: string;
@@ -34,15 +34,15 @@ const tagProps = href
 ---
 
 <Tag
-  class:list={['btn', `btn--${variant}`, variant !== 'cta' && `btn--${size}`, { 'btn--block': block, 'btn--spread': spread }, 't-button', className]}
+  class:list={['btn', 'arrow-trigger', `btn--${variant}`, variant !== 'cta' && `btn--${size}`, { 'btn--block': block, 'btn--spread': spread }, 't-button', className]}
   {...tagProps}
   {...rest}
 >
   <span class="btn__label">{label}</span>
   {external && <span class="sr-only"> (opens in a new tab)</span>}
   {variant === 'cta'
-    ? <span class="btn__circle" aria-hidden="true"><Icon name="arrow-right" /></span>
-    : arrow && <Icon name="arrow-right" />}
+    ? <span class="btn__circle" aria-hidden="true"><ArrowSwap icon="arrow-right" /></span>
+    : arrow && <ArrowSwap icon="arrow-right" />}
 </Tag>
 
 <style>

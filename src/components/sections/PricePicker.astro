@@ -15,6 +15,7 @@ import SectionHeader, { type TwoTone } from '../ui/SectionHeader.astro';
 import Pill from '../ui/Pill.astro';
 import Icon from '../ui/Icon.astro';
 import Button from '../ui/Button.astro';
+import ArrowSwap from '../ui/ArrowSwap.astro';
 import { pricing, model, modelLabel, pkg, price } from '../../content/pricing';
 
 export interface PickerProps {
@@ -102,7 +103,7 @@ const pillText = `${modelLabel(current)}${current.mostBooked ? ` · ${p.mostBook
           <Button variant="white" block spread class="picker__cta" label={p.cta.label} href={p.cta.href} data-picker-cta />
         </div>
 
-        <a class="picker__more t-link" href={p.more.href}>{p.more.label}<Icon name="arrow-up-right" size={16} /></a>
+        <a class="picker__more t-link arrow-trigger" href={p.more.href}>{p.more.label}<ArrowSwap icon="arrow-up-right" size={16} dir="diag" /></a>
       </div>
     </div>
   </div>
