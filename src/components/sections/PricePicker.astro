@@ -44,21 +44,22 @@ const p = Astro.props as PickerProps;
 const current = model(p.defaultModel ?? pricing.defaults.model);
 const currentPkg = pkg(pricing.defaults.package);
 const pickerPkgs = pricing.packages.filter((x) => x.inPicker);
-const photo = current.image ?? pricing.models.find((m) => m.image)?.image;
+const photo = current.image;
 const pillText = `${modelLabel(current)}${current.mostBooked ? ` · ${p.mostBooked}` : ''}`;
 
 // Data for the swap script (Phase 5). Every number comes from pricing.ts.
+// Widths up to each photo's own size (the Model Y photo is only 1200 wide).
+const widthsFor = (img: typeof photo) => [640, 948, 1400, 1896].filter((w) => w < img.width).concat(img.width);
 const imageSet = async (img: typeof photo) => {
-  if (!img) return null;
-  const r = await getImage({ src: img, widths: [640, 948, 1400, 1896] });
+  const r = await getImage({ src: img, widths: widthsFor(img) });
   return { src: r.src, srcset: r.srcSet.attribute };
 };
 const pickerData = {
   models: Object.fromEntries(await Promise.all(pricing.models.map(async (m) => [m.id, {
     pill: `${modelLabel(m)}${m.mostBooked ? ` · ${p.mostBooked}` : ''}`,
-    image: await imageSet(m.image ?? photo),
+    image: await imageSet(m.image),
   }]))),
-  other: { pill: pricing.other.label, note: pricing.other.note },
+  other: { pill: pricing.other.label, note: pricing.other.note, image: await imageSet(pricing.other.image) },
   packages: Object.fromEntries(pricing.packages.map((x) => [x.id, x.pickerText ?? x.description])),
   prices: pricing.prices,
 };
@@ -101,7 +102,7 @@ const pickerData = {
       <!-- 2. Photo + glass price panel -->
       <div class="picker__visual" data-reveal>
         <div class="picker__photo">
-          {photo && <Image class="picker__img" src={photo} alt="" widths={[640, 948, 1400, 1896]} sizes="(min-width: 1440px) 948px, (min-width: 1024px) 66vw, 100vw" data-picker-img />}
+          <Image class="picker__img" src={photo} alt="" widths={widthsFor(photo)} sizes="(min-width: 1440px) 948px, (min-width: 1024px) 66vw, 100vw" data-picker-img />
           <span class="glow glow--panel picker__glow" aria-hidden="true"></span>
           <Pill variant="white" class="picker__pill" data-picker-pill data-reveal>{pillText}</Pill>
         </div>
@@ -204,7 +205,9 @@ const pickerData = {
       border-bottom: 1px solid var(--border-rail);
       border-radius: 0;
       gap: 0; /* Figma: text and circle touch on the longest row */
+      white-space: normal; /* the long "other EVs" row wraps when selected instead of overflowing */
     }
+    .picker__name { min-width: 0; }
     .picker__row:has(input:checked) {
       padding: var(--picker-row-py) var(--picker-row-pr) var(--picker-row-py) var(--picker-row-pl);
       border-radius: var(--radius-pill);
@@ -245,9 +248,10 @@ const pickerData = {
   // price, description, pill and photo from pricing.ts data. Without JS the
   // default model + package stay visible. "Other EVs" hides the price and
   // shows the exact-price-by-text note. The CTA pre-fills the final form.
+  type Img = { src: string; srcset: string };
   type Data = {
-    models: Record<string, { pill: string; image: { src: string; srcset: string } | null }>;
-    other: { pill: string; note: string };
+    models: Record<string, { pill: string; image: Img }>;
+    other: { pill: string; note: string; image: Img };
     packages: Record<string, string>;
     prices: Record<string, Record<string, number | null>>;
   };
@@ -270,6 +274,23 @@ const pickerData = {
       el.animate([{ opacity: 0, translate: '0 8px' }, { opacity: 1, translate: '0 0' }], { duration: 320, easing: 'cubic-bezier(.22, 1, .36, 1)' });
     };
 
+    // Each model shows its own photo (owner, 2026-11-17): load the new one
+    // off-screen first, then swap and fade it in, so the photo never blanks.
+    let swapId = 0;
+    const swapImage = async (img: Img) => {
+      if (!imgEl || imgEl.getAttribute('src') === img.src) return;
+      const id = ++swapId;
+      const next = new Image();
+      next.sizes = imgEl.sizes;
+      next.srcset = img.srcset;
+      next.src = img.src;
+      try { await next.decode(); } catch { /* swap anyway */ }
+      if (id !== swapId) return; // a newer choice won
+      imgEl.srcset = img.srcset;
+      imgEl.src = img.src;
+      if (!reduce) imgEl.animate([{ opacity: 0, scale: 1.03 }, { opacity: 1, scale: 1 }], { duration: 600, easing: 'cubic-bezier(.22, 1, .36, 1)' });
+    };
+
     const render = (changed: 'model' | 'package') => {
       const model = value('model');
       const pkg = value('package');
@@ -277,6 +298,7 @@ const pickerData = {
         if (priceRow) priceRow.hidden = true;
         if (descEl) descEl.textContent = data.other.note;
         if (pillEl) pillEl.textContent = data.other.pill;
+        swapImage(data.other.image);
         pop(descEl);
         return;
       }
@@ -286,11 +308,7 @@ const pickerData = {
       if (descEl) descEl.textContent = data.packages[pkg] ?? '';
       const m = data.models[model];
       if (m && pillEl) pillEl.textContent = m.pill;
-      if (changed === 'model' && m?.image && imgEl && imgEl.getAttribute('src') !== m.image.src) {
-        imgEl.srcset = m.image.srcset;
-        imgEl.src = m.image.src;
-        pop(imgEl);
-      }
+      if (changed === 'model' && m) swapImage(m.image);
       pop(priceRow);
     };
 

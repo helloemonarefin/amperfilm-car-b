@@ -3,7 +3,13 @@
 // A price is never typed in a component.
 // Source: Figma Pricing page price grid (346:2928) + Home price picker (338:121).
 import type { ImageMetadata } from 'astro';
-import modelY from '../assets/images/models/model-y.jpg';
+// Picker photo per model (owner, 2026-11-17). TODO(owner): real Cybertruck
+// and R1S photos — these reuse the photos Figma puts on each model's page.
+import model3Photo from '../assets/images/models/model-y.jpg'; // the blue Tesla close-up (owner: right for Model 3)
+import modelYPhoto from '../assets/images/heroes/pricing.png'; // Model Y (Figma Pricing hero)
+import cybertruckPhoto from '../assets/images/heroes/cybertruck.jpg'; // Figma Cybertruck hero
+import r1sPhoto from '../assets/images/models/rivian.jpg'; // Figma Rivian hero
+import otherPhoto from '../assets/images/models/other-evs.jpg'; // unbranded silhouette (Home hero)
 
 export interface PriceModel {
   id: string;
@@ -14,8 +20,8 @@ export interface PriceModel {
   /** Picker label; defaults to "<brand> <name>" (≤ 20 characters). */
   label?: string;
   mostBooked?: boolean;
-  /** Picker photo. TODO(owner): Figma only has the Model Y photo. */
-  image?: ImageMetadata;
+  /** Picker photo of this model. */
+  image: ImageMetadata;
 }
 
 export interface PricePackage {
@@ -48,16 +54,16 @@ export interface Pricing {
   prices: Record<string, Record<string, number | null>>;
   bundles: Bundle[];
   /** "Other EVs" row in the picker: no price, an exact quote by text. */
-  other: { label: string; note: string };
+  other: { label: string; note: string; image: ImageMetadata };
   defaults: { model: string; package: string };
 }
 
 export const pricing: Pricing = {
   models: [
-    { id: 'model-3', brand: 'Tesla', name: 'Model 3' },
-    { id: 'model-y', brand: 'Tesla', name: 'Model Y', mostBooked: true, image: modelY },
-    { id: 'cybertruck', brand: 'Tesla', name: 'Cybertruck' },
-    { id: 'r1s', brand: 'Rivian', name: 'R1S' },
+    { id: 'model-3', brand: 'Tesla', name: 'Model 3', image: model3Photo },
+    { id: 'model-y', brand: 'Tesla', name: 'Model Y', mostBooked: true, image: modelYPhoto },
+    { id: 'cybertruck', brand: 'Tesla', name: 'Cybertruck', image: cybertruckPhoto },
+    { id: 'r1s', brand: 'Rivian', name: 'R1S', image: r1sPhoto },
   ],
   packages: [
     {
@@ -79,6 +85,7 @@ export const pricing: Pricing = {
   other: {
     label: 'Lucid, BMW i, Mercedes EQ & more',
     note: 'Other EVs get an exact price by text within 1 hour, 9am–6pm.',
+    image: otherPhoto,
   },
   defaults: { model: 'model-y', package: 'front-shield' },
 };

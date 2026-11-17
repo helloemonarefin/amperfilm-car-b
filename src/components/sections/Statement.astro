@@ -16,7 +16,8 @@ export interface StatementProps {
   title: TwoTone;
 }
 const { index, label, icon, title } = Astro.props as StatementProps;
-// Words for the scroll-linked text reveal; soft words keep the faint colour.
+// Words for the scroll-linked text reveal. Soft words are faint only when the
+// reveal doesn't run; with it, every word fills to full ink (owner).
 const words = [
   ...title.strong.split(/\s+/).map((w) => ({ w, soft: false })),
   ...(title.soft ?? '').split(/\s+/).filter(Boolean).map((w) => ({ w, soft: true })),

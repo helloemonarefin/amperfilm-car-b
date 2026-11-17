@@ -158,6 +158,11 @@
   --m-intro-delay:    0.1s;
   --m-intro-stagger:  0.05s;  /* gap between items (owner: 0.04–0.05, 2026-11-17) */
   --m-intro-distance: 20px;
+  /* Hero settle (owner, 2026-11-17; ref open-door.framer.website): the whole
+     hero scales 1.01 → 1 on load, with the reference's fast-out ease. */
+  --m-hero-scale-from: 1.01;
+  --m-hero-scale-time: 1s;
+  --m-hero-scale-ease: cubic-bezier(0, .81, .56, 1);
 
   /* Nav intro: kept for completeness; Master D has no inline nav (BUILD_PROMPT §3). */
   --m-nav-ease:       var(--ease-drop);
@@ -273,6 +278,7 @@
   --hero-ratio: 0.625;            /* 900 / 1440: height follows the width (≤ 100vh) */
   --hero-pad-top: 24px;           /* header row from the top */
   --hero-pad-bottom: 46px;        /* bottom row from the bottom (900 − 24 − 830) */
+  --wordmark-scale-m: 0.6;        /* hero wordmark on phones (< 768): 40% smaller (owner) */
   --hero-menu-offset: 28px;       /* menu button below the wordmark's top */
   --hero-col-gap: 44px;           /* card → headline, chips → buttons */
   --hero-left-w: 703px; --hero-right-w: 486px;
@@ -403,7 +409,14 @@
   --tap-pad: 2px;
 
   /* Sticky compact header (owner-approved proposal; not in Figma). */
-  --sticky-h: 64px;
+  /* The bar's menu button sits exactly at the menu panel's inner top-right
+     corner (inset + padding = 44), at the hero button's size, so the cross
+     lands inside the panel like it does from the hero (owner, 2026-11-17).
+     Bar height = that inset above and below the button. */
+  --sticky-btn-inset: calc(var(--menu-inset) + var(--menu-pad-top));
+  --sticky-h: calc(var(--sticky-btn-inset) * 2 + var(--menu-btn-h-m));
+  --sticky-h-d: calc(var(--sticky-btn-inset) * 2 + var(--menu-btn-h-d));
+  --wordmark-scale-bar: 0.5;      /* bar wordmark = half the hero wordmark */
   --sticky-bg: rgb(248 248 243 / 0.88);   /* paper at 88% */
   --sticky-blur: 24px;                    /* Figma-scale value; CSS halves it */
   --m-sticky-time: 0.4s;

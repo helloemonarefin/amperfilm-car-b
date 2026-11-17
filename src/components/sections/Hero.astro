@@ -134,6 +134,8 @@ const widths = [640, 960, 1280, 1600, 1920, 2560].filter((w) => w < image.width)
     min-height: max(100svh, 40rem);
     color: var(--text-on-dark);
     background: var(--bg-inverse);
+    /* Entrance: the whole hero settles from 1.01 to 1 (owner, 2026-11-17). */
+    animation: settle-in var(--m-hero-scale-time) var(--m-hero-scale-ease) both;
   }
   .hero__bg { position: absolute; inset: 0; z-index: -2; }
   .hero__bg :global(.hero__img) { width: 100%; height: 100%; object-fit: cover; }
@@ -161,6 +163,8 @@ const widths = [640, 960, 1280, 1600, 1920, 2560].filter((w) => w < image.width)
     gap: var(--space-4);
     padding-inline: var(--side-pad);
   }
+  /* Phones: wordmark 40% smaller (owner, 2026-11-17). */
+  .hero__top :global(.hero__wm) { font-size: calc(var(--fs-wordmark) * var(--wordmark-scale-m)); }
   .hero__top :global(.hero__menu) {
     margin-top: var(--space-4);
     --menu-btn-w: var(--menu-btn-w-m); --menu-btn-h: var(--menu-btn-h-m); --menu-btn-bar: var(--menu-btn-bar-m);
@@ -189,6 +193,7 @@ const widths = [640, 960, 1280, 1600, 1920, 2560].filter((w) => w < image.width)
 
   /* ≥ 768: glass card and chips; buttons side by side. */
   @media (min-width: 768px) {
+    .hero__top :global(.hero__wm) { font-size: var(--fs-wordmark); }
     .hero__top :global(.hero__menu) { --menu-btn-w: var(--menu-btn-w-d); --menu-btn-h: var(--menu-btn-h-d); --menu-btn-bar: var(--menu-btn-bar-d); margin-top: var(--hero-menu-offset); }
     .hero__card {
       display: flex; align-items: center; gap: var(--gap-tight);

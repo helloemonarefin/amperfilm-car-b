@@ -10,6 +10,9 @@
   to   { opacity: 1;     translate: 0 0; }
 }
 
+/* ---------- Hero settle (owner): the whole hero scales down into place ---------- */
+@keyframes settle-in { from { scale: var(--m-hero-scale-from); } }
+
 /* ---------- Continuous spin (diagram dotted ring) ---------- */
 @keyframes spin { to { rotate: 360deg; } }
 
@@ -39,6 +42,10 @@
   opacity: calc(var(--tr-dim) + (1 - var(--tr-dim)) * var(--p, 0));
   transition: opacity var(--tr-ease-time) linear;
 }
+/* Every word fills from the same ghost tone to full ink, the soft half too
+   (owner, 2026-11-17). Without the reveal (no JS / reduced motion) the
+   headline keeps the Figma two-tone. */
+.is-text-reveal .tr-word.t-faint { color: var(--text-primary); }
 
 /* ---------- Smooth scroll and scroll lock (§1.13) ---------- */
 html { scroll-behavior: smooth; }
