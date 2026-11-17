@@ -32,11 +32,11 @@ const { index, label, title, intro, items } = Astro.props as InstallsProps;
         <li class="installs__item">
           <div class="installs__photo media" data-reveal>
             <Image src={it.image} alt={it.alt} widths={[400, 662, 1000]} sizes="(min-width: 1024px) 25vw, 80vw" />
-            <Pill variant="white" class="installs__tag">{it.tag}</Pill>
+            <Pill variant="white" class="installs__tag" data-reveal>{it.tag}</Pill>
           </div>
-          <p class="installs__caption" data-reveal>
-            <span class="t-small lh-snug c-secondary">{it.caption}</span>
-            <span class="t-meta t-medium c-tertiary" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <p class="installs__caption">
+            <span class="t-small lh-snug c-secondary" data-reveal>{it.caption}</span>
+            <span class="t-meta t-medium c-tertiary" aria-hidden="true" data-reveal>{String(i + 1).padStart(2, '0')}</span>
           </p>
         </li>
       ))}

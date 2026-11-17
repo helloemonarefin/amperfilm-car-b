@@ -23,7 +23,7 @@ const { index, stats, aside, srTitle } = Astro.props as ProofProps;
     <ul class="proof__stats" role="list">
       {stats.map((s) => (
         <li class="proof__stat">
-          <span class="t-stat" data-reveal>{s.value}</span>
+          <span class="t-stat" data-reveal data-count>{s.value}</span>
           <span class="t-small lh-snug c-tertiary" data-reveal>{s.label}</span>
         </li>
       ))}
@@ -38,6 +38,7 @@ const { index, stats, aside, srTitle } = Astro.props as ProofProps;
     display: flex; flex-direction: column; align-items: center; gap: var(--proof-gap);
     padding: var(--rail-pad-top-lg) var(--side-pad);
     white-space: nowrap;
+    text-align: center; /* keeps a counting number centred in its held width */
   }
   .proof__stat + .proof__stat { border-top: 1px solid var(--border-rail); }
   @media (min-width: 768px) {

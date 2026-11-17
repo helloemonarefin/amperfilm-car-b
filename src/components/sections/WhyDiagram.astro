@@ -36,7 +36,7 @@ const { points, solution } = Astro.props as WhyProps;
       <canvas class="why__liquid" width="300" height="300" aria-hidden="true" data-liquid></canvas>
       <div class="why__solution">
         <p class="t-meta t-medium c-strong" data-reveal>{solution.label}</p>
-        <h2 id="why-title" class="t-h3-lg" data-reveal>{solution.title.map((l, i) => <>{i > 0 && <br />}{l}</>)}</h2>
+        <h2 id="why-title" class="t-h3-lg">{solution.title.map((l, i) => <>{i > 0 && ' '}<span class="why__title-line" data-reveal>{l}</span></>)}</h2>
         <p class="t-body-sm c-secondary" data-reveal>{solution.text}</p>
       </div>
     </div>
@@ -60,6 +60,7 @@ const { points, solution } = Astro.props as WhyProps;
 </section>
 
 <style>
+  .why__title-line { display: block; }
   .why { overflow: hidden; padding-block: var(--space-18) var(--section-pad-bottom); }
   .why__frame { position: relative; padding-inline: var(--side-pad); }
 

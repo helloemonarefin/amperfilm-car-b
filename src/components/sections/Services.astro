@@ -38,20 +38,20 @@ const { index, label, title, intro, items } = Astro.props as ServicesProps;
             <Pill variant="index" class="svc__index" data-reveal>{String(i + 1).padStart(2, '0')}</Pill>
             <div class="svc__glass glass glass--md" data-reveal>
               <div class="svc__glass-top">
-                <span class="svc__tile" aria-hidden="true"><Icon name={s.icon} size={20} /></span>
+                <span class="svc__tile" aria-hidden="true" data-reveal><Icon name={s.icon} size={20} /></span>
                 <span class="svc__name">
-                  <span class="t-eyebrow-sm svc__eyebrow">{s.eyebrow}</span>
-                  <span class="t-name svc__name-text">{s.name}</span>
+                  <span class="t-eyebrow-sm svc__eyebrow" data-reveal>{s.eyebrow}</span>
+                  <span class="t-name svc__name-text" data-reveal>{s.name}</span>
                 </span>
-                <Pill variant="label">{s.warranty}</Pill>
+                <Pill variant="label" data-reveal>{s.warranty}</Pill>
               </div>
-              <span class="svc__divider" aria-hidden="true"></span>
+              <span class="svc__divider" aria-hidden="true" data-reveal></span>
               <dl class="svc__specs">
                 {s.specs.map((sp) => (
                   <div class="svc__spec">
                     <dt class="sr-only">{sp.label}</dt>
-                    <dd class="t-spec">{sp.value}</dd>
-                    <dd class="t-micro svc__spec-label" aria-hidden="true">{sp.label}</dd>
+                    <dd class="t-spec" data-reveal>{sp.value}</dd>
+                    <dd class="t-micro svc__spec-label" aria-hidden="true" data-reveal>{sp.label}</dd>
                   </div>
                 ))}
               </dl>

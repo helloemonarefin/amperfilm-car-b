@@ -71,9 +71,11 @@ const ogImage = new URL(image, Astro.site ?? site.url).href;
       import { initScroll } from '../scripts/scroll';
       import { initReveal } from '../scripts/reveal';
       import { initTextReveal } from '../scripts/textReveal';
+      import { initCountUp } from '../scripts/countUp';
       initScroll();
       initReveal();
       initTextReveal();
+      initCountUp();
     </script>
   </body>
 </html>

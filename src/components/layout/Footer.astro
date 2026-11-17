@@ -26,8 +26,8 @@ const columns = [...f.columns, { heading: site.menu.studioLabel, links: studio }
   <div class="footer__top frame">
     <div class="footer__brand">
       <p class="t-meta c-tertiary" data-reveal>{f.eyebrow}</p>
-      <p class="t-h2-sm footer__statement" data-reveal>
-        {f.statement.map((line, i) => <>{i > 0 && <br />}{line}</>)}
+      <p class="t-h2-sm footer__statement">
+        {f.statement.map((line, i) => <>{i > 0 && ' '}<span class="footer__line" data-reveal>{line}</span></>)}
       </p>
     </div>
     <nav class="footer__cols" aria-label="Footer">
@@ -48,10 +48,13 @@ const columns = [...f.columns, { heading: site.menu.studioLabel, links: studio }
 
   <div class="footer__mid frame">
     <div class="footer__legal">
-      <p class="t-micro t-medium footer__rights" data-reveal>
-        <span>©{site.year} {site.legalName}</span><span>{f.rightsReserved}</span>
+      <p class="t-micro t-medium footer__rights">
+        <span data-reveal>©{site.year} {site.legalName}</span><span data-reveal>{f.rightsReserved}</span>
       </p>
-      <p class="t-small c-secondary" data-reveal>{f.serving} {site.serviceArea.join(' · ')}</p>
+      <!-- Each place reveals on its own (owner, 2026-11-17). -->
+      <p class="t-small c-secondary footer__serving">
+        <span class="footer__piece" data-reveal>{f.serving}</span>{site.serviceArea.map((place, i) => <> <span class="footer__piece" data-reveal>{i > 0 && '· '}{place}</span></>)}
+      </p>
     </div>
 
     <form
@@ -63,8 +66,9 @@ const columns = [...f.columns, { heading: site.menu.studioLabel, links: studio }
     >
       <input type="hidden" name="form-name" value="price-by-text" />
       <p class="sr-only"><label>Leave this empty: <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
-      <div class="footer__field" data-reveal>
+      <div class="footer__field">
       <Field
+        reveal
         id="footer-phone"
         name="phone"
         type="tel"
@@ -87,6 +91,8 @@ const columns = [...f.columns, { heading: site.menu.studioLabel, links: studio }
 </footer>
 
 <style>
+  .footer__line { display: block; }
+  .footer__piece { display: inline-block; } /* translate needs a box */
   .footer { background: var(--bg-page); color: var(--text-primary); }
 
   .footer__top {

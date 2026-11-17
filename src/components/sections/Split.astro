@@ -68,21 +68,21 @@ const titleId = `${id}-title`;
     <span class="glow glow--panel split__glow" aria-hidden="true"></span>
     <Wordmark size="sm" class="split__wm" decorative data-reveal />
     <div class="split__panel glass glass--lg" data-reveal>
-      <div class="split__cap" data-reveal>
-        <span class="split__cap-icon" aria-hidden="true"><Icon name={visual.icon} size={14} /></span>
-        <p class="t-small lh-snug split__cap-text">{visual.caption.map((l, i) => <>{i > 0 && <br />}{l}</>)}</p>
+      <div class="split__cap">
+        <span class="split__cap-icon" aria-hidden="true" data-reveal><Icon name={visual.icon} size={14} /></span>
+        <p class="t-small lh-snug split__cap-text">{visual.caption.map((l, i) => <>{i > 0 && ' '}<span class="split__cap-line" data-reveal>{l}</span></>)}</p>
       </div>
-      <p class="split__num" data-reveal>
-        <span class:list={[visual.numberSize === 'lg' ? 't-num-lg' : 't-num-xl']}>{visual.number}</span>
-        <span class="t-unit split__unit">{visual.unit}</span>
+      <p class="split__num">
+        <span class:list={[visual.numberSize === 'lg' ? 't-num-lg' : 't-num-xl']} data-reveal>{visual.number}</span>
+        <span class="t-unit split__unit" data-reveal>{visual.unit}</span>
       </p>
       <p class="t-meta t-medium split__label" data-reveal>{visual.label}</p>
       <div class="split__bar" data-reveal role="img" aria-label={`${Math.round(visual.progress * 100)}%`} style={variant === 'cta' ? '--bar-h: var(--cta-bar-h)' : undefined}>
         <span class="split__fill" style={`--p: ${visual.progress}`}></span>
       </div>
       {visual.axis && (
-        <div class="split__axis t-eyebrow" data-reveal aria-hidden="true">
-          {visual.axis.map((a) => <span>{a}</span>)}
+        <div class="split__axis t-eyebrow" aria-hidden="true">
+          {visual.axis.map((a) => <span data-reveal>{a}</span>)}
         </div>
       )}
     </div>
@@ -128,6 +128,7 @@ const titleId = `${id}-title`;
     border-radius: var(--radius-pill); background: var(--bg-card); color: var(--text-primary);
   }
   .split__cap-text { color: var(--text-on-dark-strong); }
+  .split__cap-line { display: block; }
   .split__num { display: flex; align-items: baseline; gap: var(--proof-gap); white-space: nowrap; }
   .split__unit { color: var(--text-on-dark-strong); }
   .split__label { color: var(--text-on-dark-strong); }

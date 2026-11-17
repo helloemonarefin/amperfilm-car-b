@@ -35,20 +35,20 @@ const packages = [
     <input type="hidden" name="form-name" value={form.name} />
     <p class="sr-only"><label>Leave this empty: <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
     <div class="cta-form__row">
-      <div data-reveal>
-        <Field id="cta-car" name="car" label={form.carLabel} select>
+      <div>
+        <Field id="cta-car" name="car" label={form.carLabel} select reveal>
           {pricing.models.map((m) => <option value={m.id} selected={m.id === form.defaultModel}>{m.name}</option>)}
           <option value="other">{pricing.other.label}</option>
         </Field>
       </div>
-      <div data-reveal>
-        <Field id="cta-package" name="package" label={form.packageLabel} select>
+      <div>
+        <Field id="cta-package" name="package" label={form.packageLabel} select reveal>
           {packages.map((p) => <option value={p.id} selected={p.id === form.defaultPackage}>{p.name}</option>)}
         </Field>
       </div>
     </div>
-    <div data-reveal>
-      <Field id="cta-contact" name="contact" label={form.contactLabel} placeholder={form.contactPlaceholder} autocomplete="tel" required />
+    <div>
+      <Field id="cta-contact" name="contact" label={form.contactLabel} placeholder={form.contactPlaceholder} autocomplete="tel" required reveal />
     </div>
     <div class="cta-form__submit">
       <Button type="submit" variant="white" label={form.submit} data-reveal />

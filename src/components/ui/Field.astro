@@ -22,20 +22,22 @@ interface Props {
   icon?: IconName;
   /** Renders a native <select>; the slot holds the <option>s. */
   select?: boolean;
+  /** Label and control reveal on their own (owner: every element animates individually). */
+  reveal?: boolean;
   class?: string;
   [key: string]: unknown;
 }
 
 const {
   id, name, label, theme = 'dark', labelStyle = 'micro', type = 'text', placeholder,
-  autocomplete, required = false, icon, select = false, class: className, ...rest
+  autocomplete, required = false, icon, select = false, reveal = false, class: className, ...rest
 } = Astro.props;
 const trailing: IconName | undefined = select ? 'chevron-down' : icon;
 ---
 
 <div class:list={['field', `field--${theme}`, `field--label-${labelStyle}`, className]}>
-  <label for={id} class:list={['field__label', labelStyle === 'h3' ? 't-h3' : 't-micro']}>{label}</label>
-  <div class="field__control">
+  <label for={id} class:list={['field__label', labelStyle === 'h3' ? 't-h3' : 't-micro']} data-reveal={reveal ? '' : undefined}>{label}</label>
+  <div class="field__control" data-reveal={reveal ? '' : undefined}>
     {select
       ? <select id={id} name={name} required={required} autocomplete={autocomplete} class="field__input" {...rest}><slot /></select>
       : <input id={id} name={name} type={type} placeholder={placeholder} autocomplete={autocomplete} required={required} class="field__input" {...rest} />}

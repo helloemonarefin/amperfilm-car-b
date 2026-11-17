@@ -27,7 +27,14 @@ const { size = 'md', class: className, ...rest } = Astro.props;
     justify-content: space-between;
     flex: none;
     width: var(--menu-btn-w);
-    height: var(--menu-btn-h);
+    /* Tap target ≥ 24px even when drawn smaller (phone hero button is 22.8):
+       the extra height is padding with an equal negative margin, so the
+       bars and the layout stay exactly where they were. */
+    --tap-extra: max(0px, (var(--tap-min) - var(--menu-btn-h)) / 2);
+    height: calc(var(--menu-btn-h) + 2 * var(--tap-extra));
+    padding-block: var(--tap-extra);
+    margin-block: calc(var(--tap-extra) * -1);
+    box-sizing: border-box;
     color: inherit;
     -webkit-tap-highlight-color: transparent;
   }

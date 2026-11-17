@@ -40,10 +40,10 @@ const { index, title, intro, cta, items, allOpen = false, group = 'faq' } = Astr
     {items.map((it, i) => (
       <details class="faq__item" name={allOpen ? undefined : group} open={allOpen || i === 0} data-reveal>
         <summary class="faq__q">
-          <span class="t-faq-q">{it.q}</span>
-          <span class="faq__toggle" aria-hidden="true"><span></span><span></span></span>
+          <span class="t-faq-q" data-reveal>{it.q}</span>
+          <span class="faq__toggle" aria-hidden="true" data-reveal><span></span><span></span></span>
         </summary>
-        <p class="t-body c-secondary faq__a">{it.a}</p>
+        <p class="t-body c-secondary faq__a" data-reveal>{it.a}</p>
       </details>
     ))}
   </div>

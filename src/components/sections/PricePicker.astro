@@ -117,9 +117,9 @@ const pickerData = {
               </label>
             ))}
           </div>
-          <p class="picker__price" aria-live="polite" data-reveal>
-            <span class="t-price-xl" data-picker-price>{price(current.id, currentPkg.id)}</span>
-            <span class="t-body picker__unit">{p.unit}</span>
+          <p class="picker__price" aria-live="polite">
+            <span class="t-price-xl" data-picker-price data-reveal>{price(current.id, currentPkg.id)}</span>
+            <span class="t-body picker__unit" data-reveal>{p.unit}</span>
           </p>
           <p class="t-small picker__desc" data-picker-desc data-reveal>{currentPkg.pickerText ?? currentPkg.description}</p>
           <Button variant="white" block spread class="picker__cta" label={p.cta.label} href={p.cta.href} data-picker-cta data-reveal />

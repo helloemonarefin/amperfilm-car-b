@@ -51,10 +51,10 @@ const { icon, title, intro, photo, steps } = Astro.props as StepsProps;
           {photo.rows.map((r) => (
             <li class="steps__row" data-reveal>
               <span class="steps__row-text">
-                <span class="t-name steps__row-title">{r.title}</span>
-                <span class="t-micro steps__row-sub">{r.text}</span>
+                <span class="t-name steps__row-title" data-reveal>{r.title}</span>
+                <span class="t-micro steps__row-sub" data-reveal>{r.text}</span>
               </span>
-              <Pill variant={r.done ? 'accent-tag' : 'white-tag'}>{r.done ? photo.doneLabel : photo.progressLabel}</Pill>
+              <Pill variant={r.done ? 'accent-tag' : 'white-tag'} data-reveal>{r.done ? photo.doneLabel : photo.progressLabel}</Pill>
             </li>
           ))}
         </ul>
@@ -67,9 +67,9 @@ const { icon, title, intro, photo, steps } = Astro.props as StepsProps;
         <li class="steps__step">
           <span class:list={['steps__icon', { 'is-first': i === 0 }]} aria-hidden="true" data-reveal><Icon name={s.icon} size={18} /></span>
           <span class="steps__step-text">
-            <span class="steps__step-head" data-reveal>
-              <span class="t-meta t-medium c-tertiary">{String(i + 1).padStart(2, '0')}</span>
-              <h3 class="t-h5">{s.title}</h3>
+            <span class="steps__step-head">
+              <span class="t-meta t-medium c-tertiary" data-reveal>{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="t-h5" data-reveal>{s.title}</h3>
             </span>
             <span class="t-body-sm c-secondary steps__step-body" data-reveal>{s.text}</span>
           </span>

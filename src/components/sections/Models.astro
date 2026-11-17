@@ -66,11 +66,11 @@ const { index, label, title, cta, cards, other } = Astro.props as ModelsProps;
             <Image class="model__img" src={c.image} alt={c.alt} widths={[320, 640, 960]} sizes="(min-width: 1024px) 23vw, (min-width: 768px) 50vw, 100vw" />
             <Pill variant="white" class="model__brand" data-reveal>{c.brand}</Pill>
             <span class="model__glass glass glass--md" data-reveal>
-              <span class="t-h4 lh-tighter model__title">{c.title}</span>
-              <span class="t-meta model__text">{c.text}</span>
+              <span class="t-h4 lh-tighter model__title" data-reveal>{c.title}</span>
+              <span class="t-meta model__text" data-reveal>{c.text}</span>
               <span class="model__row">
-                <Pill variant="accent-tag">{c.priceTemplate.replace('{price}', fromPrice(c.models, c.package) ?? '')}</Pill>
-                <RoundButton as="span" size="md" variant="white"><ArrowSwap icon="arrow-up-right" size={14} dir="diag" /></RoundButton>
+                <Pill variant="accent-tag" data-reveal>{c.priceTemplate.replace('{price}', fromPrice(c.models, c.package) ?? '')}</Pill>
+                <RoundButton as="span" size="md" variant="white" data-reveal><ArrowSwap icon="arrow-up-right" size={14} dir="diag" /></RoundButton>
               </span>
             </span>
           </a>
@@ -79,16 +79,16 @@ const { index, label, title, cta, cards, other } = Astro.props as ModelsProps;
       <li data-reveal>
         <a class="model model--other" href={other.href}>
           <span class="model__ring" aria-hidden="true"></span>
-          <span class="model__other-head" data-reveal>
-            <Icon name="bolt" size={22} />
-            <span class="t-faq-q lh-tighter">{other.title}</span>
+          <span class="model__other-head">
+            <span class="model__other-icon" data-reveal><Icon name="bolt" size={22} /></span>
+            <span class="t-faq-q lh-tighter" data-reveal>{other.title}</span>
           </span>
           <span class="t-small model__other-text" data-reveal>{other.text}</span>
           <span class="model__other-foot">
             <Pill variant="accent-lg" data-reveal>{other.pill}</Pill>
-            <span class="model__hour" data-reveal>
-              <span class="t-num-lg">{other.number}</span>
-              <span class="t-unit model__unit">{other.unit}</span>
+            <span class="model__hour">
+              <span class="t-num-lg" data-reveal>{other.number}</span>
+              <span class="t-unit model__unit" data-reveal>{other.unit}</span>
             </span>
           </span>
         </a>

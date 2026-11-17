@@ -158,9 +158,10 @@
   --m-intro-delay:    0.1s;
   --m-intro-stagger:  0.05s;  /* gap between items (owner: 0.04–0.05, 2026-11-17) */
   --m-intro-distance: 20px;
-  /* Hero settle (owner, 2026-11-17; ref open-door.framer.website): the whole
-     hero scales 1.01 → 1 on load, with the reference's fast-out ease. */
-  --m-hero-scale-from: 1.01;
+  /* Hero settle (owner, 2026-11-17; ref open-door.framer.website): the hero's
+     contents scale 1.1 → 1 in 1s on load, with the reference's fast-out ease. */
+  --m-hero-scale-from: 1.1;
+  --m-count-time: 1.6s;           /* proof-strip numbers count up from 0 (owner) */
   --m-hero-scale-time: 1s;
   --m-hero-scale-ease: cubic-bezier(0, .81, .56, 1);
 

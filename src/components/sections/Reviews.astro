@@ -61,7 +61,7 @@ const starsLabel = (n: number) => `${n} out of 5 stars`;
         <div class="review__photo-col">
           <div class="review__photo" data-reveal>
             <Image src={r.photo} alt={r.photoAlt} widths={[256, 512]} sizes="(min-width: 1024px) 256px, 100vw" />
-            <Pill variant="white" class="review__photo-pill">{photoLabel}</Pill>
+            <Pill variant="white" class="review__photo-pill" data-reveal>{photoLabel}</Pill>
           </div>
         </div>
       </li>

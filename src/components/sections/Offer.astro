@@ -71,10 +71,10 @@ const note = p.capacity.note.replace('{booked}', String(p.capacity.booked)).repl
           <ul role="list" class="offer__list">
             {p.included.map((it) => (
               <li class="offer__glass" data-reveal>
-                <span class="offer__check" aria-hidden="true"><Icon name="check" size={16} /></span>
+                <span class="offer__check" aria-hidden="true" data-reveal><Icon name="check" size={16} /></span>
                 <span class="offer__glass-text">
-                  <span class="t-name offer__glass-title">{it.title}</span>
-                  <span class="t-micro lh-snug offer__glass-sub">{it.text}</span>
+                  <span class="t-name offer__glass-title" data-reveal>{it.title}</span>
+                  <span class="t-micro lh-snug offer__glass-sub" data-reveal>{it.text}</span>
                 </span>
               </li>
             ))}
@@ -91,11 +91,11 @@ const note = p.capacity.note.replace('{booked}', String(p.capacity.booked)).repl
         <ul role="list">
           {p.bonuses.items.map((it) => (
             <li class="offer__bonus" data-reveal>
-              <span class="offer__bonus-icon" aria-hidden="true"><Icon name={it.icon} size={16} /></span>
+              <span class="offer__bonus-icon" aria-hidden="true" data-reveal><Icon name={it.icon} size={16} /></span>
               <span class="offer__bonus-text">
-                <span class="t-name offer__bonus-title">{it.title}</span>
-                <span class="t-meta c-secondary offer__bonus-desc">{it.text}</span>
-                <Pill variant="soft-round">{it.tag}</Pill>
+                <span class="t-name offer__bonus-title" data-reveal>{it.title}</span>
+                <span class="t-meta c-secondary offer__bonus-desc" data-reveal>{it.text}</span>
+                <Pill variant="soft-round" data-reveal>{it.tag}</Pill>
               </span>
             </li>
           ))}

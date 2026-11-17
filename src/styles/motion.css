@@ -47,6 +47,10 @@
    headline keeps the Figma two-tone. */
 .is-text-reveal .tr-word.t-faint { color: var(--text-primary); }
 
+/* ---------- Count-up numbers (owner, 2026-11-17) ----------
+   Even-width digits while counting, so the number doesn't wobble. */
+.is-counting { display: inline-block; font-variant-numeric: tabular-nums; }
+
 /* ---------- Smooth scroll and scroll lock (§1.13) ---------- */
 html { scroll-behavior: smooth; }
 html.is-locked { overflow: hidden; }
