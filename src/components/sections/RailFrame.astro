@@ -1,0 +1,32 @@
+---
+// 3-column rail frame — DESIGN_SYSTEM §6: 200 | 1040 | 200 with vertical
+// rail borders. Left rail: generated (0n) index; right rail: a label.
+// Below 1024 the side rails collapse and both move into a section meta bar.
+import { formatIndex } from '../../lib/sections';
+
+interface Props {
+  index?: number;
+  label?: string;
+  /** Rail text top padding: 'sm' 24 (Statement), 'lg' 36 (Proof strip). */
+  pad?: 'sm' | 'lg';
+}
+const { index, label, pad = 'sm' } = Astro.props;
+const idx = index != null ? formatIndex(index) : '';
+---
+
+<div class="section-meta t-meta rf__meta">
+  <span class="t-medium">{idx}</span><span class="t-medium">{label}</span>
+</div>
+<div class:list={['rails frame rf', `rf--${pad}`]}>
+  <div class="rails__side rails__side--collapse rf__side t-meta t-medium" data-reveal>{idx}</div>
+  <div class="rails__main"><slot /></div>
+  <div class="rails__side rails__side--collapse rf__side rf__side--end t-meta t-medium" data-reveal>{label}</div>
+</div>
+
+<style>
+  .rf__side { padding: var(--rf-pad) var(--side-pad) 0; color: var(--text-tertiary); }
+  .rf__side--end { text-align: right; }
+  .rf--sm { --rf-pad: var(--rail-pad-top); }
+  .rf--lg { --rf-pad: var(--rail-pad-top-lg); }
+  @media (min-width: 1024px) { .rf__meta { display: none; } }
+</style>

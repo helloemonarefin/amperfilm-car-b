@@ -1,0 +1,47 @@
+---
+// Proof strip — DESIGN_SYSTEM §7, Figma 337:164.
+// Rails: (01) / 3 × [`stat` number + `small` label, centred] / ©YEAR.
+// Mobile (proposed): stats stack, one per row, divided by rail lines;
+// 3 across from 768.
+import RailFrame from './RailFrame.astro';
+
+export interface ProofProps {
+  index?: number;
+  /** Exactly 3 stats; value ≤ 6 characters (DESIGN_SYSTEM §9). */
+  stats: { value: string; label: string }[];
+  /** Right rail text (e.g. "©2026", generated from the build year). */
+  aside?: string;
+  /** Accessible section name (no visible heading in the design). */
+  srTitle: string;
+}
+const { index, stats, aside, srTitle } = Astro.props as ProofProps;
+---
+
+<section class="proof" aria-labelledby="proof-title">
+  <h2 id="proof-title" class="sr-only">{srTitle}</h2>
+  <RailFrame index={index} label={aside} pad="lg">
+    <ul class="proof__stats" role="list">
+      {stats.map((s) => (
+        <li class="proof__stat" data-reveal>
+          <span class="t-stat">{s.value}</span>
+          <span class="t-small lh-snug c-tertiary">{s.label}</span>
+        </li>
+      ))}
+    </ul>
+  </RailFrame>
+</section>
+
+<style>
+  .proof { border-bottom: 1px solid var(--border-rail); }
+  .proof__stats { display: grid; grid-template-columns: 1fr; }
+  .proof__stat {
+    display: flex; flex-direction: column; align-items: center; gap: var(--proof-gap);
+    padding: var(--rail-pad-top-lg) var(--side-pad);
+    white-space: nowrap;
+  }
+  .proof__stat + .proof__stat { border-top: 1px solid var(--border-rail); }
+  @media (min-width: 768px) {
+    .proof__stats { grid-template-columns: repeat(3, 1fr); }
+    .proof__stat + .proof__stat { border-top: 0; border-left: 1px solid var(--border-rail); }
+  }
+</style>

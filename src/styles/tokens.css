@@ -212,6 +212,7 @@
   --gap-tight: 10px; /* button label → arrow, field label → value */
   --head-title-max: 760px; --head-intro-max: 320px;
   --menu-btn-w: 68px; --menu-btn-h: 36px; --menu-btn-bar: 3.83px;
+  --menu-btn-w-m: 44px; --menu-btn-h-m: 24px; --menu-btn-bar-m: 2.5px; /* phones (proposed) */
 
   /* Menu motion (BUILD_PROMPT §3: slide ≈24px from the right + fade). */
   --m-menu-time: 0.5s;
@@ -242,6 +243,39 @@
   /* Footer (Figma 337:972) — component tokens. */
   --footer-form-w: 560px;
   --footer-legal-gap: 14px;
+
+  /* Hero (Figma 337:122) — component tokens. Desktop positions in the 1440 × 900 frame. */
+  --hero-h: 900px;
+  --hero-wm-top: 36px; --hero-wm-left: 56px;
+  --hero-menu-top: 64px;
+  --hero-edge: 64px;              /* headline, chips, buttons, menu: 64 from the frame edge */
+  --hero-chips-top: 330px; --hero-chips-right: 56px;
+  --hero-card-x: 2px;             /* card sits 2px right of the headline (66 vs 64) */
+  --hero-head-bottom: 88px;       /* headline box bottom → frame bottom */
+  --hero-actions-bottom: 71px;    /* actions box bottom → frame bottom */
+  --hero-card-gap: 31px;          /* glass card → headline */
+  --hero-actions-w: 430px;
+  --hero-thumb: 52px;
+  --hero-ring: 560px; --hero-ring-x: 180px; --hero-ring-y: 160px; --hero-ring-line: rgb(255 255 255 / 0.14);
+  --hero-line-x: 288px; --hero-line-color: rgb(255 255 255 / 0.12);
+  --hero-glow-w: 760px; --hero-glow-h: 620px; --hero-glow-x: -260px; --hero-glow-y: 430px;
+
+  /* Rails sections (Proof strip, Statement). */
+  --rail-pad-top: 24px;           /* Statement rails */
+  --rail-pad-top-lg: 36px;        /* Proof strip rails + stats */
+  --proof-gap: 6px;               /* stat → label */
+  --statement-pad: 110px 80px;
+  --statement-max: 880px;
+
+  /* Why EV-only diagram (Figma 337:188). Desktop canvas from 1360. */
+  --diagram-h: 930px;
+  --diagram-circle: 860px; --diagram-circle-y: 35px;
+  --diagram-glow-inset: 9.3023%;  /* 700 glow inside the 860 circle: 80 / 860 */
+  --diagram-solution-gap: 14px;
+  --diagram-points-x: 64px; --diagram-points-y: 175px; --diagram-row: 250px; --diagram-point-w: 380px;
+  --diagram-line-y: 40px;         /* line height below the point's top */
+  --diagram-dot: 10px;
+  --diagram-solution-x: 360px; --diagram-solution-y: 320px; --diagram-solution-w: 360px; /* from the circle's top-left */
 
   /* Stacking order. */
   --z-sticky: 40; --z-menu: 50; --z-skip: 100;

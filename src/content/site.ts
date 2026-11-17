@@ -34,6 +34,13 @@ export interface Site {
   serviceArea: string[];
   /** Hours from drop-off to protected ("48 hours"). */
   turnaroundHours: number;
+  /** Review rating out of 5 (shown "4.9★"). */
+  rating: number;
+  reviewCount: number;
+  /** Where the reviews live ("Google"). */
+  reviewSource: string;
+  /** Installs to date; shown as "2,100+". */
+  installsCount: number;
 
   /** Menu links, in order (≤ 8, DESIGN_SYSTEM §9). */
   nav: NavLink[];
@@ -92,6 +99,10 @@ export const site: Site = {
   hours: 'Mon–Sat, 8am–6pm',
   serviceArea: ['Austin', 'Round Rock', 'Cedar Park', 'Georgetown', 'Pflugerville', 'Lakeway', 'Bee Cave'],
   turnaroundHours: TURNAROUND_HOURS,
+  rating: 4.9,
+  reviewCount: 386,
+  reviewSource: 'Google',
+  installsCount: 2100,
 
   nav: [
     { label: 'Home', href: '/' },

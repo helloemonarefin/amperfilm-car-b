@@ -1,0 +1,25 @@
+---
+// Renders a page's section array in order, passing each entry's props and
+// its generated (0n) index (lib/sections.ts). Adding a section type means
+// adding one line to the map below.
+import ProofStrip from '../sections/ProofStrip.astro';
+import Statement from '../sections/Statement.astro';
+import WhyDiagram from '../sections/WhyDiagram.astro';
+import { numberSections, type SectionEntry } from '../../lib/sections';
+
+interface Props { sections: SectionEntry[] }
+
+const map: Record<string, any> = {
+  proof: ProofStrip,
+  statement: Statement,
+  why: WhyDiagram,
+};
+
+const entries = numberSections(Astro.props.sections);
+---
+
+{entries.map((e) => {
+  const C = map[e.kind];
+  if (!C) throw new Error(`SectionRenderer: no component for "${e.kind}"`);
+  return <C {...e.props} index={e.index} />;
+})}

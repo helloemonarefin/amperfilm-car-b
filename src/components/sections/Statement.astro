@@ -1,0 +1,41 @@
+---
+// Statement — DESIGN_SYSTEM §7, Figma 337:178.
+// Rails: (02) / centred icon badge + two-tone `h2` (≤ 880 wide) / label.
+// Padding 110 / 80 in the centre column; mobile 72 / side.
+import RailFrame from './RailFrame.astro';
+import IconBadge from '../ui/IconBadge.astro';
+import type { IconName } from '../ui/Icon.astro';
+import type { TwoTone } from '../ui/SectionHeader.astro';
+
+export interface StatementProps {
+  index?: number;
+  /** Right rail label (≤ 16 characters). */
+  label: string;
+  icon: IconName;
+  /** Two-tone headline, ≈ 80 characters total. */
+  title: TwoTone;
+}
+const { index, label, icon, title } = Astro.props as StatementProps;
+---
+
+<section class="statement" aria-labelledby="statement-title">
+  <RailFrame index={index} label={label}>
+    <div class="statement__body">
+      <span data-reveal><IconBadge icon={icon} /></span>
+      <h2 id="statement-title" class="t-h2 statement__title" data-reveal>
+        {title.strong}{title.soft && <> <span class="t-faint">{title.soft}</span></>}
+      </h2>
+    </div>
+  </RailFrame>
+</section>
+
+<style>
+  .statement { border-bottom: 1px solid var(--border-rail); }
+  .statement__body {
+    display: flex; flex-direction: column; align-items: center; gap: var(--space-7);
+    padding: var(--space-18) var(--side-pad);
+    text-align: center;
+  }
+  .statement__title { max-width: var(--statement-max); }
+  @media (min-width: 1024px) { .statement__body { padding: var(--statement-pad); } }
+</style>

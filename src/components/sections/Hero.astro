@@ -1,0 +1,177 @@
+---
+// Hero — DESIGN_SYSTEM §6/§7, Figma 337:122 (1440 × 900).
+// Full-bleed photo + hero overlay; decorative glow, ring and vertical line.
+// Wordmark (128, not the h1) top-left; menu button top-right; service chips
+// right; delivery glass card + h1 headline bottom-left; buttons + intro
+// bottom-right. Shared by every page (different photo, headline, chips, buttons).
+// Mobile (proposed, §6): wordmark 64, headline at the bottom, buttons stack
+// full width, chips + glass card hidden below 768.
+// Motion (§7.4): wordmark → headline → buttons → glass card and chips.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Wordmark from '../ui/Wordmark.astro';
+import Button from '../ui/Button.astro';
+import Pill from '../ui/Pill.astro';
+import MenuButton from '../layout/MenuButton.astro';
+
+export interface HeroProps {
+  image: ImageMetadata;
+  imageAlt?: string;
+  /** Headline lines (`h1`). Limit: 2 lines, ≤ 30 characters each (DESIGN_SYSTEM §9). */
+  headline: string[];
+  /** Service chips on the right; one may be `active` (glass). ≤ 3, ≤ 22 characters. */
+  chips?: { label: string; active?: boolean }[];
+  /** Small glass card above the headline. Text ≤ 28 characters. */
+  card?: { image: ImageMetadata; imageAlt?: string; tag: string; text: string };
+  /** Two buttons: ghost-white then white. Labels ≤ 28 characters. */
+  actions: { label: string; href: string; variant: 'ghost-white' | 'white' }[];
+  /** Right-aligned intro, ≤ 160 characters (3 lines at 430px). */
+  intro?: string;
+}
+
+const { image, imageAlt = '', headline, chips = [], card, actions, intro } = Astro.props as HeroProps;
+---
+
+<header class="hero">
+  <div class="hero__bg" aria-hidden={imageAlt ? undefined : 'true'}>
+    <Image
+      class="hero__img"
+      src={image}
+      alt={imageAlt}
+      widths={[image.width]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+    />
+  </div>
+  <div class="hero__decor" aria-hidden="true">
+    <span class="glow hero__glow"></span>
+    <span class="hero__ring"></span>
+    <span class="hero__line"></span>
+  </div>
+
+  <div class="hero__frame frame">
+    <Wordmark size="hero" href="/" class="hero__wm" data-intro style="--i:0" />
+    <MenuButton class="hero__menu" />
+
+    {chips.length > 0 && (
+      <ul class="hero__chips" role="list" data-intro style="--i:3">
+        {chips.map((c) => <li><Pill variant={c.active ? 'glass' : 'plain'}>{c.label}</Pill></li>)}
+      </ul>
+    )}
+
+    <div class="hero__main">
+      {card && (
+        <div class="hero__card glass glass--sm" data-intro style="--i:3">
+          <Image class="hero__thumb" src={card.image} alt={card.imageAlt ?? ''} widths={[52, 104]} sizes="52px" />
+          <div class="hero__card-text">
+            <Pill variant="accent">{card.tag}</Pill>
+            <p class="t-meta lh-snug hero__card-copy">{card.text}</p>
+          </div>
+        </div>
+      )}
+      <h1 class="t-hero hero__title" data-intro style="--i:1">
+        {headline.map((line, i) => <>{i > 0 && ' '}<span class="hero__line-break">{line}</span></>)}
+      </h1>
+    </div>
+
+    <div class="hero__actions" data-intro style="--i:2">
+      <div class="hero__buttons">
+        {actions.map((a) => <Button variant={a.variant} label={a.label} href={a.href} />)}
+      </div>
+      {intro && <p class="t-small hero__intro">{intro}</p>}
+    </div>
+  </div>
+</header>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: max(100svh, 40rem);
+    color: var(--text-on-dark);
+    background: var(--bg-inverse);
+  }
+  .hero__bg { position: absolute; inset: 0; z-index: -2; }
+  .hero__bg :global(.hero__img) { width: 100%; height: 100%; object-fit: cover; }
+  .hero__bg::after { content: ''; position: absolute; inset: 0; background: var(--overlay-hero); }
+
+  .hero__decor { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+  .hero__glow { width: var(--hero-glow-w); height: var(--hero-glow-h); left: var(--hero-glow-x); top: var(--hero-glow-y); }
+  .hero__ring, .hero__line { display: none; }
+
+  .hero__frame {
+    position: relative;
+    min-height: inherit;
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-6) var(--side-pad) var(--space-10);
+  }
+  .hero__frame :global(.hero__wm) { position: relative; z-index: 1; }
+  .hero__frame :global(.hero__menu) { position: absolute; top: var(--space-8); right: var(--side-pad); }
+
+  .hero__chips { display: none; }
+  .hero__main { margin-top: auto; }
+  .hero__card { display: none; }
+  .hero__title { color: var(--text-on-dark); }
+  /* Figma's two lines from 768; below that the headline wraps (balanced)
+     so no line is left with a single word. */
+  @media (min-width: 768px) { .hero__line-break { display: block; } }
+  /* Phones: a smaller menu button so it clears the 64px wordmark (proposed). */
+  @media (max-width: 767px) {
+    .hero__frame :global(.hero__menu) { --menu-btn-w: var(--menu-btn-w-m); --menu-btn-h: var(--menu-btn-h-m); --menu-btn-bar: var(--menu-btn-bar-m); top: var(--space-10); }
+  }
+
+  .hero__actions { display: flex; flex-direction: column; gap: var(--space-5); margin-top: var(--space-8); }
+  .hero__buttons { display: flex; flex-direction: column; gap: var(--gap-tight); }
+  .hero__buttons :global(.btn) { width: 100%; }
+  .hero__intro { color: var(--text-on-dark-strong); max-width: var(--hero-actions-w); }
+
+  /* ≥ 768: chips + glass card come back; buttons sit side by side. */
+  @media (min-width: 768px) {
+    .hero__chips {
+      position: absolute; top: var(--hero-chips-top); right: var(--hero-chips-right);
+      display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-2);
+    }
+    .hero__chips li { display: flex; }
+    .hero__card {
+      display: flex; align-items: center; gap: var(--gap-tight);
+      width: max-content;
+      margin: 0 0 var(--hero-card-gap) var(--hero-card-x);
+      /* Figma strokes sit inside the box: padding minus the 1px border. */
+      padding: calc(var(--space-2) - 1px) calc(var(--space-3) - 1px) calc(var(--space-2) - 1px) calc(var(--space-2) - 1px);
+    }
+    .hero__card :global(.hero__thumb) { width: var(--hero-thumb); height: var(--hero-thumb); object-fit: cover; border-radius: var(--radius-sm); }
+    .hero__card-text { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+    .hero__card-copy { color: var(--text-on-dark-strong); }
+    .hero__buttons { flex-direction: row; }
+    .hero__buttons :global(.btn) { width: auto; }
+  }
+
+  /* ≥ 1024: Figma frame (900 tall); wordmark, menu, chips and decor in place.
+     Headline and actions stay stacked until 1280, where they fit side by side. */
+  @media (min-width: 1024px) {
+    .hero { min-height: var(--hero-h); }
+    .hero__ring {
+      display: block; position: absolute;
+      left: var(--hero-ring-x); top: var(--hero-ring-y);
+      width: var(--hero-ring); height: var(--hero-ring);
+      border: 1px solid var(--hero-ring-line); border-radius: var(--radius-pill);
+    }
+    .hero__line { display: block; position: absolute; top: 0; bottom: 0; left: var(--hero-line-x); width: 1px; background: var(--hero-line-color); }
+
+    .hero__frame { height: var(--hero-h); padding: 0 var(--hero-edge) var(--hero-actions-bottom); }
+    .hero__frame :global(.hero__wm) { position: absolute; top: var(--hero-wm-top); left: var(--hero-wm-left); }
+    .hero__frame :global(.hero__menu) { top: var(--hero-menu-top); right: var(--hero-edge); }
+  }
+  @media (min-width: 1280px) {
+    .hero__main { position: absolute; left: var(--hero-edge); bottom: var(--hero-head-bottom); }
+    .hero__title { white-space: nowrap; }
+    .hero__actions {
+      position: absolute; right: var(--hero-edge); bottom: var(--hero-actions-bottom);
+      align-items: flex-end; margin-top: 0;
+    }
+    .hero__intro { width: var(--hero-actions-w); text-align: right; }
+  }
+</style>

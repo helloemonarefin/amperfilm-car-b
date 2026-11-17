@@ -1,0 +1,129 @@
+---
+// Why EV-only diagram — DESIGN_SYSTEM §7, Figma 337:188 (1440 × 930).
+// Desktop (≥ 1360): three problem points on the left (`h3` + `small` + soft
+// tag), each linked by a 1px line to a 10px ink dot on the dotted 860 circle.
+// Inside the circle: a blue radial glow and the "Solution" block.
+// The circle is anchored to the frame's right edge (as in Figma); the lines
+// stretch with the width, so the canvas needs ≥ 1360 to keep every line visible.
+// Below 1360 (proposed, §7): the circle becomes a smaller block with the
+// Solution inside, and the points stack underneath (3 across from 768).
+// Figma's "Car photo circle" layer is an empty (transparent) image: omitted.
+import { Image } from 'astro:assets';
+import Pill from '../ui/Pill.astro';
+import ring from '../../assets/images/home/diagram-ring.png';
+
+export interface WhyProps {
+  /** Exactly 3 points (the dots sit at fixed angles on the circle). */
+  points: { title: string; text: string; tag: string }[];
+  solution: {
+    label: string;
+    /** `h3-lg`, one entry per line, ≤ 2 lines of ≤ 20 characters. */
+    title: string[];
+    /** ≤ 120 characters. */
+    text: string;
+  };
+}
+const { points, solution } = Astro.props as WhyProps;
+---
+
+<section class="why" aria-labelledby="why-title">
+  <div class="why__frame frame">
+    <div class="why__visual">
+      <Image class="why__ring" src={ring} alt="" widths={[860, 1720]} sizes="(min-width: 1360px) 860px, 560px" aria-hidden="true" />
+      <span class="glow glow--diagram why__glow" aria-hidden="true"></span>
+      <div class="why__solution" data-reveal>
+        <p class="t-meta t-medium c-strong">{solution.label}</p>
+        <h2 id="why-title" class="t-h3-lg">{solution.title.map((l, i) => <>{i > 0 && <br />}{l}</>)}</h2>
+        <p class="t-body-sm c-secondary">{solution.text}</p>
+      </div>
+    </div>
+
+    <ul class="why__points" role="list">
+      {points.map((p) => (
+        <li class="why__point" data-reveal>
+          <h3 class="t-h3">{p.title}</h3>
+          <p class="t-small c-secondary">{p.text}</p>
+          <Pill variant="soft">{p.tag}</Pill>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .why { overflow: hidden; padding-block: var(--space-18) var(--section-pad-bottom); }
+  .why__frame { position: relative; padding-inline: var(--side-pad); }
+
+  /* ---- Stacked layout (< 1360) ---- */
+  .why__visual {
+    position: relative;
+    width: min(100%, 35rem);
+    aspect-ratio: 1;
+    margin-inline: auto;
+    display: grid;
+    place-items: center;
+  }
+  .why__visual :global(.why__ring) { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .why__glow {
+    inset: var(--diagram-glow-inset);
+    opacity: 0.55;
+  }
+  .why__solution {
+    position: relative;
+    display: flex; flex-direction: column; gap: var(--space-3);
+    width: 64%;
+    text-align: center;
+  }
+  .why__points {
+    display: grid; gap: var(--space-10);
+    margin-top: var(--space-14);
+  }
+  .why__point { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+  @media (min-width: 768px) {
+    .why__points { grid-template-columns: repeat(3, 1fr); gap: var(--space-8); }
+  }
+
+  /* ---- Figma canvas (≥ 1360) ---- */
+  @media (min-width: 1360px) {
+    .why { padding: 0; }
+    .why__frame { height: var(--diagram-h); padding: 0; container-type: inline-size; }
+    .why__visual {
+      position: absolute; top: var(--diagram-circle-y); right: 0;
+      width: var(--diagram-circle); margin: 0; display: block;
+    }
+    .why__solution {
+      position: absolute; left: var(--diagram-solution-x); top: var(--diagram-solution-y);
+      width: var(--diagram-solution-w);
+      gap: var(--diagram-solution-gap);
+      text-align: left;
+    }
+    .why__points {
+      position: absolute; left: var(--diagram-points-x); top: var(--diagram-points-y);
+      width: var(--diagram-point-w);
+      margin: 0; gap: 0;
+      grid-template-columns: 1fr;
+      grid-auto-rows: var(--diagram-row);
+    }
+    /* Line from the point to its dot on the circle. The dot's x is fixed
+       relative to the circle (--dx from its centre); the line start is
+       relative to the point column. */
+    .why__point { position: relative; --dx: 350px; --start: 20px; }
+    .why__point:nth-child(2) { --dx: 430px; }
+    .why__point:nth-child(3) { --start: 106px; }
+    .why__point::before, .why__point::after { content: ''; position: absolute; }
+    .why__point::before {
+      top: var(--diagram-line-y);
+      left: calc(100% + var(--start));
+      width: calc(100cqw - var(--diagram-circle) / 2 - var(--dx) - var(--diagram-points-x) - 100% - var(--start));
+      height: 1px;
+      background: var(--border-line);
+    }
+    .why__point::after {
+      top: calc(var(--diagram-line-y) - var(--diagram-dot) / 2 + 0.5px);
+      left: calc(100cqw - var(--diagram-circle) / 2 - var(--dx) - var(--diagram-points-x) - var(--diagram-dot) / 2);
+      width: var(--diagram-dot); height: var(--diagram-dot);
+      border-radius: var(--radius-pill);
+      background: var(--text-primary);
+    }
+  }
+</style>
