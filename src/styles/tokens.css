@@ -271,6 +271,7 @@
      The cross's visible right edge sits on the content edge (optical, owner:
      not the 44 box's edge). Phones: smaller than the 44-wide hamburger. */
   --menu-x-size: 44px;
+  --menu-x-nudge: 6px;            /* owner: cross 6px further right, every size */
   --menu-x-len: 40px; --menu-x-bar: 3px; --menu-x-h: 20px;   /* phones */
   --menu-link-py: 9px;
   --menu-link-gap: 16px;   /* index → label */
@@ -287,7 +288,9 @@
   --hero-pad-top: 24px;           /* header row from the top */
   --hero-pad-bottom: 46px;        /* bottom row from the bottom (900 − 24 − 830) */
   --wordmark-scale-m: 0.6;        /* hero wordmark on phones (< 768): 40% smaller (owner) */
-  --hero-menu-offset: 28px;       /* menu button below the wordmark's top */
+  --hero-menu-offset: 28px;
+  --hero-menu-offset-m: 13px;     /* phones: 3px higher than 16 so it reads level with the logo (owner) */
+  --hero-menu-scale-m: 0.95;      /* phones: hamburger 5% smaller (owner) */       /* menu button below the wordmark's top */
   --hero-col-gap: 44px;           /* card → headline, chips → buttons */
   --hero-left-w: 703px; --hero-right-w: 486px;
   --hero-col-min-gap: 64px;       /* side-by-side needs 703 + 486 + 64 = 1253 (container query in Hero.astro) */

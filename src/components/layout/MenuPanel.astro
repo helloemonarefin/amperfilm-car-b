@@ -303,7 +303,8 @@ const offerPrice = price(offer.model, offer.package);
       // 44 box — sits on the content edge, like the links' arrows.
       const gb = px(ms_.getPropertyValue('--gb'));
       const span = (gw + gb) * Math.SQRT1_2;
-      set('--gx', `${right - span / 2 - gw / 2}px`);
+      const nudge = px(ms_.getPropertyValue('--menu-x-nudge')); // owner: +6px right
+      set('--gx', `${right - span / 2 - gw / 2 + nudge}px`);
       set('--gy', `${top + size / 2 - gh / 2}px`);
     };
 

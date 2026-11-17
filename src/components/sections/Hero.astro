@@ -165,9 +165,13 @@ const widths = [640, 960, 1280, 1600, 1920, 2560].filter((w) => w < image.width)
   }
   /* Phones: wordmark 40% smaller (owner, 2026-11-17). */
   .hero__top :global(.hero__wm) { font-size: calc(var(--fs-wordmark) * var(--wordmark-scale-m)); }
+  /* Phones: 3px higher and 5% smaller than the token size, so it reads level
+     with the smaller wordmark (owner, 2026-11-17). */
   .hero__top :global(.hero__menu) {
-    margin-top: var(--space-4);
-    --menu-btn-w: var(--menu-btn-w-m); --menu-btn-h: var(--menu-btn-h-m); --menu-btn-bar: var(--menu-btn-bar-m);
+    margin-top: var(--hero-menu-offset-m);
+    --menu-btn-w: calc(var(--menu-btn-w-m) * var(--hero-menu-scale-m));
+    --menu-btn-h: calc(var(--menu-btn-h-m) * var(--hero-menu-scale-m));
+    --menu-btn-bar: calc(var(--menu-btn-bar-m) * var(--hero-menu-scale-m));
   }
 
   /* Bottom row: same frame as the rails; content inset to the rail text
