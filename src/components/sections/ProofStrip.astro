@@ -22,9 +22,9 @@ const { index, stats, aside, srTitle } = Astro.props as ProofProps;
   <RailFrame index={index} label={aside} pad="lg">
     <ul class="proof__stats" role="list">
       {stats.map((s) => (
-        <li class="proof__stat" data-reveal>
-          <span class="t-stat">{s.value}</span>
-          <span class="t-small lh-snug c-tertiary">{s.label}</span>
+        <li class="proof__stat">
+          <span class="t-stat" data-reveal>{s.value}</span>
+          <span class="t-small lh-snug c-tertiary" data-reveal>{s.label}</span>
         </li>
       ))}
     </ul>

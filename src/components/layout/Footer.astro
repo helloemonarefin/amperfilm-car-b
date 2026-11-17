@@ -32,11 +32,11 @@ const columns = [...f.columns, { heading: site.menu.studioLabel, links: studio }
     </div>
     <nav class="footer__cols" aria-label="Footer">
       {columns.map((col) => (
-        <div class="footer__col" data-reveal>
-          <h2 class="t-meta c-tertiary">{col.heading}</h2>
+        <div class="footer__col">
+          <h2 class="t-meta c-tertiary" data-reveal>{col.heading}</h2>
           <ul role="list">
             {col.links.map((link) => (
-              <li class="t-body-sm lh-snug">
+              <li class="t-body-sm lh-snug" data-reveal>
                 {link.href ? <a class="footer__link" href={link.href}>{link.label}</a> : <span>{link.label}</span>}
               </li>
             ))}
@@ -47,11 +47,11 @@ const columns = [...f.columns, { heading: site.menu.studioLabel, links: studio }
   </div>
 
   <div class="footer__mid frame">
-    <div class="footer__legal" data-reveal>
-      <p class="t-micro t-medium footer__rights">
+    <div class="footer__legal">
+      <p class="t-micro t-medium footer__rights" data-reveal>
         <span>©{site.year} {site.legalName}</span><span>{f.rightsReserved}</span>
       </p>
-      <p class="t-small c-secondary">{f.serving} {site.serviceArea.join(' · ')}</p>
+      <p class="t-small c-secondary" data-reveal>{f.serving} {site.serviceArea.join(' · ')}</p>
     </div>
 
     <form
@@ -60,10 +60,10 @@ const columns = [...f.columns, { heading: site.menu.studioLabel, links: studio }
       method="POST"
       data-netlify="true"
       netlify-honeypot="bot-field"
-      data-reveal
     >
       <input type="hidden" name="form-name" value="price-by-text" />
       <p class="sr-only"><label>Leave this empty: <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+      <div class="footer__field" data-reveal>
       <Field
         id="footer-phone"
         name="phone"
@@ -76,12 +76,13 @@ const columns = [...f.columns, { heading: site.menu.studioLabel, links: studio }
         required
         icon="chat"
       />
-      <Button type="submit" variant="dark" size="sm" label={f.form.button} />
+      </div>
+      <Button type="submit" variant="dark" size="sm" label={f.form.button} data-reveal />
     </form>
   </div>
 
   <div class="footer__wm frame">
-    <Wordmark size="xl" decorative />
+    <Wordmark size="xl" decorative data-reveal />
   </div>
 </footer>
 
@@ -116,7 +117,7 @@ const columns = [...f.columns, { heading: site.menu.studioLabel, links: studio }
     text-transform: uppercase; letter-spacing: var(--ls-button);
   }
   .footer__form { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-5); width: 100%; }
-  .footer__form > :global(.field) { width: 100%; }
+  .footer__field { width: 100%; }
 
   /* Giant wordmark: sits on the page bottom; the line box (0.86) clips the
      descender exactly like the Figma frame. */

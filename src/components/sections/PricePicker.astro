@@ -50,13 +50,13 @@ const pillText = `${modelLabel(current)}${current.mostBooked ? ` · ${p.mostBook
   </div>
 
   <div class="container">
-    <div class="picker" data-picker data-reveal>
+    <div class="picker" data-picker>
       <!-- 1. Models -->
-      <div class="picker__list">
-        <p class="t-meta t-medium c-tertiary" id="picker-models">{p.modelsLabel}</p>
+      <div class="picker__list" data-reveal>
+        <p class="t-meta t-medium c-tertiary" id="picker-models" data-reveal>{p.modelsLabel}</p>
         <div class="picker__models" role="radiogroup" aria-labelledby="picker-models">
           {pricing.models.map((m) => (
-            <label class="picker__row">
+            <label class="picker__row" data-reveal>
               <input class="sr-only" type="radio" name="model" value={m.id} checked={m.id === current.id} />
               <span class="t-title picker__name">{modelLabel(m)}</span>
               <span class="picker__round" aria-hidden="true">
@@ -65,7 +65,7 @@ const pillText = `${modelLabel(current)}${current.mostBooked ? ` · ${p.mostBook
               </span>
             </label>
           ))}
-          <label class="picker__row picker__row--other">
+          <label class="picker__row picker__row--other" data-reveal>
             <input class="sr-only" type="radio" name="model" value="other" />
             <span class="t-title picker__name">{pricing.other.label}</span>
             <span class="picker__round" aria-hidden="true">
@@ -74,36 +74,36 @@ const pillText = `${modelLabel(current)}${current.mostBooked ? ` · ${p.mostBook
             </span>
           </label>
         </div>
-        <p class="t-small c-tertiary picker__note">{pricing.other.note}</p>
+        <p class="t-small c-tertiary picker__note" data-reveal>{pricing.other.note}</p>
       </div>
 
       <!-- 2. Photo + glass price panel -->
-      <div class="picker__visual">
+      <div class="picker__visual" data-reveal>
         <div class="picker__photo">
           {photo && <Image class="picker__img" src={photo} alt="" widths={[640, 948, 1400, 1896]} sizes="(min-width: 1440px) 948px, (min-width: 1024px) 66vw, 100vw" data-picker-img />}
           <span class="glow glow--panel picker__glow" aria-hidden="true"></span>
-          <Pill variant="white" class="picker__pill" data-picker-pill>{pillText}</Pill>
+          <Pill variant="white" class="picker__pill" data-picker-pill data-reveal>{pillText}</Pill>
         </div>
 
-        <div class="picker__panel glass glass--lg">
-          <p class="t-meta t-medium picker__panel-label" id="picker-packages">{p.packagesLabel}</p>
+        <div class="picker__panel glass glass--lg" data-reveal>
+          <p class="t-meta t-medium picker__panel-label" id="picker-packages" data-reveal>{p.packagesLabel}</p>
           <div class="picker__pkgs" role="radiogroup" aria-labelledby="picker-packages">
             {pickerPkgs.map((x) => (
-              <label class="picker__pkg t-tag">
+              <label class="picker__pkg t-tag" data-reveal>
                 <input class="sr-only" type="radio" name="package" value={x.id} checked={x.id === currentPkg.id} />
                 {x.short}
               </label>
             ))}
           </div>
-          <p class="picker__price" aria-live="polite">
+          <p class="picker__price" aria-live="polite" data-reveal>
             <span class="t-price-xl" data-picker-price>{price(current.id, currentPkg.id)}</span>
             <span class="t-body picker__unit">{p.unit}</span>
           </p>
-          <p class="t-small picker__desc" data-picker-desc>{currentPkg.pickerText ?? currentPkg.description}</p>
-          <Button variant="white" block spread class="picker__cta" label={p.cta.label} href={p.cta.href} data-picker-cta />
+          <p class="t-small picker__desc" data-picker-desc data-reveal>{currentPkg.pickerText ?? currentPkg.description}</p>
+          <Button variant="white" block spread class="picker__cta" label={p.cta.label} href={p.cta.href} data-picker-cta data-reveal />
         </div>
 
-        <a class="picker__more t-link arrow-trigger" href={p.more.href}>{p.more.label}<ArrowSwap icon="arrow-up-right" size={16} dir="diag" /></a>
+        <a data-reveal class="picker__more t-link arrow-trigger" href={p.more.href}>{p.more.label}<ArrowSwap icon="arrow-up-right" size={16} dir="diag" /></a>
       </div>
     </div>
   </div>

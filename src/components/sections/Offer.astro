@@ -55,9 +55,9 @@ const note = p.capacity.note.replace('{booked}', String(p.capacity.booked)).repl
 
 <section class="offer" id="offer" aria-labelledby="offer-title">
   <div class="container offer__inner">
-    <div class="offer__badge" data-reveal>
-      {p.index != null && <span class="offer__index t-tag t-semibold">{String(p.index).padStart(2, '0')}</span>}
-      <Pill variant="white-tag">{p.badge}</Pill>
+    <div class="offer__badge">
+      {p.index != null && <span class="offer__index t-tag t-semibold" data-reveal>{String(p.index).padStart(2, '0')}</span>}
+      <Pill variant="white-tag" data-reveal>{p.badge}</Pill>
     </div>
 
     <SectionHeader id="offer-title" class="offer__head" title={p.title} size="h2-xl" introTone={p.intro} introSize="body-xl" introMax="lg" />
@@ -67,10 +67,10 @@ const note = p.capacity.note.replace('{booked}', String(p.capacity.booked)).repl
       <div class="offer__card offer__photo" data-reveal>
         <Image class="offer__img" src={p.photo.image} alt={p.photo.alt} widths={[480, 810, 1200]} sizes="(min-width: 1024px) 30vw, 100vw" />
         <div class="offer__included">
-          <p class="t-eyebrow offer__included-label">{p.includedLabel}</p>
+          <p class="t-eyebrow offer__included-label" data-reveal>{p.includedLabel}</p>
           <ul role="list" class="offer__list">
             {p.included.map((it) => (
-              <li class="offer__glass">
+              <li class="offer__glass" data-reveal>
                 <span class="offer__check" aria-hidden="true"><Icon name="check" size={16} /></span>
                 <span class="offer__glass-text">
                   <span class="t-name offer__glass-title">{it.title}</span>
@@ -85,12 +85,12 @@ const note = p.capacity.note.replace('{booked}', String(p.capacity.booked)).repl
       <!-- 2. Bonuses -->
       <div class="offer__card offer__white offer__bonuses" data-reveal>
         <div class="offer__bonuses-head">
-          <p class="t-meta t-medium c-tertiary">{p.bonuses.label}</p>
-          <h3 class="t-faq-q">{p.bonuses.title}</h3>
+          <p class="t-meta t-medium c-tertiary" data-reveal>{p.bonuses.label}</p>
+          <h3 class="t-faq-q" data-reveal>{p.bonuses.title}</h3>
         </div>
         <ul role="list">
           {p.bonuses.items.map((it) => (
-            <li class="offer__bonus">
+            <li class="offer__bonus" data-reveal>
               <span class="offer__bonus-icon" aria-hidden="true"><Icon name={it.icon} size={16} /></span>
               <span class="offer__bonus-text">
                 <span class="t-name offer__bonus-title">{it.title}</span>
@@ -104,17 +104,17 @@ const note = p.capacity.note.replace('{booked}', String(p.capacity.booked)).repl
 
       <!-- 3. Price -->
       <div class="offer__card offer__white offer__price" data-reveal>
-        <p class="t-meta t-medium c-tertiary">{m.name}</p>
-        {amount != null && <p class="t-price-xl offer__amount">{formatUsd(amount)}</p>}
-        <Pill variant="accent-tag">{p.savingsTemplate.replace('{amount}', formatUsd(b.savings))}</Pill>
+        <p class="t-meta t-medium c-tertiary" data-reveal>{m.name}</p>
+        {amount != null && <p class="t-price-xl offer__amount" data-reveal>{formatUsd(amount)}</p>}
+        <Pill variant="accent-tag" data-reveal>{p.savingsTemplate.replace('{amount}', formatUsd(b.savings))}</Pill>
         <div class="offer__capacity">
-          <p class="t-meta t-medium c-tertiary" id="offer-capacity">{p.capacity.label}</p>
+          <p class="t-meta t-medium c-tertiary" id="offer-capacity" data-reveal>{p.capacity.label}</p>
           <div class="offer__slots" role="img" aria-labelledby="offer-capacity offer-capacity-note">
-            {slots.map((full) => <span class:list={['offer__slot', { 'is-full': full }]}></span>)}
+            {slots.map((full) => <span class:list={['offer__slot', { 'is-full': full }]} data-reveal></span>)}
           </div>
-          <p class="t-meta c-secondary offer__note" id="offer-capacity-note">{note}</p>
+          <p class="t-meta c-secondary offer__note" id="offer-capacity-note" data-reveal>{note}</p>
         </div>
-        <Button variant="dark" size="lg" block spread class="offer__cta" label={p.cta.label} href={p.cta.href} />
+        <Button variant="dark" size="lg" block spread class="offer__cta" label={p.cta.label} href={p.cta.href} data-reveal />
       </div>
     </div>
   </div>

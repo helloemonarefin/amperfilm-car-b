@@ -1,19 +1,26 @@
 // Scroll reveal (BOILERPLATE §1.5 + §7.6): one data-reveal per visual item.
-// Plays once. Batches stagger top → bottom, left → right, capped at
-// --m-reveal-stagger-max so big batches don't trickle in.
+// Plays once. Items that enter together reveal one by one in READING order
+// (DOM order: heading → intro on the right → the content below; inside a
+// two-column block the left column first, then the right) — owner,
+// 2026-11-17. Stagger --m-reveal-stagger, capped at --m-reveal-stagger-max.
 export function initReveal(): void {
   const root = document.documentElement;
   if (!root.classList.contains('reveal-on')) return;
 
-  const readSeconds = (name: string, fallback: number) =>
-    parseFloat(getComputedStyle(root).getPropertyValue(name)) || fallback;
+  // Time tokens may compute as "0.05s" or "50ms": convert both to seconds.
+  const readSeconds = (name: string, fallback: number) => {
+    const raw = getComputedStyle(root).getPropertyValue(name).trim();
+    const n = parseFloat(raw);
+    if (Number.isNaN(n)) return fallback;
+    return raw.endsWith('ms') ? n / 1000 : n;
+  };
 
   const show = (els: HTMLElement[]) => {
     const s = readSeconds('--m-reveal-stagger', 0.05);
     const max = readSeconds('--m-reveal-stagger-max', 0.4);
     els
+      .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1))
       .map((el) => ({ el, r: el.getBoundingClientRect() }))
-      .sort((a, b) => Math.round(a.r.top - b.r.top) || a.r.left - b.r.left)
       .forEach(({ el, r }, i) => {
         // Items outside the screen horizontally (scroll-snap rows) don't wait.
         const offscreen = r.right < 0 || r.left > window.innerWidth;

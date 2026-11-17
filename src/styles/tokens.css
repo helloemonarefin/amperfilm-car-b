@@ -172,7 +172,7 @@
   --m-reveal-time:     0.6s;
   --m-reveal-stagger:  0.05s;
   --m-reveal-distance: 24px;
-  --m-reveal-stagger-max: 0.4s;
+  --m-reveal-stagger-max: 1.6s; /* owner: long sequences keep stepping one by one */
 }
 
 /* ---------- Project extensions (see Decisions log) ---------- */
@@ -325,7 +325,7 @@
   --offer-list-y: 288px; --offer-list-w: 392px;
   --offer-glass-bg: rgb(255 255 255 / 0.18); --offer-glass-line: rgb(255 255 255 / 0.25);
   --offer-check: 36px;
-  --offer-slot-h: 28px; --offer-slot-h-empty: 20px; --offer-slot-gap: 6px;
+  --offer-slot-h: 20px; --offer-slot-h-empty: 20px; --offer-slot-gap: 6px; /* booked = empty height (owner; Figma 28 / 20) */
   --offer-slot-empty: rgb(var(--brand-ink-rgb) / 0.12);
 
   /* Stacking order. */

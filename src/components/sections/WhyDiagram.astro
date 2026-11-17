@@ -28,31 +28,31 @@ const { points, solution } = Astro.props as WhyProps;
 
 <section class="why" aria-labelledby="why-title">
   <div class="why__frame frame">
-    <div class="why__visual">
+    <div class="why__visual" data-reveal>
       <Image class="why__ring" src={ring} alt="" widths={[860, 1720]} sizes="(min-width: 1360px) 860px, 560px" aria-hidden="true" />
       <span class="glow glow--diagram why__glow" aria-hidden="true"></span>
       <!-- Liquid glow (owner, 2026-11-17): replaces the CSS glow when JS runs
            and motion is allowed. -->
       <canvas class="why__liquid" width="300" height="300" aria-hidden="true" data-liquid></canvas>
-      <div class="why__solution" data-reveal>
-        <p class="t-meta t-medium c-strong">{solution.label}</p>
-        <h2 id="why-title" class="t-h3-lg">{solution.title.map((l, i) => <>{i > 0 && <br />}{l}</>)}</h2>
-        <p class="t-body-sm c-secondary">{solution.text}</p>
+      <div class="why__solution">
+        <p class="t-meta t-medium c-strong" data-reveal>{solution.label}</p>
+        <h2 id="why-title" class="t-h3-lg" data-reveal>{solution.title.map((l, i) => <>{i > 0 && <br />}{l}</>)}</h2>
+        <p class="t-body-sm c-secondary" data-reveal>{solution.text}</p>
       </div>
     </div>
 
     <!-- Connector lines + dots (desktop canvas only). They sit at fixed angles
          on the circle; the points beside them are positioned separately. -->
     <div class="why__links" aria-hidden="true">
-      {points.map(() => <span class="why__link"></span>)}
+      {points.map(() => <span class="why__link" data-reveal></span>)}
     </div>
 
     <ul class="why__points" role="list">
       {points.map((p) => (
-        <li class="why__point" data-reveal>
-          <h3 class="t-h3">{p.title}</h3>
-          <p class="t-small c-secondary">{p.text}</p>
-          <Pill variant="soft">{p.tag}</Pill>
+        <li class="why__point">
+          <h3 class="t-h3" data-reveal>{p.title}</h3>
+          <p class="t-small c-secondary" data-reveal>{p.text}</p>
+          <Pill variant="soft" data-reveal>{p.tag}</Pill>
         </li>
       ))}
     </ul>
