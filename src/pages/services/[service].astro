@@ -1,0 +1,12 @@
+---
+// One route for every service page (BUILD_PROMPT §3), built from servicePages.ts.
+import Page from '../../layouts/Page.astro';
+import { servicePages } from '../../content/servicePages';
+
+export function getStaticPaths() {
+  return servicePages.map((page) => ({ params: { service: page.slug }, props: { page } }));
+}
+const { page } = Astro.props;
+---
+
+<Page page={page} />

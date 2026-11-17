@@ -1,0 +1,13 @@
+---
+// One route for every model page (BUILD_PROMPT §3): adding a model to
+// models.ts adds a page, no new file needed.
+import Page from '../../layouts/Page.astro';
+import { modelPages } from '../../content/models';
+
+export function getStaticPaths() {
+  return modelPages.map((page) => ({ params: { model: page.slug }, props: { page } }));
+}
+const { page } = Astro.props;
+---
+
+<Page page={page} />

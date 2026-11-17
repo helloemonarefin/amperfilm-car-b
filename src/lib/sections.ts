@@ -21,3 +21,8 @@ export function numberSections<E extends SectionEntry>(entries: E[]): NumberedEn
 
 /** "(01)" */
 export const formatIndex = (i: number) => `(${String(i).padStart(2, '0')})`;
+
+/** A copy of a shared entry with some props replaced (e.g. a page-specific default). */
+export function withProps<E extends SectionEntry>(entry: E, props: Partial<E['props']>): E {
+  return { ...entry, props: { ...entry.props, ...props } };
+}

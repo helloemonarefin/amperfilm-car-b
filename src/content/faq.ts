@@ -22,3 +22,14 @@ export const faq: FaqItem[] = [
   },
   { q: 'Do you pick up the car?', a: 'Yes. Delivery Day includes free pickup within 15 miles, from your house or the delivery center.' },
 ];
+
+// Service-page FAQs (Figma Tint 347:5621, Coating 347:6483). Only questions
+// with an answer in Figma are listed; the rest wait for the owner's copy.
+// TODO(owner): answers for Tint — "Does roof heat film really help range?",
+// "How long does tint take?", "What does the lifetime warranty cover?".
+export const tintFaq: FaqItem[] = [faq[0], faq[1]];
+// TODO(owner): answers for Coating — "Do you correct the paint first?",
+// "5-year or 7-year?", "How do I wash a coated EV?", "Will coating stop rock chips?".
+export const coatingFaq: FaqItem[] = [
+  { q: 'Can you coat over PPF?', a: 'Yes. Our coating is safe over film. It makes the film easier to clean and adds depth.' },
+];

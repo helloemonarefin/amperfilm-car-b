@@ -168,3 +168,5 @@ export const site: Site = {
 export const wordmark = `${site.brand}${site.mark}`;
 /** "tel:" href from the display phone number. */
 export const telHref = `tel:+1${site.phone.replace(/\D/g, '')}`;
+/** "sms:" href from the display phone number (FAQ hero "Text us a question"). */
+export const smsHref = `sms:+1${site.phone.replace(/\D/g, '')}`;

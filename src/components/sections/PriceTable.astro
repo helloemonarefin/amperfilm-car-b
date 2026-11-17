@@ -1,0 +1,122 @@
+---
+// Full price list — NEW in Phase 6. Figma Pricing page: title 346:3008,
+// grid 346:2928. Rendered inside the Pricing section, under the picker.
+// Title: two-tone `h2-sm` (≤ 760), 40 below. Grid: a real <table>
+// (BUILD_PROMPT §3) — header row (brand `meta` + model pill; the most-booked
+// model is an accent pill on an accent-soft column), then one row per
+// package: `h5` name + `meta` description (400 column, 40 left padding),
+// `price-md` cells centred; "n/a" in text-faint (Figma ink 25%).
+// Every number comes from pricing.ts.
+// Mobile (proposed): the table scrolls sideways inside its own box with the
+// package column sticky, so the page itself never scrolls sideways.
+import Pill from '../ui/Pill.astro';
+import type { TwoTone } from '../ui/SectionHeader.astro';
+import { pricing, price } from '../../content/pricing';
+
+export interface PriceTableProps {
+  /** `h2-sm` two-tone, ≈ 55 characters. */
+  title: TwoTone;
+  /** First header cell ("Package"). */
+  packageLabel: string;
+  /** Suffix on the most-booked model's pill ("Most booked"). */
+  mostBooked: string;
+  /** Shown for combinations that aren't offered. */
+  na: string;
+}
+const p = Astro.props as PriceTableProps;
+const id = 'price-list';
+---
+
+<div class="ptable" id={id}>
+  <div class="container">
+    <h3 id={`${id}-title`} class="t-h2-sm ptable__title" data-reveal>
+      {p.title.strong}{p.title.soft && <> <span class="t-faint">{p.title.soft}</span></>}
+    </h3>
+  </div>
+
+  <div class="frame">
+    <div class="ptable__scroll" role="region" aria-labelledby={`${id}-title`} tabindex="0">
+      <table class="ptable__table">
+        <caption class="sr-only">{p.title.strong}</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="ptable__first ptable__head-first"><span class="t-meta t-medium c-tertiary" data-reveal>{p.packageLabel}</span></th>
+            {pricing.models.map((m) => (
+              <th scope="col" class:list={['ptable__head', { 'is-featured': m.mostBooked }]}>
+                <span class="t-meta t-medium c-tertiary" data-reveal>{m.brand}</span>
+                <Pill variant={m.mostBooked ? 'accent-tag' : 'white-tag'} data-reveal>
+                  {m.name}{m.mostBooked && ` · ${p.mostBooked}`}
+                </Pill>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {pricing.packages.map((x) => (
+            <tr>
+              <th scope="row" class="ptable__first ptable__pkg">
+                <span class="t-h5 ptable__name" data-reveal>{x.name}</span>
+                <span class="t-meta lh-snug c-tertiary" data-reveal>{x.description}</span>
+              </th>
+              {pricing.models.map((m) => {
+                const v = price(m.id, x.id);
+                return (
+                  <td class:list={['ptable__cell', { 'is-featured': m.mostBooked }]}>
+                    {v
+                      ? <span class="t-price-md ptable__price" data-reveal>{v}</span>
+                      : <span class="t-price-md ptable__price ptable__na" data-reveal>{p.na}</span>}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<style>
+  .ptable { margin-top: var(--section-pad-bottom); }
+  .ptable__title { max-width: var(--head-title-max-md); padding-bottom: var(--space-8); }
+
+  /* Scrolls inside its own box on narrow screens (focusable for keyboard scrolling). */
+  .ptable__scroll { overflow-x: auto; overscroll-behavior-x: contain; }
+  .ptable__scroll:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: calc(var(--focus-width) * -1); }
+
+  .ptable__table {
+    width: 100%;
+    min-width: calc(var(--table-first-w-m) + var(--table-col-min-m) * 4);
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-top: 1px solid var(--border-rail);
+  }
+  .ptable__table tr { border-bottom: 1px solid var(--border-rail); }
+  .ptable__table th, .ptable__table td { padding: 0; font-weight: inherit; text-align: center; vertical-align: middle; }
+
+  /* Package column: sticky while the prices scroll sideways. */
+  .ptable__table .ptable__first {
+    position: sticky; left: 0; z-index: 1;
+    width: var(--table-first-w-m);
+    padding: var(--table-row-py) var(--space-4) var(--table-row-py) var(--side-pad);
+    background: var(--bg-page);
+    text-align: left;
+  }
+  .ptable__table .ptable__head-first { padding-block: var(--table-head-py); }
+  .ptable__first > span { display: block; }
+  .ptable__name { color: var(--text-primary); margin-bottom: var(--table-title-gap); }
+
+  .ptable__table .ptable__head { padding: var(--table-head-py) var(--space-2); border-left: 1px solid var(--border-rail); }
+  .ptable__head > * { display: block; }
+  .ptable__head :global(.pill) { display: inline-flex; margin-top: var(--space-2); white-space: nowrap; }
+
+  .ptable__cell { border-left: 1px solid var(--border-rail); }
+  .is-featured { background: var(--table-featured-bg); }
+  .ptable__price { display: inline-block; white-space: nowrap; }
+  .ptable__na { color: var(--text-faint); }
+
+  @media (min-width: 1024px) {
+    .ptable__title { padding-bottom: var(--table-title-pb); }
+    .ptable__table .ptable__first { position: static; width: var(--table-first-w); padding-right: 0; }
+  }
+</style>

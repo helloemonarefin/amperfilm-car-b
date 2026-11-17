@@ -408,6 +408,16 @@
   --sticky-blur: 24px;                    /* Figma-scale value; CSS halves it */
   --m-sticky-time: 0.4s;
 
+  /* Price table (Figma Pricing 346:2928 / 346:3008). */
+  --table-first-w: 400px;            /* package column at 1024+ */
+  --table-first-w-m: 168px;          /* sticky package column on phones */
+  --table-col-min-m: 128px;          /* model columns on phones (scrolls) */
+  --table-head-py: 24px;
+  --table-row-py: 30px;
+  --table-title-gap: 6px;            /* package name → description */
+  --table-featured-bg: rgb(232 237 255 / 0.55); /* accent-soft at 55% (most-booked column) */
+  --table-title-pb: 40px;
+
   /* Stacking order. */
   --z-sticky: 40; --z-menu: 50; --z-skip: 100;
 }
