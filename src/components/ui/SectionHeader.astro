@@ -18,25 +18,39 @@ interface Props {
   level?: 'h1' | 'h2' | 'h3';
   /** Role class for the headline (default .t-h2). */
   size?: 'h2' | 'h2-xl' | 'h2-dark' | 'h2-sm';
+  /** Figma widths: headline 760 (md) / 780 (lg); intro 320 (sm) / 340 (md) / 380 (lg). */
+  titleMax?: 'md' | 'lg';
+  introMax?: 'sm' | 'md' | 'lg';
+  /** Bottom padding at desktop: 48 (sm) / 56 (md) / 64 (lg). */
+  pb?: 'sm' | 'md' | 'lg';
+  /** Intro as two tones (strong + soft), used by the offer (`body-xl`). */
+  introTone?: TwoTone;
+  introSize?: 'body-sm' | 'body-xl';
   class?: string;
 }
-const { id, title, intro, level: H = 'h2', size = 'h2', class: className } = Astro.props;
-const hasAside = intro || Astro.slots.has('aside');
+const { id, title, intro, level: H = 'h2', size = 'h2', titleMax = 'md', introMax = 'sm', pb = 'md', introTone, introSize = 'body-sm', class: className } = Astro.props;
+const hasAside = intro || introTone || Astro.slots.has('aside');
 ---
 
-<div class:list={['section-head', className]}>
+<div class:list={['section-head', `section-head--pb-${pb}`, className]} style={`--title-max: var(--head-title-max-${titleMax}); --intro-max: var(--head-intro-max-${introMax})`}>
   <H id={id} class:list={[`t-${size}`, 'section-head__title']} data-reveal>
     {title.strong}{title.soft && <> <span class="t-faint">{title.soft}</span></>}
   </H>
   {hasAside && (
     <div class="section-head__aside" data-reveal>
-      {intro && <p class="t-body-sm c-secondary section-head__intro">{intro}</p>}
+      {intro && <p class:list={[`t-${introSize}`, 'c-secondary section-head__intro']}>{intro}</p>}
+      {introTone && <p class:list={[`t-${introSize}`, 'c-tertiary section-head__intro']}><span class="section-head__intro-strong">{introTone.strong}</span>{introTone.soft && <> {introTone.soft}</>}</p>}
       <slot name="aside" />
     </div>
   )}
 </div>
 
 <style>
-  .section-head__title { max-width: var(--head-title-max); }
-  .section-head__intro { max-width: var(--head-intro-max); }
+  .section-head__title { max-width: var(--title-max); }
+  .section-head__intro { max-width: var(--intro-max); }
+  .section-head__intro-strong { color: var(--text-primary); }
+  @media (min-width: 1024px) {
+    .section-head--pb-sm { padding-bottom: var(--head-pb-sm); }
+    .section-head--pb-lg { padding-bottom: var(--head-pb-lg); }
+  }
 </style>

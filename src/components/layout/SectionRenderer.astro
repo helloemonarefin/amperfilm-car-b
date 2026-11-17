@@ -5,6 +5,9 @@
 import ProofStrip from '../sections/ProofStrip.astro';
 import Statement from '../sections/Statement.astro';
 import WhyDiagram from '../sections/WhyDiagram.astro';
+import Installs from '../sections/Installs.astro';
+import PricePicker from '../sections/PricePicker.astro';
+import Offer from '../sections/Offer.astro';
 import { numberSections, type SectionEntry } from '../../lib/sections';
 
 interface Props { sections: SectionEntry[] }
@@ -13,6 +16,9 @@ const map: Record<string, any> = {
   proof: ProofStrip,
   statement: Statement,
   why: WhyDiagram,
+  installs: Installs,
+  picker: PricePicker,
+  offer: Offer,
 };
 
 const entries = numberSections(Astro.props.sections);

@@ -121,7 +121,7 @@ export const site: Site = {
     offer: {
       title: 'The Delivery Day Package',
       model: 'model-y',
-      package: 'delivery-day',
+      package: 'delivery-day', // a bundle id in pricing.ts
       href: '/#offer',
       image: deliveryWeek,
       imageAlt: '',

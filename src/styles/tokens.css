@@ -209,8 +209,11 @@
 
   /* Round buttons and icon tiles (Figma sizes). */
   --round-sm: 28px; --round-md: 32px; --round-lg: 40px; --round-xl: 44px;
+  --gap-hair: 2px;
   --gap-tight: 10px; /* button label → arrow, field label → value */
-  --head-title-max: 760px; --head-intro-max: 320px;
+  --head-title-max-md: 760px; --head-title-max-lg: 780px;
+  --head-intro-max-sm: 320px; --head-intro-max-md: 340px; --head-intro-max-lg: 380px;
+  --head-pb-sm: 48px; --head-pb-lg: 64px;
   --menu-btn-w: 68px; --menu-btn-h: 36px; --menu-btn-bar: 3.83px;
   --menu-btn-w-m: 44px; --menu-btn-h-m: 24px; --menu-btn-bar-m: 2.5px; /* phones (proposed) */
 
@@ -282,6 +285,37 @@
   --diagram-line-y: 40px;         /* line height below the point's top */
   --diagram-dot: 10px;
   --diagram-solution-x: 360px; --diagram-solution-y: 320px; --diagram-solution-w: 360px; /* from the circle's top-left */
+
+  /* Recent installs (Figma 337:1014). */
+  --installs-tall: 460px; --installs-short: 400px;
+  --installs-caption-gap: 14px;
+  --installs-pill-inset: 16px;
+
+  /* Price picker (Figma 338:121). */
+  --picker-h: 620px;
+  --picker-list-w: 400px;
+  --picker-pad: 28px;
+  --picker-row-py: 18px;
+  --picker-row-pl: 18px; --picker-row-pr: 14px;   /* selected (pill) row */
+  --picker-round: 30px;
+  --picker-inset: 24px;                             /* pill + link inside the photo */
+  /* Anchored to the photo's right edge (Figma photo 948 wide: glass x 464, glow x 218). */
+  --picker-glass-r: 84px; --picker-glass-y: 263px; --picker-glass-w: 400px;
+  --picker-glow-w: 876px; --picker-glow-h: 617px; --picker-glow-r: -146px; --picker-glow-y: 224px;
+  --picker-pill-gap: 6px;
+  --overlay-picker: linear-gradient(90deg, rgb(0 0 0 / 0) 35%, rgb(0 0 0 / 0.60) 100%);
+
+  /* Signature offer (Figma 337:309). */
+  --offer-cols: 405fr 461fr 461fr;
+  --offer-h: 540px;
+  --offer-gap: 16px;
+  --offer-index: 36px;
+  --offer-photo-tint: rgb(var(--brand-ink-rgb) / 0.15);
+  --offer-list-y: 288px; --offer-list-w: 392px;
+  --offer-glass-bg: rgb(255 255 255 / 0.18); --offer-glass-line: rgb(255 255 255 / 0.25);
+  --offer-check: 36px;
+  --offer-slot-h: 28px; --offer-slot-h-empty: 20px; --offer-slot-gap: 6px;
+  --offer-slot-empty: rgb(var(--brand-ink-rgb) / 0.12);
 
   /* Stacking order. */
   --z-sticky: 40; --z-menu: 50; --z-skip: 100;

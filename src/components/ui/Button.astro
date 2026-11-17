@@ -12,6 +12,8 @@ interface Props {
   size?: 'sm' | 'md' | 'lg';
   /** Fill the parent's width. */
   block?: boolean;
+  /** Label left, arrow right (full-width buttons in cards). */
+  spread?: boolean;
   /** Show the trailing arrow (default true). */
   arrow?: boolean;
   href?: string;
@@ -22,7 +24,7 @@ interface Props {
 }
 
 const {
-  label, variant = 'dark', size = 'md', block = false, arrow = true,
+  label, variant = 'dark', size = 'md', block = false, spread = false, arrow = true,
   href, external = false, type = 'button', class: className, ...rest
 } = Astro.props;
 const Tag = href ? 'a' : 'button';
@@ -32,7 +34,7 @@ const tagProps = href
 ---
 
 <Tag
-  class:list={['btn', `btn--${variant}`, variant !== 'cta' && `btn--${size}`, { 'btn--block': block }, 't-button', className]}
+  class:list={['btn', `btn--${variant}`, variant !== 'cta' && `btn--${size}`, { 'btn--block': block, 'btn--spread': spread }, 't-button', className]}
   {...tagProps}
   {...rest}
 >
@@ -63,6 +65,7 @@ const tagProps = href
   .btn--sm { height: var(--btn-h-sm); }
   .btn--lg { height: var(--btn-h-lg); }
   .btn--block { display: flex; width: 100%; }
+  .btn--spread { justify-content: space-between; }
 
   .btn--dark        { background: var(--bg-inverse); color: var(--text-on-dark); }
   .btn--white       { background: var(--bg-card); color: var(--text-primary); }

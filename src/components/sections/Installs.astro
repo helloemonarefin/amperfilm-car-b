@@ -1,0 +1,78 @@
+---
+// Recent installs — DESIGN_SYSTEM §7 "Install photo card", Figma 337:1014.
+// Meta bar + section header + 4 photos (3 columns each), alternating
+// 460 / 400 tall and bottom-aligned (staggered). Each: photo (r4) + white
+// eyebrow pill top-left + caption row (`small` + `meta` index).
+// Mobile (§6): horizontal scroll-snap row, ~1.2 cards visible, no stagger.
+import { Image } from 'astro:assets';
+import SectionMeta from '../ui/SectionMeta.astro';
+import SectionHeader, { type TwoTone } from '../ui/SectionHeader.astro';
+import Pill from '../ui/Pill.astro';
+import type { Install } from '../../content/installs';
+
+export interface InstallsProps {
+  index?: number;
+  label: string;
+  title: TwoTone;
+  intro: string;
+  /** Exactly 4. */
+  items: Install[];
+}
+const { index, label, title, intro, items } = Astro.props as InstallsProps;
+---
+
+<section class="section installs" id="installs" aria-labelledby="installs-title">
+  <SectionMeta index={index} label={label} />
+  <div class="container">
+    <SectionHeader id="installs-title" title={title} intro={intro} titleMax="lg" pb="sm" />
+  </div>
+  <div class="container installs__wrap">
+    <ul class="installs__row" role="list" data-reveal-group>
+      {items.map((it, i) => (
+        <li class="installs__item" data-reveal>
+          <div class="installs__photo media">
+            <Image src={it.image} alt={it.alt} widths={[400, 662, 1000]} sizes="(min-width: 1024px) 25vw, 80vw" />
+            <Pill variant="white" class="installs__tag">{it.tag}</Pill>
+          </div>
+          <p class="installs__caption">
+            <span class="t-small lh-snug c-secondary">{it.caption}</span>
+            <span class="t-meta t-medium c-tertiary" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          </p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  /* Mobile: scroll-snap row bleeding to the screen edge. */
+  .installs__wrap { padding-inline: 0; }
+  .installs__row {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 80%;
+    gap: var(--grid-gutter);
+    align-items: end;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--side-pad);
+    padding-inline: var(--side-pad);
+    scrollbar-width: none;
+  }
+  .installs__row::-webkit-scrollbar { display: none; }
+  .installs__item { display: flex; flex-direction: column; gap: var(--installs-caption-gap); scroll-snap-align: start; min-width: 0; }
+  .installs__photo { aspect-ratio: 331 / 400; }
+  .installs__photo :global(img) { position: absolute; inset: 0; }
+  .installs__photo :global(.installs__tag) { position: absolute; top: var(--installs-pill-inset); left: var(--installs-pill-inset); }
+  .installs__caption { display: flex; justify-content: space-between; gap: var(--space-3); white-space: nowrap; }
+
+  @media (min-width: 768px) { .installs__row { grid-auto-columns: 45%; } }
+
+  /* Desktop: 4 columns, alternating heights, bottom-aligned. */
+  @media (min-width: 1024px) {
+    .installs__wrap { padding-inline: var(--side-pad); }
+    .installs__row { grid-auto-flow: row; grid-template-columns: repeat(4, minmax(0, 1fr)); overflow: visible; padding-inline: 0; }
+    .installs__photo { aspect-ratio: auto; height: var(--installs-short); }
+    .installs__item:nth-child(odd) .installs__photo { height: var(--installs-tall); }
+  }
+</style>

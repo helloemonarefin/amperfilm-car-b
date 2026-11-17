@@ -1,0 +1,198 @@
+---
+// Signature offer — DESIGN_SYSTEM §7 "Offer block", Figma 337:309.
+// Index badge (36 accent circle with the generated number + white pill),
+// `h2-xl` two-tone + `body-xl` two-tone intro, then three cards (405/461/461,
+// gap 16, 540 tall):
+//  1. photo (r20, ink 15% tint) with an "INCLUDED" glass list of 3 rows
+//     (392 wide, so they run off the card's right edge as in Figma);
+//  2. bonuses (white, r20, p28): heading + 3 rows (round icon + name + text + tag);
+//  3. price (white, r20, p28): model, price-xl, savings pill, 8-slot capacity
+//     bar, note, dark lg button.
+// The price and savings come from pricing.ts (bundle).
+// Mobile (proposed): cards stack; bonuses + price side by side from 768.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Pill from '../ui/Pill.astro';
+import Icon, { type IconName } from '../ui/Icon.astro';
+import Button from '../ui/Button.astro';
+import SectionHeader, { type TwoTone } from '../ui/SectionHeader.astro';
+import { bundle, model, formatUsd } from '../../content/pricing';
+
+export interface OfferProps {
+  index?: number;
+  /** White pill next to the index ("Most popular"). */
+  badge: string;
+  /** `h2-xl`, ≈ 65 characters. */
+  title: TwoTone;
+  /** `body-xl` two-tone intro, ≤ 120 characters. */
+  intro: TwoTone;
+  /** Bundle + model whose price shows (pricing.ts). */
+  bundleId: string;
+  modelId: string;
+  photo: { image: ImageMetadata; alt: string };
+  includedLabel: string;
+  /** Exactly 3. Title ≤ 26, text ≤ 44 characters. */
+  included: { title: string; text: string }[];
+  bonuses: {
+    label: string;
+    /** `faq-q`, ≤ 50 characters. */
+    title: string;
+    /** Exactly 3. */
+    items: { icon: IconName; title: string; text: string; tag: string }[];
+  };
+  /** "Save {amount} vs. separate" — {amount} is filled from pricing.ts. */
+  savingsTemplate: string;
+  capacity: { label: string; total: number; booked: number; note: string };
+  cta: { label: string; href: string };
+}
+const p = Astro.props as OfferProps;
+const b = bundle(p.bundleId);
+const m = model(p.modelId);
+const amount = b.prices[m.id];
+const slots = Array.from({ length: p.capacity.total }, (_, i) => i < p.capacity.booked);
+const note = p.capacity.note.replace('{booked}', String(p.capacity.booked)).replace('{total}', String(p.capacity.total));
+---
+
+<section class="offer" id="offer" aria-labelledby="offer-title">
+  <div class="container offer__inner">
+    <div class="offer__badge" data-reveal>
+      {p.index != null && <span class="offer__index t-tag t-semibold">{String(p.index).padStart(2, '0')}</span>}
+      <Pill variant="white-tag">{p.badge}</Pill>
+    </div>
+
+    <SectionHeader id="offer-title" class="offer__head" title={p.title} size="h2-xl" introTone={p.intro} introSize="body-xl" introMax="lg" />
+
+    <div class="offer__cards">
+      <!-- 1. Included (photo) -->
+      <div class="offer__card offer__photo" data-reveal>
+        <Image class="offer__img" src={p.photo.image} alt={p.photo.alt} widths={[480, 810, 1200]} sizes="(min-width: 1024px) 30vw, 100vw" />
+        <div class="offer__included">
+          <p class="t-eyebrow offer__included-label">{p.includedLabel}</p>
+          <ul role="list" class="offer__list">
+            {p.included.map((it) => (
+              <li class="offer__glass">
+                <span class="offer__check" aria-hidden="true"><Icon name="check" size={16} /></span>
+                <span class="offer__glass-text">
+                  <span class="t-name offer__glass-title">{it.title}</span>
+                  <span class="t-micro lh-snug offer__glass-sub">{it.text}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <!-- 2. Bonuses -->
+      <div class="offer__card offer__white offer__bonuses" data-reveal>
+        <div class="offer__bonuses-head">
+          <p class="t-meta t-medium c-tertiary">{p.bonuses.label}</p>
+          <h3 class="t-faq-q">{p.bonuses.title}</h3>
+        </div>
+        <ul role="list">
+          {p.bonuses.items.map((it) => (
+            <li class="offer__bonus">
+              <span class="offer__bonus-icon" aria-hidden="true"><Icon name={it.icon} size={16} /></span>
+              <span class="offer__bonus-text">
+                <span class="t-name offer__bonus-title">{it.title}</span>
+                <span class="t-meta c-secondary offer__bonus-desc">{it.text}</span>
+                <Pill variant="soft-round">{it.tag}</Pill>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- 3. Price -->
+      <div class="offer__card offer__white offer__price" data-reveal>
+        <p class="t-meta t-medium c-tertiary">{m.name}</p>
+        {amount != null && <p class="t-price-xl offer__amount">{formatUsd(amount)}</p>}
+        <Pill variant="accent-tag">{p.savingsTemplate.replace('{amount}', formatUsd(b.savings))}</Pill>
+        <div class="offer__capacity">
+          <p class="t-meta t-medium c-tertiary" id="offer-capacity">{p.capacity.label}</p>
+          <div class="offer__slots" role="img" aria-labelledby="offer-capacity offer-capacity-note">
+            {slots.map((full) => <span class:list={['offer__slot', { 'is-full': full }]}></span>)}
+          </div>
+          <p class="t-meta c-secondary offer__note" id="offer-capacity-note">{note}</p>
+        </div>
+        <Button variant="dark" size="lg" block spread class="offer__cta" label={p.cta.label} href={p.cta.href} />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .offer { border-top: 1px solid var(--border-rail); }
+  .offer__inner { display: flex; flex-direction: column; gap: var(--space-10); padding-block: var(--space-18); }
+  .offer__badge { display: flex; align-items: center; gap: var(--space-2); }
+  .offer__index {
+    display: grid; place-items: center;
+    width: var(--offer-index); height: var(--offer-index);
+    border-radius: var(--radius-pill);
+    background: var(--bg-accent); color: var(--text-on-accent);
+  }
+  .offer__inner :global(.offer__head) { padding: 0; }
+
+  .offer__cards { display: grid; gap: var(--offer-gap); }
+  .offer__card { position: relative; overflow: hidden; border-radius: var(--radius-xl); }
+  .offer__white { background: var(--bg-card); padding: var(--space-7); }
+
+  /* 1. Photo + included glass list */
+  .offer__photo { min-height: var(--offer-h); color: var(--text-on-dark); display: flex; align-items: flex-end; padding: var(--space-6); }
+  .offer__photo :global(.offer__img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .offer__photo::after { content: ''; position: absolute; inset: 0; background: var(--offer-photo-tint); }
+  .offer__included { position: relative; z-index: 1; display: flex; flex-direction: column; gap: var(--space-2); width: 100%; }
+  .offer__included-label { color: var(--text-on-dark-strong); }
+  .offer__list { display: flex; flex-direction: column; gap: var(--space-2); }
+  .offer__glass {
+    display: flex; align-items: center; gap: var(--space-3);
+    padding: var(--space-3);
+    border: 1px solid var(--offer-glass-line);
+    border-radius: var(--radius-glass-md);
+    background: var(--offer-glass-bg);
+    -webkit-backdrop-filter: blur(calc(var(--glass-md-blur) / 2));
+    backdrop-filter: blur(calc(var(--glass-md-blur) / 2));
+  }
+  .offer__check {
+    display: grid; place-items: center; flex: none;
+    width: var(--offer-check); height: var(--offer-check);
+    border-radius: var(--radius-pill);
+    background: var(--bg-accent); color: var(--text-on-accent);
+  }
+  .offer__glass-text { display: flex; flex-direction: column; gap: var(--gap-hair); min-width: 0; }
+  .offer__glass-title { font-size: var(--fs-body); line-height: var(--lh-faq-q); }
+  .offer__glass-sub { color: var(--text-on-dark-secondary); }
+
+  /* 2. Bonuses */
+  .offer__bonuses { display: flex; flex-direction: column; }
+  .offer__bonuses-head { display: flex; flex-direction: column; gap: var(--space-2); padding-bottom: var(--space-5); }
+  .offer__bonus { display: flex; gap: var(--menu-card-gap); padding-block: var(--picker-row-py); border-top: 1px solid var(--border-rail); }
+  .offer__bonus-icon {
+    display: grid; place-items: center; flex: none;
+    width: var(--offer-check); height: var(--offer-check);
+    border: 1px solid var(--border-default); border-radius: var(--radius-pill);
+  }
+  .offer__bonus-text { display: flex; flex-direction: column; align-items: flex-start; gap: var(--proof-gap); min-width: 0; }
+  .offer__bonus-title { font-size: var(--fs-body); line-height: var(--lh-faq-q); }
+  .offer__bonus-desc { line-height: var(--lh-small); }
+
+  /* 3. Price */
+  .offer__price { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-5); }
+  .offer__amount { line-height: var(--lh-tight); margin-block: var(--space-1); }
+  .offer__capacity { display: flex; flex-direction: column; gap: var(--gap-tight); width: 100%; margin-top: auto; padding-top: var(--space-8); }
+  .offer__slots { display: flex; align-items: center; gap: var(--offer-slot-gap); }
+  .offer__slot { flex: 1; height: var(--offer-slot-h-empty); border-radius: var(--radius-xs); background: var(--offer-slot-empty); }
+  .offer__slot.is-full { height: var(--offer-slot-h); background: var(--bg-inverse); }
+  .offer__note { line-height: var(--lh-small); }
+
+  @media (min-width: 768px) {
+    .offer__cards { grid-template-columns: 1fr 1fr; }
+    .offer__photo { grid-column: 1 / -1; }
+  }
+  @media (min-width: 1024px) {
+    .offer__inner { gap: var(--space-14); padding-block: var(--space-28); }
+    .offer__cards { grid-template-columns: var(--offer-cols); }
+    .offer__photo { grid-column: auto; height: var(--offer-h); display: block; padding: 0; }
+    .offer__included { position: absolute; left: var(--space-6); top: var(--offer-list-y); width: var(--offer-list-w); }
+    .offer__white { height: var(--offer-h); }
+  }
+</style>
