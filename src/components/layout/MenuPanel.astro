@@ -125,7 +125,7 @@ const offerPrice = price(offer.model, offer.package);
     width: min(var(--menu-w), calc(100% - 2 * var(--menu-inset)));
     display: flex; flex-direction: column;
     padding: var(--menu-pad);
-    padding-bottom: calc(var(--space-7) + env(safe-area-inset-bottom));
+    padding-bottom: calc(var(--menu-pad-bottom) + env(safe-area-inset-bottom));
     border-color: var(--border-glass);
     overflow-y: auto;
     overscroll-behavior: contain;
@@ -289,8 +289,8 @@ const offerPrice = price(offer.model, offer.package);
       const cy = r.top + r.height / 2 - p.top;
       const far = Math.max(Math.hypot(cx, cy), Math.hypot(p.width - cx, cy), Math.hypot(cx, p.height - cy), Math.hypot(p.width - cx, p.height - cy));
       set('--cx', `${cx}px`); set('--cy', `${cy}px`); set('--cr', `${far + 80}px`); // +80 keeps the shadow
-      // The cross's resting place: centred in the 44 × 44 close button at the
-      // top-right of the panel's content box (Figma 373:162).
+      // The cross's resting place: the 44-tall header row at the top-right of
+      // the panel's content box (Figma 373:162).
       const ps = getComputedStyle(panel);
       const ms_ = getComputedStyle(menu);
       const px = (v: string) => parseFloat(v) || 0;
@@ -299,7 +299,11 @@ const offerPrice = price(offer.model, offer.package);
       const gh = px(ms_.getPropertyValue('--gh'));
       const right = p.right - px(ps.borderRightWidth) - px(ps.paddingRight);
       const top = p.top + px(ps.borderTopWidth) + px(ps.paddingTop);
-      set('--gx', `${right - size / 2 - gw / 2}px`);
+      // Optical alignment (owner): the cross's visible right edge — not its
+      // 44 box — sits on the content edge, like the links' arrows.
+      const gb = px(ms_.getPropertyValue('--gb'));
+      const span = (gw + gb) * Math.SQRT1_2;
+      set('--gx', `${right - span / 2 - gw / 2}px`);
       set('--gy', `${top + size / 2 - gh / 2}px`);
     };
 

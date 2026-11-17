@@ -82,7 +82,7 @@
   /* ---------- Component tokens ---------- */
   --btn-h-sm: 42px; --btn-h-md: 48px; --btn-h-lg: 52px; --btn-h-cta: 56px; --btn-pad-x: 22px;
   --icon-badge: 44px; --round-btn: 28px; --avatar: 36px;
-  --menu-w: 520px; --menu-inset: 16px;
+  --menu-w: 520px; --menu-inset: 8px; /* phones (owner: tighter); 16 from 768 */
 
   /* ---------- Typography ---------- */
   --font-sans: var(--font-dm-sans, "DM Sans"), system-ui, -apple-system, sans-serif;
@@ -262,14 +262,16 @@
   --hover-ghost-white-text: var(--brand-ink);
 
   /* Menu panel (Figma 373:157) — component tokens. */
-  --menu-pad: 28px 28px 28px 32px;
-  --menu-pad-top: 28px;
+  --menu-pad: 20px 20px 20px 24px;   /* phones (owner: tighter); Figma 28/28/28/32 from 768 */
+  --menu-pad-bottom: 20px;
   /* Close button (Figma "Menu open" 373:162): a 44 × 44 round button flush
      right in a 44-tall header row; the cross is two 50 × 4.17 bars at ±45°.
      On open, the clicked hamburger's stand-in glides into it and morphs
-     (owner, 2026-11-17). --menu-x-h is the hamburger box mid-glide. */
+     (owner, 2026-11-17). --menu-x-h is the hamburger box mid-glide.
+     The cross's visible right edge sits on the content edge (optical, owner:
+     not the 44 box's edge). Phones: smaller than the 44-wide hamburger. */
   --menu-x-size: 44px;
-  --menu-x-len: 50px; --menu-x-bar: 4.17px; --menu-x-h: 24px;
+  --menu-x-len: 40px; --menu-x-bar: 3px; --menu-x-h: 20px;   /* phones */
   --menu-link-py: 9px;
   --menu-link-gap: 16px;   /* index → label */
   --menu-card-gap: 14px;
@@ -432,4 +434,14 @@
 
   /* Stacking order. */
   --z-sticky: 40; --z-menu: 50; --z-skip: 100;
+}
+
+/* Menu panel from 768 (Figma 373:121); phones use the tighter values above. */
+@media (min-width: 768px) {
+  :root {
+    --menu-inset: 16px;
+    --menu-pad: 28px 28px 28px 32px;
+    --menu-pad-bottom: 28px;
+    --menu-x-len: 50px; --menu-x-bar: 4.17px; --menu-x-h: 24px;
+  }
 }
