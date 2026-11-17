@@ -1,0 +1,126 @@
+---
+// Services — DESIGN_SYSTEM §7 "Service card", Figma 337:438.
+// Meta bar + header, then 3 white cards (r6, p8): photo 340 (r4, gradient)
+// with a glass index pill and a glass-md spec panel (icon tile + eyebrow +
+// name + warranty pill, divider, 2 specs); text: h4 + small + check list
+// (accent checks, 8% dividers) + text-link row pinned to the bottom.
+// Mobile: 1 column; 2 from 768; 3 from 1024.
+import { Image } from 'astro:assets';
+import SectionMeta from '../ui/SectionMeta.astro';
+import SectionHeader, { type TwoTone } from '../ui/SectionHeader.astro';
+import Pill from '../ui/Pill.astro';
+import Icon from '../ui/Icon.astro';
+import TextLink from '../ui/TextLink.astro';
+import type { ServiceCard } from '../../content/services';
+
+export interface ServicesProps {
+  index?: number;
+  label: string;
+  title: TwoTone;
+  intro: string;
+  /** Exactly 3. */
+  items: ServiceCard[];
+}
+const { index, label, title, intro, items } = Astro.props as ServicesProps;
+---
+
+<section class="section services" id="services" aria-labelledby="services-title">
+  <SectionMeta index={index} label={label} />
+  <div class="container">
+    <SectionHeader id="services-title" title={title} intro={intro} />
+  </div>
+  <div class="container">
+    <ul class="services__grid" role="list">
+      {items.map((s, i) => (
+        <li class="svc" data-reveal>
+          <div class="svc__photo" data-reveal>
+            <Image class="svc__img" src={s.image} alt={s.alt} widths={[430, 860, 1290]} sizes="(min-width: 1024px) 30vw, (min-width: 768px) 50vw, 100vw" />
+            <Pill variant="index" class="svc__index" data-reveal>{String(i + 1).padStart(2, '0')}</Pill>
+            <div class="svc__glass glass glass--md" data-reveal>
+              <div class="svc__glass-top">
+                <span class="svc__tile" aria-hidden="true"><Icon name={s.icon} size={20} /></span>
+                <span class="svc__name">
+                  <span class="t-eyebrow-sm svc__eyebrow">{s.eyebrow}</span>
+                  <span class="t-name svc__name-text">{s.name}</span>
+                </span>
+                <Pill variant="label">{s.warranty}</Pill>
+              </div>
+              <span class="svc__divider" aria-hidden="true"></span>
+              <dl class="svc__specs">
+                {s.specs.map((sp) => (
+                  <div class="svc__spec">
+                    <dt class="sr-only">{sp.label}</dt>
+                    <dd class="t-spec">{sp.value}</dd>
+                    <dd class="t-micro svc__spec-label" aria-hidden="true">{sp.label}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+          <div class="svc__text">
+            <h3 class="t-h4" data-reveal>{s.title}</h3>
+            <p class="t-small c-secondary" data-reveal>{s.text}</p>
+            <ul class="svc__checks" role="list">
+              {s.checks.map((c) => (
+                <li class="svc__check" data-reveal>
+                  <span class="svc__check-icon" aria-hidden="true"><Icon name="check" /></span>
+                  <span class="t-small lh-snug c-strong">{c}</span>
+                </li>
+              ))}
+            </ul>
+            <TextLink label={s.link.label} href={s.link.href} class="svc__link" data-reveal />
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .services__grid { display: grid; gap: var(--grid-gutter); }
+  @media (min-width: 768px) { .services__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1024px) { .services__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+  .svc { display: flex; flex-direction: column; padding: var(--space-2); border-radius: var(--radius-card-sm); background: var(--bg-card); }
+
+  .svc__photo { position: relative; height: var(--service-photo-h); overflow: hidden; border-radius: var(--radius-media); color: var(--text-on-dark); }
+  .svc__photo :global(.svc__img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .svc__photo::after { content: ''; position: absolute; inset: 0; background: var(--overlay-service); }
+  .svc__photo :global(.svc__index) { position: absolute; z-index: 1; top: var(--service-inset); left: var(--service-inset); }
+  .svc__glass {
+    position: absolute; z-index: 1;
+    left: var(--service-inset); right: var(--service-inset); bottom: var(--service-inset);
+    display: flex; flex-direction: column; gap: var(--menu-card-gap);
+    padding: var(--space-4);
+    --glass-radius: var(--radius-glass-md);
+    border-color: var(--border-glass);
+  }
+  .svc__glass-top { display: flex; align-items: center; gap: var(--space-3); }
+  .svc__tile {
+    display: grid; place-items: center; flex: none;
+    width: var(--service-tile); height: var(--service-tile);
+    border: 1px solid var(--service-tile-line); border-radius: var(--radius-md);
+    background: var(--service-tile-bg);
+  }
+  .svc__name { display: flex; flex-direction: column; gap: var(--gap-name); flex: 1; min-width: 0; }
+  .svc__eyebrow { color: var(--text-on-dark-strong); }
+  .svc__name-text { font-size: var(--fs-body); }
+  .svc__divider { height: 1px; background: var(--service-divider); }
+  .svc__specs { display: grid; grid-template-columns: 1fr 1fr; }
+  .svc__spec { display: flex; flex-direction: column; gap: var(--gap-hair); white-space: nowrap; }
+  .svc__spec + .svc__spec { padding-left: var(--space-4); border-left: 1px solid var(--service-divider); }
+  .svc__spec dd { margin: 0; }
+  .svc__spec-label { color: var(--text-on-dark-strong); }
+
+  .svc__text { display: flex; flex-direction: column; gap: var(--space-4); flex: 1; padding: var(--space-6) var(--space-4) var(--space-4); }
+  .svc__checks { display: flex; flex-direction: column; }
+  .svc__check { display: flex; align-items: center; gap: var(--gap-tight); padding-block: var(--gap-tight); border-top: 1px solid var(--border-rail); }
+  .svc__check-icon {
+    display: grid; place-items: center; flex: none;
+    width: var(--service-check); height: var(--service-check);
+    border-radius: var(--radius-pill); background: var(--bg-accent-soft); color: var(--brand-accent);
+  }
+  .svc__text :global(.svc__link) { margin-top: auto; }
+
+  @media (min-width: 1024px) { .svc__text { min-height: var(--service-text-h); } }
+</style>

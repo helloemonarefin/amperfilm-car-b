@@ -12,7 +12,7 @@
 //  soft-round: accent-soft, `tag`, 6/12, pill radius (bonus tags)
 //  accent-tag: accent, white `tag`, 6/12 ("Save $199 vs. separate")
 interface Props {
-  variant?: 'soft' | 'white' | 'label' | 'accent' | 'glass' | 'plain' | 'index' | 'outline' | 'white-tag' | 'soft-round' | 'accent-tag';
+  variant?: 'soft' | 'white' | 'label' | 'accent' | 'accent-lg' | 'glass' | 'plain' | 'index' | 'outline' | 'white-tag' | 'soft-round' | 'accent-tag';
   /** Wider accent pill (menu "You're here"). */
   wide?: boolean;
   as?: 'span' | 'li' | 'p';
@@ -23,7 +23,7 @@ const { variant = 'soft', wide = false, as: Tag = 'span', class: className, ...r
 const typeClass = {
   soft: 't-tag', white: 't-eyebrow', label: 't-eyebrow pill__lc', accent: 't-eyebrow-sm',
   glass: 't-eyebrow', plain: 't-eyebrow', index: 't-eyebrow pill__lc', outline: 't-eyebrow',
-  'white-tag': 't-tag', 'soft-round': 't-tag', 'accent-tag': 't-tag',
+  'white-tag': 't-tag', 'soft-round': 't-tag', 'accent-tag': 't-tag', 'accent-lg': 't-eyebrow',
 }[variant];
 ---
 
@@ -60,6 +60,7 @@ const typeClass = {
     -webkit-backdrop-filter: blur(calc(var(--glass-sm-blur) / 2));
     backdrop-filter: blur(calc(var(--glass-sm-blur) / 2));
   }
+  .pill--accent-lg  { padding: var(--pill-py-sm) var(--pill-px-lg); background: var(--bg-accent); color: var(--text-on-accent); }
   .pill--white-tag  { padding: var(--pill-py-sm) var(--pill-px-lg); background: var(--bg-card); color: var(--text-primary); }
   .pill--soft-round { padding: var(--pill-py-sm) var(--pill-px-lg); background: var(--bg-accent-soft); color: var(--text-primary); }
   .pill--accent-tag { padding: var(--pill-py-sm) var(--pill-px-lg); background: var(--bg-accent); color: var(--text-on-accent); }

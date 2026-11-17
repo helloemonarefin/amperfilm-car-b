@@ -1,0 +1,144 @@
+---
+// Models — DESIGN_SYSTEM §7 "Model card", Figma 337:652.
+// Meta bar + header with a ghost button, then 3 photo cards (500 tall, r4,
+// gradient, brand pill, glass-md bottom panel: h4 + text + accent "from"
+// price pill + round white arrow) and the dark "other EVs" card (bolt +
+// title, text, faint circle, accent pill, num-lg "1" + unit "hour").
+// Every price comes from pricing.ts. Cards link to their model page.
+// Mobile: 1 column; 2 from 768; Figma 319/319/319/367 from 1024.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import SectionMeta from '../ui/SectionMeta.astro';
+import SectionHeader, { type TwoTone } from '../ui/SectionHeader.astro';
+import Pill from '../ui/Pill.astro';
+import Icon from '../ui/Icon.astro';
+import Button from '../ui/Button.astro';
+import RoundButton from '../ui/RoundButton.astro';
+import ArrowSwap from '../ui/ArrowSwap.astro';
+import { fromPrice } from '../../content/pricing';
+
+export interface ModelsProps {
+  index?: number;
+  label: string;
+  title: TwoTone;
+  cta: { label: string; href: string };
+  /** Exactly 3 photo cards. */
+  cards: {
+    brand: string;
+    /** `h4`, ≤ 16 characters. */
+    title: string;
+    /** ≤ 60 characters. */
+    text: string;
+    image: ImageMetadata;
+    alt: string;
+    href: string;
+    /** "Front Shield from {price}" — {price} = lowest price of `package` across `models`. */
+    priceTemplate: string;
+    models: string[];
+    package: string;
+  }[];
+  other: {
+    /** ≤ 28 characters. */
+    title: string;
+    /** ≤ 100 characters. */
+    text: string;
+    pill: string;
+    number: string;
+    unit: string;
+    href: string;
+  };
+}
+const { index, label, title, cta, cards, other } = Astro.props as ModelsProps;
+---
+
+<section class="section models" id="models" aria-labelledby="models-title">
+  <SectionMeta index={index} label={label} />
+  <div class="container">
+    <SectionHeader id="models-title" title={title}>
+      <Button slot="aside" variant="ghost" label={cta.label} href={cta.href} />
+    </SectionHeader>
+  </div>
+  <div class="container">
+    <ul class="models__grid" role="list">
+      {cards.map((c) => (
+        <li data-reveal>
+          <a class="model arrow-trigger" href={c.href}>
+            <Image class="model__img" src={c.image} alt={c.alt} widths={[320, 640, 960]} sizes="(min-width: 1024px) 23vw, (min-width: 768px) 50vw, 100vw" />
+            <Pill variant="white" class="model__brand" data-reveal>{c.brand}</Pill>
+            <span class="model__glass glass glass--md" data-reveal>
+              <span class="t-h4 lh-tighter model__title">{c.title}</span>
+              <span class="t-meta model__text">{c.text}</span>
+              <span class="model__row">
+                <Pill variant="accent-tag">{c.priceTemplate.replace('{price}', fromPrice(c.models, c.package) ?? '')}</Pill>
+                <RoundButton as="span" size="md" variant="white"><ArrowSwap icon="arrow-up-right" size={14} dir="diag" /></RoundButton>
+              </span>
+            </span>
+          </a>
+        </li>
+      ))}
+      <li data-reveal>
+        <a class="model model--other" href={other.href}>
+          <span class="model__ring" aria-hidden="true"></span>
+          <span class="model__other-head" data-reveal>
+            <Icon name="bolt" size={22} />
+            <span class="t-faq-q lh-tighter">{other.title}</span>
+          </span>
+          <span class="t-small model__other-text" data-reveal>{other.text}</span>
+          <span class="model__other-foot">
+            <Pill variant="accent-lg" data-reveal>{other.pill}</Pill>
+            <span class="model__hour" data-reveal>
+              <span class="t-num-lg">{other.number}</span>
+              <span class="t-unit model__unit">{other.unit}</span>
+            </span>
+          </span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .models__grid { display: grid; gap: var(--grid-gutter); }
+  @media (min-width: 768px) { .models__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1024px) { .models__grid { grid-template-columns: var(--models-cols); } }
+
+  .model {
+    position: relative; isolation: isolate; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    height: var(--model-h);
+    padding: var(--model-inset);
+    border-radius: var(--radius-media);
+    color: var(--text-on-dark);
+  }
+  .model :global(.model__img) { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; transition: scale var(--m-arrow-time) var(--m-arrow-ease); }
+  .model::after { content: ''; position: absolute; inset: 0; z-index: -1; background: var(--overlay-model); }
+  .model :global(.model__brand) { position: absolute; top: var(--model-inset); left: var(--model-inset); }
+  .model__glass {
+    display: flex; flex-direction: column; gap: var(--gap-tight);
+    width: min(100%, var(--model-glass-w));
+    padding: var(--model-glass-pad);
+    border-color: var(--border-glass);
+  }
+  .model__text { color: var(--text-on-dark-strong); line-height: var(--lh-small); }
+  .model__row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); padding-top: var(--proof-gap); }
+  @media (hover: hover) and (pointer: fine) { .model:hover :global(.model__img) { scale: 1.03; } }
+
+  /* Dark "other EVs" card */
+  .model--other {
+    justify-content: flex-start; align-items: stretch; gap: var(--space-4);
+    padding: var(--space-6);
+    background: var(--bg-inverse);
+  }
+  .model--other::after { display: none; }
+  .model__ring {
+    position: absolute; z-index: -1;
+    left: var(--model-ring-x); top: var(--model-ring-y);
+    width: var(--model-ring); height: var(--model-ring);
+    border: 1px solid var(--model-ring-line); border-radius: var(--radius-pill);
+  }
+  .model__other-head { display: flex; align-items: center; gap: var(--gap-tight); }
+  .model__other-text { color: var(--text-on-dark-secondary); }
+  .model__other-foot { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-4); margin-top: auto; }
+  .model__hour { display: flex; align-items: baseline; gap: var(--proof-gap); }
+  .model__unit { color: var(--text-on-dark-secondary); }
+</style>

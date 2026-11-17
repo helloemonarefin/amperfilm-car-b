@@ -111,3 +111,11 @@ export function bundle(id: string): Bundle {
   if (!b) throw new Error(`pricing.ts: unknown bundle "${id}"`);
   return b;
 }
+
+/** Lowest price of a package across several models ("from $1,690"). */
+export function fromPrice(modelIds: string[], packageId: string): string | null {
+  const values = modelIds
+    .map((id) => pricing.prices[id]?.[packageId])
+    .filter((v): v is number => typeof v === 'number');
+  return values.length ? usd.format(Math.min(...values)) : null;
+}

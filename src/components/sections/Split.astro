@@ -1,0 +1,160 @@
+---
+// Split section — DESIGN_SYSTEM §7 (Guarantee 337:402, Final CTA 337:918).
+// Dark half (768): icon, `h2-dark`, `body-lg` (white 70%), optional fine
+// print (white 45%) or a slotted form, outline pills at the bottom.
+// Image half (672): photo + accent tint + panel glow + small wordmark +
+// glass-lg panel (icon circle + caption, num-xl/num-lg + unit, label,
+// progress bar that fills once on reveal, optional axis labels).
+// Full bleed, no margins. Mobile: dark half on top, image half below.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Icon, { type IconName } from '../ui/Icon.astro';
+import Pill from '../ui/Pill.astro';
+import Wordmark from '../ui/Wordmark.astro';
+
+export interface SplitProps {
+  id: string;
+  icon: IconName;
+  /** `h2-dark`, ≤ 32 characters. */
+  title: string;
+  /** `body-lg`, ≤ 200 characters. */
+  text: string;
+  /** Fine print, ≤ 130 characters. */
+  fine?: string;
+  /** Outline pills; an `icon` entry renders an accent icon between pills. */
+  pills?: ({ label: string } | { icon: IconName })[];
+  visual: {
+    image: ImageMetadata;
+    imageAlt?: string;
+    icon: IconName;
+    /** Caption next to the icon, one entry per line (≤ 2). */
+    caption: string[];
+    number: string;
+    unit: string;
+    /** 'xl' = 150 (48), 'lg' = 130 (60). */
+    numberSize?: 'xl' | 'lg';
+    label: string;
+    /** Bar fill, 0–1. */
+    progress: number;
+    /** Axis labels under the bar (e.g. 0h · 24h · 48h). */
+    axis?: string[];
+  };
+}
+
+const { id, icon, title, text, fine, pills = [], visual } = Astro.props as SplitProps;
+const titleId = `${id}-title`;
+---
+
+<section class="split" id={id} aria-labelledby={titleId}>
+  <div class="split__dark">
+    <span class="split__icon" data-reveal><Icon name={icon} /></span>
+    <h2 id={titleId} class="t-h2-dark" data-reveal>{title}</h2>
+    <p class="t-body-lg split__text" data-reveal>{text}</p>
+    {fine && <p class="t-meta lh-snug split__fine" data-reveal>{fine}</p>}
+    <slot />
+    {pills.length > 0 && (
+      <ul class="split__pills" role="list">
+        {pills.map((p) => 'label' in p
+          ? <li data-reveal><Pill variant="outline">{p.label}</Pill></li>
+          : <li class="split__pill-icon" data-reveal aria-hidden="true"><Icon name={p.icon} /></li>)}
+      </ul>
+    )}
+  </div>
+
+  <div class="split__visual" data-reveal>
+    <Image class="split__img" src={visual.image} alt={visual.imageAlt ?? ''} widths={[672, 1344]} sizes="(min-width: 1024px) 47vw, 100vw" />
+    <span class="glow glow--panel split__glow" aria-hidden="true"></span>
+    <Wordmark size="sm" class="split__wm" decorative data-reveal />
+    <div class="split__panel glass glass--lg" data-reveal>
+      <div class="split__cap" data-reveal>
+        <span class="split__cap-icon" aria-hidden="true"><Icon name={visual.icon} size={14} /></span>
+        <p class="t-small lh-snug split__cap-text">{visual.caption.map((l, i) => <>{i > 0 && <br />}{l}</>)}</p>
+      </div>
+      <p class="split__num" data-reveal>
+        <span class:list={[visual.numberSize === 'lg' ? 't-num-lg' : 't-num-xl']}>{visual.number}</span>
+        <span class="t-unit split__unit">{visual.unit}</span>
+      </p>
+      <p class="t-meta t-medium split__label" data-reveal>{visual.label}</p>
+      <div class="split__bar" data-reveal role="img" aria-label={`${Math.round(visual.progress * 100)}%`}>
+        <span class="split__fill" style={`--p: ${visual.progress}`}></span>
+      </div>
+      {visual.axis && (
+        <div class="split__axis t-eyebrow" data-reveal aria-hidden="true">
+          {visual.axis.map((a) => <span>{a}</span>)}
+        </div>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .split { display: grid; grid-template-columns: minmax(0, 1fr); }
+
+  /* Dark half */
+  .split__dark {
+    display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-7);
+    padding: var(--space-14) var(--side-pad) var(--space-10);
+    background: var(--bg-inverse); color: var(--text-on-dark);
+  }
+  .split__icon { display: inline-flex; }
+  .split__text { color: var(--text-on-dark-secondary); }
+  .split__fine { color: var(--text-on-dark-tertiary); line-height: var(--lh-body); }
+  .split__pills { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin-top: var(--space-10); }
+  .split__pill-icon { display: inline-flex; color: var(--brand-accent); }
+
+  /* Image half */
+  .split__visual {
+    position: relative; overflow: hidden; isolation: isolate;
+    display: flex; flex-direction: column; align-items: center; gap: var(--space-10);
+    padding: var(--space-10) var(--side-pad) var(--space-14);
+    color: var(--text-on-dark);
+  }
+  .split__visual :global(.split__img) { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; }
+  .split__visual::before { content: ''; position: absolute; inset: 0; z-index: -1; background: var(--tint-accent); }
+  .split__glow { z-index: -1; width: var(--promise-glow-w); height: var(--promise-glow-h); left: var(--promise-glow-x); top: var(--promise-glow-y); }
+
+  .split__panel {
+    display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-4);
+    width: min(100%, var(--promise-w));
+    padding: var(--space-6);
+    border-color: var(--border-on-dark-strong);
+  }
+  .split__cap { display: flex; align-items: center; gap: var(--space-3); }
+  .split__cap-icon {
+    display: grid; place-items: center; flex: none;
+    width: var(--promise-icon); height: var(--promise-icon);
+    border-radius: var(--radius-pill); background: var(--bg-card); color: var(--text-primary);
+  }
+  .split__cap-text { color: var(--text-on-dark-strong); }
+  .split__num { display: flex; align-items: baseline; gap: var(--proof-gap); white-space: nowrap; }
+  .split__unit { color: var(--text-on-dark-strong); }
+  .split__label { color: var(--text-on-dark-strong); }
+  .split__bar { position: relative; width: 100%; height: var(--promise-bar-h); overflow: hidden; border-radius: var(--radius-media); background: var(--border-on-dark); }
+  .split__fill {
+    position: absolute; inset: 0 auto 0 0; width: calc(var(--p) * 100%);
+    border-radius: var(--radius-media); background: var(--bg-accent);
+    transform-origin: left;
+  }
+  /* Fills once on reveal (BUILD_PROMPT §3); full without JS / reduced motion. */
+  :global(.reveal-on) .split__bar .split__fill { scale: 0 1; }
+  :global(.reveal-on) .split__bar:global(.is-revealed) .split__fill {
+    scale: 1 1;
+    transition: scale var(--m-bar-time) var(--m-reveal-ease) calc(var(--reveal-delay, 0s) + var(--m-reveal-time) * 0.5);
+  }
+  .split__axis { display: flex; justify-content: space-between; width: 100%; color: var(--text-on-dark-strong); font-weight: var(--fw-medium); text-transform: none; letter-spacing: 0; }
+
+  @media (min-width: 1024px) {
+    .split { grid-template-columns: var(--split-cols); min-height: var(--split-h); }
+    .split__dark { padding: var(--split-pad); }
+    .split__pills { margin-top: auto; }
+    .split__visual { display: block; padding: 0; }
+    /* Centred with auto margins, shifted right by --promise-dx like the panel
+       (Figma x 320.5 in the 672 half); translate belongs to the reveal. */
+    .split__visual :global(.split__wm) { position: absolute; top: var(--space-10); left: calc(var(--promise-dx) * 2); right: 0; margin-inline: auto; }
+    .split__panel {
+      position: absolute; top: var(--promise-y);
+      left: calc(50% - var(--promise-w) / 2 + var(--promise-dx));
+      width: var(--promise-w);
+    }
+  }
+</style>

@@ -72,3 +72,10 @@ html { font-family: var(--font-sans); font-optical-sizing: auto; }
 @media (min-width: 1024px) {
   .t-hero, .t-h2-xl, .t-h2, .t-h2-dark, .t-h2-sm, .t-h3-lg, .t-h3, .t-h4, .t-h5, .t-faq-q { text-wrap-style: auto; }
 }
+
+/* Big numbers: browsers add the (negative) letter-spacing after the last
+   glyph too, Figma doesn't — give it back so the unit beside the number
+   ("48 hrs", "$1,790 all in", "1 hour") sits where Figma puts it. */
+.t-num-xl, .t-num-lg { margin-inline-end: calc(var(--ls-num) * -1); }
+.t-num-md { margin-inline-end: calc(var(--ls-num-md) * -1); }
+.t-price-xl { margin-inline-end: calc(var(--ls-price-xl) * -1); }

@@ -172,6 +172,7 @@
   --m-reveal-time:     0.6s;
   --m-reveal-stagger:  0.05s;
   --m-reveal-distance: 24px;
+  --m-bar-time: 1.2s;            /* progress bars fill once on reveal */
   --m-reveal-stagger-max: 1.6s; /* owner: long sequences keep stepping one by one */
 }
 
@@ -210,6 +211,7 @@
   /* Round buttons and icon tiles (Figma sizes). */
   --round-sm: 28px; --round-md: 32px; --round-lg: 40px; --round-xl: 44px;
   --gap-hair: 2px;
+  --gap-name: 3px;               /* eyebrow → name on glass cards */
   --gap-tight: 10px; /* button label → arrow, field label → value */
   --head-title-max-md: 760px; --head-title-max-lg: 780px;
   --head-intro-max-sm: 320px; --head-intro-max-md: 340px; --head-intro-max-lg: 380px;
@@ -327,6 +329,44 @@
   --offer-check: 36px;
   --offer-slot-h: 20px; --offer-slot-h-empty: 20px; --offer-slot-gap: 6px; /* booked = empty height (owner; Figma 28 / 20) */
   --offer-slot-empty: rgb(var(--brand-ink-rgb) / 0.12);
+
+  /* Split sections — Guarantee (Figma 337:402) / Final CTA (337:918). */
+  --split-cols: 768fr 672fr;
+  --split-h: 680px;
+  --split-pad: 56px 56px 48px 40px;
+  --promise-w: 380px; --promise-y: 197px; --promise-dx: 24px;   /* glass panel, 24 right of centre */
+  --promise-glow-w: 700px; --promise-glow-h: 500px; --promise-glow-x: 100px; --promise-glow-y: 300px;
+  --promise-bar-h: 14px;
+  --promise-icon: 32px;
+
+  /* Services (Figma 337:438). */
+  --service-photo-h: 340px;
+  --service-text-h: 431px;
+  --service-inset: 14px;
+  --service-tile: 40px;
+  --service-tile-bg: rgb(255 255 255 / 0.22); --service-tile-line: rgb(255 255 255 / 0.40);
+  --service-divider: rgb(255 255 255 / 0.28);
+  --service-check: 20px;
+  --overlay-service: linear-gradient(180deg, rgb(0 0 0 / 0) 35%, rgb(0 0 0 / 0.50) 100%);
+
+  /* Models (Figma 337:652). */
+  --models-cols: 319fr 319fr 319fr 367fr;
+  --model-h: 500px;
+  --model-inset: 20px;
+  --model-glass-w: 279px;
+  --model-glass-pad: 18px;
+  --model-ring: 420px; --model-ring-x: -40px; --model-ring-y: 220px; --model-ring-line: rgb(255 255 255 / 0.12);
+  --overlay-model: linear-gradient(180deg, rgb(0 0 0 / 0) 40%, rgb(0 0 0 / 0.55) 100%);
+
+  /* How it works (Figma 337:713). */
+  --steps-head-pad: 112px 0 80px;
+  --steps-side-w: 500px;
+  --steps-photo-w: 420px; --steps-photo-h: 520px;
+  --steps-row-pad: 44px 64px;
+  --steps-row-gap: 56px;
+  --steps-text-w: 460px;
+  --steps-status-w: 372px;
+  --tint-steps: rgb(var(--brand-accent-rgb) / 0.18);
 
   /* Stacking order. */
   --z-sticky: 40; --z-menu: 50; --z-skip: 100;

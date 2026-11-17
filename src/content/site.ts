@@ -41,6 +41,8 @@ export interface Site {
   reviewSource: string;
   /** Installs to date; shown as "2,100+". */
   installsCount: number;
+  /** Exact-price-by-text reply time for other EVs, in hours. */
+  quoteHours: number;
 
   /** Menu links, in order (≤ 8, DESIGN_SYSTEM §9). */
   nav: NavLink[];
@@ -103,6 +105,7 @@ export const site: Site = {
   reviewCount: 386,
   reviewSource: 'Google',
   installsCount: 2100,
+  quoteHours: 1,
 
   nav: [
     { label: 'Home', href: '/' },

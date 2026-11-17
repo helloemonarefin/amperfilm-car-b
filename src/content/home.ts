@@ -8,7 +8,16 @@ import type { WhyProps } from '../components/sections/WhyDiagram.astro';
 import type { InstallsProps } from '../components/sections/Installs.astro';
 import type { PickerProps } from '../components/sections/PricePicker.astro';
 import type { OfferProps } from '../components/sections/Offer.astro';
+import type { SplitProps } from '../components/sections/Split.astro';
+import type { ServicesProps } from '../components/sections/Services.astro';
+import type { ModelsProps } from '../components/sections/Models.astro';
+import type { StepsProps } from '../components/sections/Steps.astro';
 import { installs } from './installs';
+import { services } from './services';
+import modelY from '../assets/images/models/model-y.jpg';
+import cybertruck from '../assets/images/models/cybertruck.png';
+import rivian from '../assets/images/models/rivian.jpg';
+import ppfPhoto from '../assets/images/services/ppf.jpg';
 import type { SectionEntry } from '../lib/sections';
 import type { ImageMetadata } from 'astro';
 import { site } from './site';
@@ -58,7 +67,11 @@ export type HomeSection =
   | SectionEntry<'why', WhyProps>
   | SectionEntry<'installs', InstallsProps>
   | SectionEntry<'picker', PickerProps>
-  | SectionEntry<'offer', OfferProps>;
+  | SectionEntry<'offer', OfferProps>
+  | SectionEntry<'split', SplitProps>
+  | SectionEntry<'services', ServicesProps>
+  | SectionEntry<'models', ModelsProps>
+  | SectionEntry<'steps', StepsProps>;
 
 export const home: { title: string; description: string; sections: HomeSection[] } = {
   title: `${site.brand}${site.mark} — EV paint protection film, tint and coating in Austin`,
@@ -170,6 +183,101 @@ export const home: { title: string; description: string; sections: HomeSection[]
         savingsTemplate: 'Save {amount} vs. separate',
         capacity: { label: 'Delivery-week slots this week', total: 8, booked: 5, note: '{booked} of {total} booked · booked slots show on the calendar' },
         cta: { label: 'Reserve my delivery week', href: '#get-price' },
+      },
+    },
+    {
+      kind: 'split',
+      numbered: false,
+      props: {
+        id: 'guarantee',
+        icon: 'clock',
+        title: `The ${site.turnaroundHours}-Hour Promise.`,
+        text: `If we quote ${site.turnaroundHours} hours and your car isn't ready in ${site.turnaroundHours} hours, your tint is free. Simple as that. We schedule tight on purpose: you bought an EV to drive it, not to leave it at a shop.`,
+        fine: "Applies to Delivery Day and Front Shield packages. Full-body PPF takes 3–4 days, and we'll tell you the exact day upfront.",
+        pills: [{ label: 'Delivery Day' }, { label: 'Front Shield' }, { label: 'Your tint is free' }],
+        visual: {
+          image: modelY,
+          icon: 'clock',
+          caption: ['Quoted. Ready.', 'Or your tint is free.'],
+          number: String(site.turnaroundHours),
+          unit: 'hrs',
+          numberSize: 'xl',
+          label: 'Delivery Day turnaround',
+          progress: 260 / 332, // Figma bar fill
+          axis: ['0h', `${site.turnaroundHours / 2}h`, `${site.turnaroundHours}h`],
+        },
+      },
+    },
+    {
+      kind: 'services',
+      numbered: true,
+      props: {
+        label: 'What we install',
+        title: { strong: 'Everything we install.', soft: "Nothing we don't." },
+        intro: 'Three services, each chosen for how electric cars are built and driven.',
+        items: services,
+      },
+    },
+    {
+      kind: 'models',
+      numbered: true,
+      props: {
+        label: 'Your model',
+        title: { strong: 'Built around your car.', soft: 'Patterns for your exact model and year.' },
+        cta: { label: 'See all model pricing', href: '/pricing' },
+        cards: [
+          {
+            brand: 'Tesla', title: 'Model 3 & Y', text: 'The two most chipped cars on Austin highways.',
+            image: modelY, alt: 'Close-up of a blue Tesla', href: '/models/tesla',
+            priceTemplate: 'Front Shield from {price}', models: ['model-3', 'model-y'], package: 'front-shield',
+          },
+          {
+            brand: 'Tesla', title: 'Cybertruck', text: 'Stainless panels need different film and different hands.',
+            image: cybertruck, alt: 'Silhouette of an electric car against a pink sky', href: '/models/cybertruck',
+            priceTemplate: 'Full body from {price}', models: ['cybertruck'], package: 'full-body',
+          },
+          {
+            brand: 'Rivian', title: 'R1S & R1T', text: 'Big front ends, big chip risk.',
+            image: rivian, alt: 'Front three-quarter view of a red SUV', href: '/models/rivian',
+            priceTemplate: 'Front Shield from {price}', models: ['r1s'], package: 'front-shield',
+          },
+        ],
+        other: {
+          title: 'Lucid, BMW i & Mercedes EQ',
+          text: `Plus Model S/X and R1T. Tell us the model and we'll reply with an exact number. 9am–6pm.`,
+          pill: 'Exact price',
+          number: String(site.quoteHours),
+          unit: site.quoteHours === 1 ? 'hour' : 'hours',
+          href: '#get-price',
+        },
+      },
+    },
+    {
+      kind: 'steps',
+      numbered: false,
+      props: {
+        icon: 'bolt',
+        title: 'Four steps. Zero guesswork.',
+        intro: `From your first price to driving away protected, most packages take ${site.turnaroundHours} hours.`,
+        photo: {
+          image: ppfPhoto,
+          alt: 'Paint protection film going onto a car in the bay',
+          title: 'Model Y · Delivery Day',
+          rows: [
+            { title: 'Price sent', text: 'By text, 9:14am', done: true },
+            { title: 'Slot booked', text: 'Delivery week, Mon', done: true },
+            { title: 'Front Shield PPF', text: 'Photos texted at 2pm', done: false },
+          ],
+          doneLabel: 'Done',
+          progressLabel: 'In progress',
+          caption: 'Connecting every step to your phone.',
+        },
+        steps: [
+          { icon: 'tag', title: 'Get your price', text: 'Pick your car and package. Exact price on screen or by text within 1 hour.' },
+          { icon: 'calendar', title: 'Book your slot', text: 'Choose a day, or book your delivery week before you have the car.' },
+          { icon: 'shield-plain', title: 'We protect it', text: `Most packages done in ${site.turnaroundHours} hours. We text photos while we work.` },
+          { icon: 'key', title: 'Drive protected', text: 'Walkthrough at pickup, care guide in your inbox, warranty registered in your name.' },
+        ],
       },
     },
   ],

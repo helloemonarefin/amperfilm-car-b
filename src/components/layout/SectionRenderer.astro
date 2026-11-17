@@ -8,6 +8,10 @@ import WhyDiagram from '../sections/WhyDiagram.astro';
 import Installs from '../sections/Installs.astro';
 import PricePicker from '../sections/PricePicker.astro';
 import Offer from '../sections/Offer.astro';
+import Split from '../sections/Split.astro';
+import Services from '../sections/Services.astro';
+import Models from '../sections/Models.astro';
+import Steps from '../sections/Steps.astro';
 import { numberSections, type SectionEntry } from '../../lib/sections';
 
 interface Props { sections: SectionEntry[] }
@@ -19,6 +23,10 @@ const map: Record<string, any> = {
   installs: Installs,
   picker: PricePicker,
   offer: Offer,
+  split: Split,
+  services: Services,
+  models: Models,
+  steps: Steps,
 };
 
 const entries = numberSections(Astro.props.sections);
