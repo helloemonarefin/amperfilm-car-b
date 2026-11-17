@@ -1,7 +1,10 @@
 ---
-// 3-column rail frame — DESIGN_SYSTEM §6: 200 | 1040 | 200 with vertical
-// rail borders. Left rail: generated (0n) index; right rail: a label.
-// Below 1024 the side rails collapse and both move into a section meta bar.
+// Rail frame — Figma "Master D — Home v2.1" (388:1130), DESIGN_SYSTEM §6.
+// Desktop columns: 40 gutter | 200 rail | centre | 200 rail | 40 gutter,
+// with vertical rail lines at the gutter edges (x 40 / 1400 at 1440) and on
+// the inner side of each rail (x 240 / 1200). Left rail: generated (0n)
+// index; right rail: a label. Below 1024 the gutters and rails collapse and
+// both texts move into a section meta bar.
 import { formatIndex } from '../../lib/sections';
 
 interface Props {
@@ -17,16 +20,29 @@ const idx = index != null ? formatIndex(index) : '';
 <div class="section-meta t-meta rf__meta">
   <span class="t-medium">{idx}</span><span class="t-medium">{label}</span>
 </div>
-<div class:list={['rails frame rf', `rf--${pad}`]}>
-  <div class="rails__side rails__side--collapse rf__side t-meta t-medium" data-reveal>{idx}</div>
-  <div class="rails__main"><slot /></div>
-  <div class="rails__side rails__side--collapse rf__side rf__side--end t-meta t-medium" data-reveal>{label}</div>
+<div class:list={['frame rf', `rf--${pad}`]}>
+  <div class="rf__gutter rf__gutter--l" aria-hidden="true"></div>
+  <div class="rf__side rf__side--l t-meta t-medium" data-reveal>{idx}</div>
+  <div class="rf__main"><slot /></div>
+  <div class="rf__side rf__side--r t-meta t-medium" data-reveal>{label}</div>
+  <div class="rf__gutter rf__gutter--r" aria-hidden="true"></div>
 </div>
 
 <style>
-  .rf__side { padding: var(--rf-pad) var(--side-pad) 0; color: var(--text-tertiary); }
-  .rf__side--end { text-align: right; }
+  .rf { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .rf__gutter, .rf__side { display: none; }
+  .rf__main { min-width: 0; }
   .rf--sm { --rf-pad: var(--rail-pad-top); }
   .rf--lg { --rf-pad: var(--rail-pad-top-lg); }
-  @media (min-width: 1024px) { .rf__meta { display: none; } }
+
+  @media (min-width: 1024px) {
+    .rf__meta { display: none; }
+    .rf { grid-template-columns: var(--side-pad) var(--rail-w) minmax(0, 1fr) var(--rail-w) var(--side-pad); }
+    .rf__gutter, .rf__side { display: block; }
+    .rf__gutter--l { border-right: 1px solid var(--border-rail); }
+    .rf__gutter--r { border-left: 1px solid var(--border-rail); }
+    .rf__side { padding: var(--rf-pad) var(--side-pad) 0; color: var(--text-tertiary); }
+    .rf__side--l { border-right: 1px solid var(--border-rail); }
+    .rf__side--r { border-left: 1px solid var(--border-rail); text-align: right; }
+  }
 </style>

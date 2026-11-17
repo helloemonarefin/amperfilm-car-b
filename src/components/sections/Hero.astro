@@ -74,8 +74,8 @@ const widths = [640, 960, 1280, 1600, 1920, 2560].filter((w) => w < image.width)
   </div>
   <div class="hero__decor" aria-hidden="true">
     <span class="glow hero__glow"></span>
-    <span class="hero__ring"></span>
-    <span class="hero__line"></span>
+    <!-- Line + ring move as one group, aligned to the Proof strip's left rail line. -->
+    <span class="hero__group"><span class="hero__ring"></span><span class="hero__line"></span></span>
   </div>
 
   <div class="hero__inner">
@@ -202,13 +202,20 @@ const widths = [640, 960, 1280, 1600, 1920, 2560].filter((w) => w < image.width)
       height: min(calc(100vw * var(--hero-ratio)), 100svh);
       min-height: min-content;
     }
+    /* x of the Proof strip's left rail line: the 1440 frame's left edge
+       (centred above 1440) + the side gutter. */
+    .hero__group {
+      position: absolute; top: 0; bottom: 0;
+      /* −1px: the rail line is the gutter's border-right, i.e. its last pixel. */
+      left: calc(max(0px, (100% - var(--content-max) - 2 * var(--side-pad)) / 2) + var(--side-pad) - 1px);
+    }
     .hero__ring {
       display: block; position: absolute;
-      left: var(--hero-ring-x); top: var(--hero-ring-y);
+      left: var(--hero-ring-dx); top: var(--hero-ring-y);
       width: var(--hero-ring); height: var(--hero-ring);
       border: 1px solid var(--hero-ring-line); border-radius: var(--radius-pill);
     }
-    .hero__line { display: block; position: absolute; top: 0; bottom: 0; left: var(--hero-line-x); width: 1px; background: var(--hero-line-color); }
+    .hero__line { display: block; position: absolute; top: 0; bottom: 0; left: 0; width: 1px; background: var(--hero-line-color); }
   }
 
   /* ≥ 1280: Figma bottom row — two columns side by side, bottom-aligned. */

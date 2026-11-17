@@ -263,8 +263,11 @@
   --hero-left-w: 703px; --hero-right-w: 486px;
   --hero-actions-w: 430px;
   --hero-thumb: 52px;
-  --hero-ring: 560px; --hero-ring-x: 180px; --hero-ring-y: 160px; --hero-ring-line: rgb(255 255 255 / 0.14);
-  --hero-line-x: 288px; --hero-line-color: rgb(255 255 255 / 0.12);
+  /* Decor group (line + ring). The vertical line sits on the Proof strip's
+     leftmost rail line (the gutter edge, x 40 at 1440; owner 2026-11-17);
+     the ring keeps its Figma offset from the line (180 − 288 = −108). */
+  --hero-ring: 560px; --hero-ring-dx: -108px; --hero-ring-y: 160px; --hero-ring-line: rgb(255 255 255 / 0.14);
+  --hero-line-color: rgb(255 255 255 / 0.12);
   --hero-glow-w: 760px; --hero-glow-h: 620px; --hero-glow-x: -260px; --hero-glow-y: 430px;
 
   /* Rails sections (Proof strip, Statement). */
@@ -279,8 +282,10 @@
   --diagram-circle: 860px; --diagram-circle-y: 35px;
   --diagram-glow-inset: 9.3023%;  /* 700 glow inside the 860 circle: 80 / 860 */
   --diagram-solution-gap: 14px;
-  --diagram-points-x: 64px; --diagram-points-y: 175px; --diagram-row: 250px; --diagram-point-w: 380px;
-  --diagram-line-y: 40px;         /* line height below the point's top */
+  /* Figma v2.1 (388:1155): points at x 40, tops 156 / 410 / 665; lines start at x 461. */
+  --diagram-points-x: 40px; --diagram-point-w: 380px;
+  --diagram-point-y1: 156px; --diagram-point-y2: 410px; --diagram-point-y3: 665px;
+  --diagram-line-x: 461px;
   --diagram-dot: 10px;
   --diagram-solution-x: 360px; --diagram-solution-y: 320px; --diagram-solution-w: 360px; /* from the circle's top-left */
 

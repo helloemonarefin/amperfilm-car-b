@@ -38,6 +38,12 @@ const { points, solution } = Astro.props as WhyProps;
       </div>
     </div>
 
+    <!-- Connector lines + dots (desktop canvas only). They sit at fixed angles
+         on the circle; the points beside them are positioned separately. -->
+    <div class="why__links" aria-hidden="true">
+      {points.map(() => <span class="why__link"></span>)}
+    </div>
+
     <ul class="why__points" role="list">
       {points.map((p) => (
         <li class="why__point" data-reveal>
@@ -84,6 +90,7 @@ const { points, solution } = Astro.props as WhyProps;
     margin-top: var(--space-14);
   }
   .why__point { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+  .why__links { display: none; }
   @media (min-width: 768px) {
     .why__points { grid-template-columns: repeat(3, 1fr); gap: var(--space-8); }
   }
@@ -102,30 +109,30 @@ const { points, solution } = Astro.props as WhyProps;
       gap: var(--diagram-solution-gap);
       text-align: left;
     }
-    .why__points {
-      position: absolute; left: var(--diagram-points-x); top: var(--diagram-points-y);
-      width: var(--diagram-point-w);
-      margin: 0; gap: 0;
-      grid-template-columns: 1fr;
-      grid-auto-rows: var(--diagram-row);
-    }
-    /* Line from the point to its dot on the circle. The dot's x is fixed
-       relative to the circle (--dx from its centre); the line start is
-       relative to the point column. */
-    .why__point { position: relative; --dx: 350px; --start: 20px; }
-    .why__point:nth-child(2) { --dx: 430px; }
-    .why__point:nth-child(3) { --start: 106px; }
-    .why__point::before, .why__point::after { content: ''; position: absolute; }
-    .why__point::before {
-      top: var(--diagram-line-y);
-      left: calc(100% + var(--start));
-      width: calc(100cqw - var(--diagram-circle) / 2 - var(--dx) - var(--diagram-points-x) - 100% - var(--start));
+    /* Points: x 40, tops 156 / 410 / 665 (Figma v2.1). */
+    .why__points { position: static; margin: 0; display: block; }
+    .why__point { position: absolute; left: var(--diagram-points-x); width: var(--diagram-point-w); }
+    .why__point:nth-child(1) { top: var(--diagram-point-y1); }
+    .why__point:nth-child(2) { top: var(--diagram-point-y2); }
+    .why__point:nth-child(3) { top: var(--diagram-point-y3); }
+
+    /* Lines: start at x 461, end at their dot on the circle. Dot position =
+       circle centre + (dx, dy); the circle is anchored to the right edge. */
+    .why__links { display: block; }
+    .why__link {
+      --dx: -350px; --dy: -250px;
+      position: absolute;
+      top: calc(var(--diagram-circle-y) + var(--diagram-circle) / 2 + var(--dy));
+      left: var(--diagram-line-x);
+      width: calc(100cqw - var(--diagram-circle) / 2 + var(--dx) - var(--diagram-line-x));
       height: 1px;
       background: var(--border-line);
     }
-    .why__point::after {
-      top: calc(var(--diagram-line-y) - var(--diagram-dot) / 2 + 0.5px);
-      left: calc(100cqw - var(--diagram-circle) / 2 - var(--dx) - var(--diagram-points-x) - var(--diagram-dot) / 2);
+    .why__link:nth-child(2) { --dx: -430px; --dy: 0px; }
+    .why__link:nth-child(3) { --dy: 250px; }
+    .why__link::after {
+      content: '';
+      position: absolute; right: calc(var(--diagram-dot) / -2); top: calc(var(--diagram-dot) / -2 + 0.5px);
       width: var(--diagram-dot); height: var(--diagram-dot);
       border-radius: var(--radius-pill);
       background: var(--text-primary);
