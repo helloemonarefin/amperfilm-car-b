@@ -220,6 +220,7 @@
 
   /* Menu motion (BUILD_PROMPT §3: slide ≈24px from the right + fade). */
   --m-menu-time: 0.5s;
+  --m-menu-reveal-time: 0.7s;     /* panel grows out of the menu button (owner, 2026-11-17) */
   --m-menu-ease: var(--ease-smooth);
   --m-menu-distance: 24px;
   --m-menu-item-delay: 0.12s;
@@ -254,7 +255,6 @@
   --menu-thumb: 64px;
   --menu-thumb-radius: 10px;
   --menu-dot: 8px;
-  --menu-x-w: 18px; --menu-x-h: 12px; --menu-x-bar: 1.8px; /* close icon bars (cross spans ~13px like Figma's 9px-arm X) */
 
   /* Footer (Figma 337:972) — component tokens. */
   --footer-form-w: 560px;
@@ -267,6 +267,7 @@
   --hero-menu-offset: 28px;       /* menu button below the wordmark's top */
   --hero-col-gap: 44px;           /* card → headline, chips → buttons */
   --hero-left-w: 703px; --hero-right-w: 486px;
+  --hero-col-min-gap: 64px;       /* side-by-side needs 703 + 486 + 64 = 1253 (container query in Hero.astro) */
   --hero-actions-w: 430px;
   --hero-thumb: 52px;
   /* Decor group (line + ring). The vertical line sits on the Proof strip's

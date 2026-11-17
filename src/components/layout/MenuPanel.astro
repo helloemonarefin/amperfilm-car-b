@@ -2,7 +2,11 @@
 // Menu panel — DESIGN_SYSTEM §7 (Figma 373:121), BOILERPLATE §1.8 behaviour.
 // A floating glass panel from the right (520 wide, 16 from the edges, r24,
 // glass-menu) over a backdrop that dims and blurs the page.
-// Contents: "Menu" label + close; 8 numbered links (current page = "You're
+// The menu button never moves (owner, 2026-11-17): on open, a copy of the
+// clicked hamburger is placed exactly over it, morphs into a cross and acts
+// as the close button, while the panel's background grows out of it (a
+// circular clip-path reveal from the button's centre). Closing reverses it.
+// Contents: "Menu" label; 8 numbered links (current page = "You're
 // here" pill + aria-current); featured offer card; CTA; two contact columns.
 // Behaviour: focus trap, Esc, backdrop click, scroll lock, aria-expanded on
 // every [data-menu-toggle]. Without JS the menu stays closed; the footer
@@ -28,13 +32,13 @@ const offerPrice = price(offer.model, offer.package);
 
 <div class="menu" id="site-menu" data-menu inert>
   <div class="menu__backdrop" data-menu-close aria-hidden="true"></div>
+  <!-- The hamburger's stand-in: sits over the clicked button, morphs into the cross. -->
+  <button class="menu__toggle" type="button" aria-label="Close menu" data-menu-close data-menu-ghost>
+    <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+  </button>
   <div class="menu__panel glass glass--menu" role="dialog" aria-modal="true" aria-labelledby="menu-title" data-lenis-prevent>
     <div class="menu__head">
       <p class="menu__title t-eyebrow" id="menu-title"><span class="menu__dot" aria-hidden="true"></span>{site.menu.title}</p>
-      <RoundButton size="xl" variant="glass" label="Close menu" data-menu-close>
-        <!-- Hamburger that turns into the cross once the panel arrives (owner, 2026-11-17). -->
-        <span class="menu__x" aria-hidden="true"><span></span><span></span><span></span></span>
-      </RoundButton>
     </div>
 
     <nav class="menu__nav" aria-label="Main">
@@ -87,8 +91,11 @@ const offerPrice = price(offer.model, offer.package);
 </div>
 
 <style>
-  .menu { position: fixed; inset: 0; z-index: var(--z-menu); visibility: hidden; transition: visibility 0s linear var(--menu-close); --menu-close: calc(var(--m-menu-time) * 0.5); }
+  .menu { position: fixed; inset: 0; z-index: var(--z-menu); visibility: hidden; transition: visibility 0s linear var(--menu-close); --menu-close: calc(var(--m-menu-reveal-time) * 0.6); }
   .menu.is-open { visibility: visible; transition: visibility 0s; }
+  /* The clicked hamburger hides while its stand-in is on screen. !important
+     beats the finished intro animation's opacity. */
+  :global(.is-menu-source) { opacity: 0 !important; }
 
   .menu__backdrop {
     position: absolute; inset: 0;
@@ -110,14 +117,37 @@ const offerPrice = price(offer.model, offer.package);
     border-color: var(--border-glass);
     overflow-y: auto;
     overscroll-behavior: contain;
-    opacity: 0;
-    translate: var(--m-menu-distance) 0;
-    transition: opacity var(--menu-close) var(--ease-in), translate var(--menu-close) var(--ease-in);
+    /* Background grows out of the menu button (--cx/--cy/--cr set by JS). */
+    clip-path: circle(0px at var(--cx, 100%) var(--cy, 0%));
+    transition: clip-path var(--menu-close) var(--ease-in);
   }
   .is-open .menu__panel {
-    opacity: 1; translate: 0 0;
-    transition: opacity var(--m-menu-time) var(--m-menu-ease), translate var(--m-menu-time) var(--m-menu-ease);
+    clip-path: circle(var(--cr, 150%) at var(--cx, 100%) var(--cy, 0%));
+    transition: clip-path var(--m-menu-reveal-time) var(--m-menu-ease);
   }
+
+  /* Stand-in hamburger → cross. Position, size and bar thickness are copied
+     from the clicked button (--tx/--ty/--tw/--th/--tb, --tc = its colour). */
+  .menu__toggle {
+    position: fixed; z-index: 2;
+    left: var(--tx); top: var(--ty); width: var(--tw); height: var(--th);
+    display: flex; flex-direction: column; justify-content: space-between;
+    color: var(--tc, var(--text-on-dark));
+    transition: color var(--m-burger-time) var(--m-burger-ease);
+  }
+  .menu__toggle span {
+    display: block; height: var(--tb); background: currentColor; transform-origin: center;
+    transition:
+      translate var(--m-burger-time) var(--m-burger-ease),
+      rotate var(--m-burger-time) var(--m-burger-ease),
+      scale var(--m-burger-time) var(--m-burger-ease),
+      opacity var(--m-burger-time) var(--m-burger-ease);
+  }
+  .menu__toggle::after { content: ''; position: absolute; inset: calc(var(--space-2) * -1); } /* ≥ 24px tap target */
+  .is-morph .menu__toggle { color: var(--text-on-dark); }
+  .is-morph .menu__toggle span:nth-child(1) { translate: 0 calc((var(--th) - var(--tb)) / 2); rotate: 45deg; }
+  .is-morph .menu__toggle span:nth-child(2) { scale: 0 1; opacity: 0; }
+  .is-morph .menu__toggle span:nth-child(3) { translate: 0 calc((var(--th) - var(--tb)) / -2); rotate: -45deg; }
 
   /* Items rise in with the §7 stagger after the panel starts moving. */
   .menu__item { opacity: 0; translate: 0 var(--m-menu-item-distance); transition: opacity var(--menu-close) ease, translate var(--menu-close) ease; }
@@ -129,16 +159,6 @@ const offerPrice = price(offer.model, offer.package);
 
   .menu__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-7); }
   .menu__title { display: flex; align-items: center; gap: var(--gap-tight); color: var(--text-on-dark-strong); }
-  /* Close icon: 3 bars (18 wide, Figma close-icon size) → cross. */
-  .menu__x { position: relative; display: flex; flex-direction: column; justify-content: space-between; width: var(--menu-x-w); height: var(--menu-x-h); }
-  .menu__x span {
-    height: var(--menu-x-bar); border-radius: var(--menu-x-bar); background: currentColor;
-    transition: translate var(--m-burger-time) var(--m-burger-ease), rotate var(--m-burger-time) var(--m-burger-ease), scale var(--m-burger-time) var(--m-burger-ease), opacity var(--m-burger-time) var(--m-burger-ease);
-  }
-  .is-open .menu__x span { transition-delay: var(--m-menu-item-delay); }
-  .is-open .menu__x span:nth-child(1) { translate: 0 calc((var(--menu-x-h) - var(--menu-x-bar)) / 2); rotate: 45deg; }
-  .is-open .menu__x span:nth-child(2) { scale: 0 1; opacity: 0; }
-  .is-open .menu__x span:nth-child(3) { translate: 0 calc((var(--menu-x-h) - var(--menu-x-bar)) / -2); rotate: -45deg; }
 
   .menu__dot { width: var(--menu-dot); height: var(--menu-dot); border-radius: var(--radius-pill); background: var(--bg-accent); }
 
@@ -216,36 +236,79 @@ const offerPrice = price(offer.model, offer.package);
   const menu = document.querySelector<HTMLElement>('[data-menu]');
   if (menu) {
     const panel = menu.querySelector<HTMLElement>('[role="dialog"]')!;
+    const ghost = menu.querySelector<HTMLButtonElement>('[data-menu-ghost]')!;
     const toggles = () => document.querySelectorAll<HTMLButtonElement>('[data-menu-toggle]');
+    const css = getComputedStyle(document.documentElement);
+    const ms = (name: string) => parseFloat(css.getPropertyValue(name)) * (css.getPropertyValue(name).trim().endsWith('ms') ? 1 : 1000) || 0;
     let opener: HTMLElement | null = null;
+    let closeTimer = 0;
+
+    // Copy the clicked button's box onto the stand-in, and aim the panel's
+    // circular reveal at the button's centre.
+    const place = () => {
+      const p = panel.getBoundingClientRect();
+      let r: DOMRect;
+      let bar = 2;
+      let color = '';
+      if (opener && opener.isConnected) {
+        r = opener.getBoundingClientRect();
+        const first = opener.querySelector('span');
+        bar = first ? first.getBoundingClientRect().height : bar;
+        color = getComputedStyle(opener).color;
+      } else {
+        // Opened without a button (e.g. programmatically): top-right of the panel.
+        r = new DOMRect(p.right - 72, p.top + 28, 44, 24);
+      }
+      const set = (k: string, v: string) => menu.style.setProperty(k, v);
+      set('--tx', `${r.left}px`); set('--ty', `${r.top}px`);
+      set('--tw', `${r.width}px`); set('--th', `${r.height}px`); set('--tb', `${bar}px`);
+      if (color) set('--tc', color);
+      const cx = r.left + r.width / 2 - p.left;
+      const cy = r.top + r.height / 2 - p.top;
+      const far = Math.max(Math.hypot(cx, cy), Math.hypot(p.width - cx, cy), Math.hypot(cx, p.height - cy), Math.hypot(p.width - cx, p.height - cy));
+      set('--cx', `${cx}px`); set('--cy', `${cy}px`); set('--cr', `${far + 80}px`); // +80 keeps the shadow
+    };
 
     const focusables = () =>
-      [...panel.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')].filter((el) => el.offsetParent !== null);
+      [...menu.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')].filter((el) => el.offsetParent !== null || el === ghost);
 
     const setOpen = (open: boolean, returnFocus = true) => {
-      menu.classList.toggle('is-open', open);
-      menu.inert = !open;
+      window.clearTimeout(closeTimer);
       toggles().forEach((t) => {
         t.setAttribute('aria-expanded', String(open));
         t.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
       });
-      lockScroll(open);
       if (open) {
-        opener = document.activeElement as HTMLElement | null;
-        // Focus the close button first so the panel is announced from the top.
-        panel.querySelector<HTMLElement>('[data-menu-close]')?.focus();
-      } else if (returnFocus) {
-        opener?.focus();
+        place();
+        opener?.classList.add('is-menu-source');
+        menu.inert = false;
+        menu.classList.add('is-open');
+        lockScroll(true);
+        // Next frame: morph into the cross (the stand-in starts as the hamburger).
+        requestAnimationFrame(() => requestAnimationFrame(() => menu.classList.add('is-morph')));
+        ghost.focus({ preventScroll: true });
+      } else {
+        menu.classList.remove('is-morph', 'is-open');
+        menu.inert = true;
+        lockScroll(false);
+        const src = opener;
+        if (returnFocus) src?.focus({ preventScroll: true });
+        // Swap back to the real button once the cross is a hamburger again.
+        closeTimer = window.setTimeout(() => src?.classList.remove('is-menu-source'), Math.max(ms('--m-burger-time'), ms('--m-menu-reveal-time') * 0.6));
       }
     };
 
     document.addEventListener('click', (e) => {
       const target = e.target as Element;
-      if (target.closest('[data-menu-toggle]')) setOpen(!menu.classList.contains('is-open'));
-      else if (target.closest('[data-menu-close]')) setOpen(false);
+      const toggle = target.closest<HTMLElement>('[data-menu-toggle]');
+      if (toggle) {
+        if (menu.classList.contains('is-open')) setOpen(false);
+        else { opener = toggle; setOpen(true); }
+      } else if (target.closest('[data-menu-close]')) setOpen(false);
     });
     // Following a link closes the menu without pulling focus back.
     panel.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false, false)));
+    window.addEventListener('resize', () => { if (menu.classList.contains('is-open')) place(); });
 
     menu.addEventListener('keydown', (e) => {
       if (!menu.classList.contains('is-open')) return;

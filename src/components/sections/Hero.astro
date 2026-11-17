@@ -74,8 +74,10 @@ const widths = [640, 960, 1280, 1600, 1920, 2560].filter((w) => w < image.width)
   </div>
   <div class="hero__decor" aria-hidden="true">
     <span class="glow hero__glow"></span>
-    <!-- Line + ring move as one group, aligned to the Proof strip's left rail line. -->
-    <span class="hero__group"><span class="hero__ring"></span><span class="hero__line"></span></span>
+    <!-- Line + ring groups, aligned to the Proof strip's outer rail lines.
+         The right group mirrors the left one (owner, 2026-11-17). -->
+    <span class="hero__group hero__group--l"><span class="hero__ring"></span><span class="hero__line"></span></span>
+    <span class="hero__group hero__group--r"><span class="hero__ring"></span><span class="hero__line"></span></span>
   </div>
 
   <div class="hero__inner">
@@ -84,7 +86,8 @@ const widths = [640, 960, 1280, 1600, 1920, 2560].filter((w) => w < image.width)
       <MenuButton class="hero__menu" {...iMenu} />
     </div>
 
-    <div class="hero__bottom container">
+    <div class="hero__bottom frame">
+      <div class="hero__cols">
       <div class="hero__left">
         {card && (
           <div class="hero__card glass glass--sm" {...iCard}>
@@ -112,6 +115,7 @@ const widths = [640, 960, 1280, 1600, 1920, 2560].filter((w) => w < image.width)
           </div>
           {intro && <p class="t-small hero__intro" {...iIntro}>{intro}</p>}
         </div>
+      </div>
       </div>
     </div>
   </div>
@@ -159,7 +163,10 @@ const widths = [640, 960, 1280, 1600, 1920, 2560].filter((w) => w < image.width)
     --menu-btn-w: var(--menu-btn-w-m); --menu-btn-h: var(--menu-btn-h-m); --menu-btn-bar: var(--menu-btn-bar-m);
   }
 
-  .hero__bottom { display: flex; flex-direction: column; gap: var(--space-8); }
+  /* Bottom row: same frame as the rails; content inset to the rail text
+     (x 80 / 1360 at 1440) from 1024 (owner, 2026-11-17). */
+  .hero__bottom { padding-inline: var(--side-pad); container-type: inline-size; }
+  .hero__cols { display: flex; flex-direction: column; gap: var(--space-8); }
   .hero__left { display: flex; flex-direction: column; align-items: flex-start; gap: var(--hero-col-gap); }
   .hero__right { display: flex; flex-direction: column; align-items: flex-start; gap: var(--hero-col-gap); }
 
@@ -204,23 +211,28 @@ const widths = [640, 960, 1280, 1600, 1920, 2560].filter((w) => w < image.width)
     }
     /* x of the Proof strip's left rail line: the 1440 frame's left edge
        (centred above 1440) + the side gutter. */
-    .hero__group {
-      position: absolute; top: 0; bottom: 0;
-      /* −1px: the rail line is the gutter's border-right, i.e. its last pixel. */
-      left: calc(max(0px, (100% - var(--content-max) - 2 * var(--side-pad)) / 2) + var(--side-pad) - 1px);
-    }
+    .hero__bottom { padding-inline: calc(var(--side-pad) * 2); }
+    .hero__group { position: absolute; top: 0; bottom: 0; width: 1px; }
+    /* Left: on the left rail line (the gutter's border-right = its last pixel). */
+    .hero__group--l { left: calc(max(0px, (100% - var(--content-max) - 2 * var(--side-pad)) / 2) + var(--side-pad) - 1px); }
+    /* Right: on the right rail line (the right gutter's border-left = its first pixel). */
+    .hero__group--r { right: calc(max(0px, (100% - var(--content-max) - 2 * var(--side-pad)) / 2) + var(--side-pad) - 1px); }
     .hero__ring {
-      display: block; position: absolute;
-      left: var(--hero-ring-dx); top: var(--hero-ring-y);
+      display: block; position: absolute; top: var(--hero-ring-y);
       width: var(--hero-ring); height: var(--hero-ring);
       border: 1px solid var(--hero-ring-line); border-radius: var(--radius-pill);
     }
+    /* Each ring keeps the Figma offset from its line and bulges toward the centre. */
+    .hero__group--l .hero__ring { left: var(--hero-ring-dx); }
+    .hero__group--r .hero__ring { right: var(--hero-ring-dx); }
     .hero__line { display: block; position: absolute; top: 0; bottom: 0; left: 0; width: 1px; background: var(--hero-line-color); }
   }
 
-  /* ≥ 1280: Figma bottom row — two columns side by side, bottom-aligned. */
-  @media (min-width: 1280px) {
-    .hero__bottom { flex-direction: row; justify-content: space-between; align-items: flex-end; gap: var(--space-10); }
+  /* Side by side (Figma) only when both columns fit with at least the
+     minimum gap: 703 (left) + 486 (right) + 64 = 1253px of content.
+     Narrower: the columns stack, so they never collide (owner). */
+  @container (min-width: 1253px) {
+    .hero__cols { flex-direction: row; justify-content: space-between; align-items: flex-end; gap: var(--hero-col-min-gap); }
     .hero__left { width: var(--hero-left-w); }
     .hero__title { white-space: nowrap; }
     .hero__right { width: var(--hero-right-w); align-items: flex-end; }
