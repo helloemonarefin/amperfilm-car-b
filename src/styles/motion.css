@@ -20,6 +20,8 @@
   animation: rise-in var(--m-intro-time) var(--m-intro-ease)
              calc(var(--m-intro-delay) + var(--i, 0) * var(--m-intro-stagger)) both;
 }
+/* Header items drop in from the top instead (owner, 2026-11-17). */
+[data-intro="down"] { --rise-from: calc(var(--m-intro-distance) * -1); }
 
 /* ---------- Scroll reveal (§7.6) ----------
    Armed by .reveal-on on <html> (inline script in Base, motion allowed only).

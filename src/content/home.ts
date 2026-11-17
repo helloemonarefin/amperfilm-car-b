@@ -36,6 +36,7 @@ const heroImage = heroMatches[0].default;
 export const hero: HeroProps = {
   image: heroImage,
   imagePosition: 'center',
+  overlay: false, // Hero v2.2 has no dark gradient over the photo
   headline: ['Protect your EV in 48 hours.', 'Before the first rock chip.'],
   chips: [
     { label: 'Paint protection film' },

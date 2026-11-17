@@ -215,6 +215,7 @@
   --head-intro-max-sm: 320px; --head-intro-max-md: 340px; --head-intro-max-lg: 380px;
   --head-pb-sm: 48px; --head-pb-lg: 64px;
   --menu-btn-w: 68px; --menu-btn-h: 36px; --menu-btn-bar: 3.83px;
+  --menu-btn-w-d: 68px; --menu-btn-h-d: 36px; --menu-btn-bar-d: 3.83px; /* hero, ≥ 768 */
   --menu-btn-w-m: 44px; --menu-btn-h-m: 24px; --menu-btn-bar-m: 2.5px; /* phones (proposed) */
 
   /* Menu motion (BUILD_PROMPT §3: slide ≈24px from the right + fade). */
@@ -253,16 +254,13 @@
   --footer-form-w: 560px;
   --footer-legal-gap: 14px;
 
-  /* Hero (Figma 337:122) — component tokens. Desktop positions in the 1440 × 900 frame. */
-  --hero-h: 900px;
-  --hero-wm-top: 36px; --hero-wm-left: 56px;
-  --hero-menu-top: 64px;
-  --hero-edge: 64px;              /* headline, chips, buttons, menu: 64 from the frame edge */
-  --hero-chips-top: 330px; --hero-chips-right: 56px;
-  --hero-card-x: 2px;             /* card sits 2px right of the headline (66 vs 64) */
-  --hero-head-bottom: 88px;       /* headline box bottom → frame bottom */
-  --hero-actions-bottom: 71px;    /* actions box bottom → frame bottom */
-  --hero-card-gap: 31px;          /* glass card → headline */
+  /* Hero (Figma "Hero v2.2" 388:246) — component tokens. */
+  --hero-ratio: 0.625;            /* 900 / 1440: height follows the width (≤ 100vh) */
+  --hero-pad-top: 24px;           /* header row from the top */
+  --hero-pad-bottom: 46px;        /* bottom row from the bottom (900 − 24 − 830) */
+  --hero-menu-offset: 28px;       /* menu button below the wordmark's top */
+  --hero-col-gap: 44px;           /* card → headline, chips → buttons */
+  --hero-left-w: 703px; --hero-right-w: 486px;
   --hero-actions-w: 430px;
   --hero-thumb: 52px;
   --hero-ring: 560px; --hero-ring-x: 180px; --hero-ring-y: 160px; --hero-ring-line: rgb(255 255 255 / 0.14);
