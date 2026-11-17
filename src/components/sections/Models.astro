@@ -99,8 +99,9 @@ const { index, label, title, cta, cards, other } = Astro.props as ModelsProps;
 
 <style>
   .models__grid { display: grid; gap: var(--grid-gutter); }
+  /* 2 × 2 until the four Figma columns fit (their minimum content needs ~1180px). */
   @media (min-width: 768px) { .models__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (min-width: 1024px) { .models__grid { grid-template-columns: var(--models-cols); } }
+  @media (min-width: 1280px) { .models__grid { grid-template-columns: var(--models-cols); } }
 
   .model {
     position: relative; isolation: isolate; overflow: hidden;
@@ -140,5 +141,11 @@ const { index, label, title, cta, cards, other } = Astro.props as ModelsProps;
   .model__other-text { color: var(--text-on-dark-secondary); }
   .model__other-foot { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-4); margin-top: auto; }
   .model__hour { display: flex; align-items: baseline; gap: var(--proof-gap); }
+  /* Below the 4-column layout the dark card sizes to its content
+     (no empty 500px block on phones). */
+  @media (max-width: 1279px) {
+    .model--other { height: auto; min-height: 0; }
+    .model__other-foot { margin-top: var(--space-10); }
+  }
   .model__unit { color: var(--text-on-dark-secondary); }
 </style>

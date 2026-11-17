@@ -66,6 +66,9 @@ const trailing: IconName | undefined = select ? 'chevron-down' : icon;
     font-size: var(--field-fs);
     line-height: var(--lh-snug);
     letter-spacing: var(--ls-body-lg);
+    /* Hit area ≥ 24px without changing the Figma layout. */
+    min-height: var(--tap-min);
+    margin-block: calc(var(--tap-pad) * -1);
     appearance: none;
     -webkit-appearance: none;
   }

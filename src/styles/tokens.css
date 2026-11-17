@@ -391,6 +391,11 @@
   --faq-gap-top: 64px;
   --m-faq-time: 0.4s;
 
+  /* Minimum tap target (WCAG 2.5.8): small links/inputs grow their hit area
+     with padding + an equal negative margin, so the layout doesn't move. */
+  --tap-min: 24px;
+  --tap-pad: 2px;
+
   /* Stacking order. */
   --z-sticky: 40; --z-menu: 50; --z-skip: 100;
 }

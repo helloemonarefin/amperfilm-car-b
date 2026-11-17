@@ -101,6 +101,8 @@ const { points, solution } = Astro.props as WhyProps;
     width: 64%;
     text-align: center;
   }
+  /* Narrow phones: wider text so the title lines never break to one word. */
+  @media (max-width: 479px) { .why__solution { width: 88%; } }
   .why__points {
     display: grid; gap: var(--space-10);
     margin-top: var(--space-14);

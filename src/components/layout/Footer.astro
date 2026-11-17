@@ -99,6 +99,9 @@ const columns = [...f.columns, { heading: site.menu.studioLabel, links: studio }
   .footer__col ul { display: flex; flex-direction: column; gap: var(--space-3); }
   .footer__col li { display: flex; color: var(--text-strong); }
   .footer__link {
+    /* Hit area ≥ 24px without changing the Figma spacing. */
+    padding-block: calc((var(--tap-min) - 1lh) / 2);
+    margin-block: calc((var(--tap-min) - 1lh) / -2);
     text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 3px;
     transition: text-decoration-color var(--m-hover-time) var(--m-hover-ease), color var(--m-hover-time) var(--m-hover-ease);
   }
