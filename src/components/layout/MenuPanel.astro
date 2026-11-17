@@ -157,7 +157,15 @@ const offerPrice = price(offer.model, offer.package);
     transition: opacity var(--m-menu-item-time) var(--m-menu-ease) var(--d), translate var(--m-menu-item-time) var(--m-menu-ease) var(--d);
   }
 
-  .menu__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-7); }
+  /* Header row is as tall as the cross (it sits over the clicked button, so
+     its position comes from --ty/--th/--tw): the links start below it plus
+     the usual 28px, and "Menu" lines up with the cross's centre (owner).
+     Cross half-height = half the bar length × sin 45° ≈ 0.36 × width. */
+  .menu__head {
+    display: flex; align-items: center; justify-content: space-between;
+    min-height: calc(var(--ty, 0px) + var(--th, 0px) / 2 + var(--tw, 0px) * 0.36 - var(--menu-inset) - var(--menu-pad-top));
+    margin-bottom: var(--space-7);
+  }
   .menu__title { display: flex; align-items: center; gap: var(--gap-tight); color: var(--text-on-dark-strong); }
 
   .menu__dot { width: var(--menu-dot); height: var(--menu-dot); border-radius: var(--radius-pill); background: var(--bg-accent); }

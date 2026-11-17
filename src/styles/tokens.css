@@ -249,6 +249,7 @@
 
   /* Menu panel (Figma 373:157) — component tokens. */
   --menu-pad: 28px 28px 28px 32px;
+  --menu-pad-top: 28px;
   --menu-link-py: 9px;
   --menu-link-gap: 16px;   /* index → label */
   --menu-card-gap: 14px;
