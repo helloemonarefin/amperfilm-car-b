@@ -9,7 +9,7 @@
 // Everything reads from pricing.ts. Without JS the default model + package
 // show; the swap script is added in Phase 5 (data-picker hooks are in place).
 // Mobile (§6): models become a horizontal pill row; the panel sits below the photo.
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import SectionMeta from '../ui/SectionMeta.astro';
 import SectionHeader, { type TwoTone } from '../ui/SectionHeader.astro';
 import Pill from '../ui/Pill.astro';
@@ -41,6 +41,22 @@ const currentPkg = pkg(pricing.defaults.package);
 const pickerPkgs = pricing.packages.filter((x) => x.inPicker);
 const photo = current.image ?? pricing.models.find((m) => m.image)?.image;
 const pillText = `${modelLabel(current)}${current.mostBooked ? ` · ${p.mostBooked}` : ''}`;
+
+// Data for the swap script (Phase 5). Every number comes from pricing.ts.
+const imageSet = async (img: typeof photo) => {
+  if (!img) return null;
+  const r = await getImage({ src: img, widths: [640, 948, 1400, 1896] });
+  return { src: r.src, srcset: r.srcSet.attribute };
+};
+const pickerData = {
+  models: Object.fromEntries(await Promise.all(pricing.models.map(async (m) => [m.id, {
+    pill: `${modelLabel(m)}${m.mostBooked ? ` · ${p.mostBooked}` : ''}`,
+    image: await imageSet(m.image ?? photo),
+  }]))),
+  other: { pill: pricing.other.label, note: pricing.other.note },
+  packages: Object.fromEntries(pricing.packages.map((x) => [x.id, x.pickerText ?? x.description])),
+  prices: pricing.prices,
+};
 ---
 
 <section class="section picker-section" id="pricing" aria-labelledby="pricing-title">
@@ -50,7 +66,7 @@ const pillText = `${modelLabel(current)}${current.mostBooked ? ` · ${p.mostBook
   </div>
 
   <div class="container">
-    <div class="picker" data-picker>
+    <div class="picker" data-picker data-picker-data={JSON.stringify(pickerData)}>
       <!-- 1. Models -->
       <div class="picker__list" data-reveal>
         <p class="t-meta t-medium c-tertiary" id="picker-models" data-reveal>{p.modelsLabel}</p>
@@ -217,3 +233,74 @@ const pillText = `${modelLabel(current)}${current.mostBooked ? ` · ${p.mostBook
     .picker__more { position: absolute; left: var(--picker-inset); bottom: var(--picker-inset); margin: 0; }
   }
 </style>
+
+<script>
+  // Price picker (BUILD_PROMPT §3, Phase 5): real radios; on change, swap the
+  // price, description, pill and photo from pricing.ts data. Without JS the
+  // default model + package stay visible. "Other EVs" hides the price and
+  // shows the exact-price-by-text note. The CTA pre-fills the final form.
+  type Data = {
+    models: Record<string, { pill: string; image: { src: string; srcset: string } | null }>;
+    other: { pill: string; note: string };
+    packages: Record<string, string>;
+    prices: Record<string, Record<string, number | null>>;
+  };
+  const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLElement>('[data-picker]').forEach((root) => {
+    const data: Data = JSON.parse(root.dataset.pickerData ?? '{}');
+    const q = <T extends Element>(s: string) => root.querySelector<T>(s);
+    const priceEl = q<HTMLElement>('[data-picker-price]');
+    const priceRow = priceEl?.parentElement ?? null;
+    const descEl = q<HTMLElement>('[data-picker-desc]');
+    const pillEl = q<HTMLElement>('[data-picker-pill]');
+    const imgEl = q<HTMLImageElement>('[data-picker-img]');
+    const cta = q<HTMLAnchorElement>('[data-picker-cta]');
+
+    const value = (name: string) => q<HTMLInputElement>(`input[name="${name}"]:checked`)?.value ?? '';
+    const pop = (el: Element | null) => {
+      if (!el || reduce) return;
+      el.animate([{ opacity: 0, translate: '0 8px' }, { opacity: 1, translate: '0 0' }], { duration: 320, easing: 'cubic-bezier(.22, 1, .36, 1)' });
+    };
+
+    const render = (changed: 'model' | 'package') => {
+      const model = value('model');
+      const pkg = value('package');
+      if (model === 'other') {
+        if (priceRow) priceRow.hidden = true;
+        if (descEl) descEl.textContent = data.other.note;
+        if (pillEl) pillEl.textContent = data.other.pill;
+        pop(descEl);
+        return;
+      }
+      if (priceRow) priceRow.hidden = false;
+      const amount = data.prices[model]?.[pkg];
+      if (priceEl) priceEl.textContent = amount == null ? 'n/a' : usd.format(amount);
+      if (descEl) descEl.textContent = data.packages[pkg] ?? '';
+      const m = data.models[model];
+      if (m && pillEl) pillEl.textContent = m.pill;
+      if (changed === 'model' && m?.image && imgEl && imgEl.getAttribute('src') !== m.image.src) {
+        imgEl.srcset = m.image.srcset;
+        imgEl.src = m.image.src;
+        pop(imgEl);
+      }
+      pop(priceRow);
+    };
+
+    root.addEventListener('change', (e) => {
+      const t = e.target as HTMLInputElement;
+      if (t.name === 'model' || t.name === 'package') render(t.name);
+    });
+
+    // Carry the choice into the final "get your price" form.
+    cta?.addEventListener('click', () => {
+      const car = document.querySelector<HTMLSelectElement>('#cta-car');
+      const pk = document.querySelector<HTMLSelectElement>('#cta-package');
+      const model = value('model');
+      if (car && [...car.options].some((o) => o.value === model)) car.value = model;
+      const pkg = value('package');
+      if (pk && [...pk.options].some((o) => o.value === pkg)) pk.value = pkg;
+    });
+  });
+</script>

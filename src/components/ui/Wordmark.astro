@@ -5,7 +5,7 @@
 import { site } from '../../content/site';
 
 interface Props {
-  size?: 'xl' | 'hero' | 'sm';
+  size?: 'xl' | 'hero' | 'sm' | 'bar';
   href?: string;
   /** The footer giant wordmark is decorative (the name is already in the legal line). */
   decorative?: boolean;
@@ -14,7 +14,7 @@ interface Props {
 }
 
 const { size = 'hero', href, decorative = false, class: className, ...rest } = Astro.props;
-const roleClass = { xl: 't-wordmark-xl', hero: 't-wordmark', sm: 't-body-sm t-medium wordmark--sm' }[size];
+const roleClass = { xl: 't-wordmark-xl', hero: 't-wordmark', sm: 't-body-sm t-medium wordmark--sm', bar: 'wordmark--bar' }[size];
 const Tag = href ? 'a' : 'p';
 ---
 
@@ -30,4 +30,6 @@ const Tag = href ? 'a' : 'p';
   .wordmark { display: block; width: max-content; }
   /* Glass wordmark: 15 Medium, −1% (Figma). */
   .wordmark--sm { letter-spacing: var(--ls-name); line-height: var(--lh-tight); }
+  /* Sticky bar wordmark: h4 size with the wordmark's tracking. */
+  .wordmark--bar { font-size: var(--fs-h4); line-height: var(--lh-tight); letter-spacing: var(--ls-wordmark); }
 </style>

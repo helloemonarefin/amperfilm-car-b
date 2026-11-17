@@ -70,8 +70,10 @@ const ogImage = new URL(image, Astro.site ?? site.url).href;
     <script>
       import { initScroll } from '../scripts/scroll';
       import { initReveal } from '../scripts/reveal';
+      import { initTextReveal } from '../scripts/textReveal';
       initScroll();
       initReveal();
+      initTextReveal();
     </script>
   </body>
 </html>

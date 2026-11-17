@@ -1,0 +1,59 @@
+---
+// Compact sticky header — owner-approved proposal (BUILD_PROMPT §3 item 5;
+// not in Figma). Small wordmark + menu button on a translucent paper bar.
+// Appears only after the hero AND only while scrolling up; hides when
+// scrolling down or back over the hero. Hidden = inert (not tabbable).
+import Wordmark from '../ui/Wordmark.astro';
+import MenuButton from './MenuButton.astro';
+---
+
+<div class="sticky" data-sticky inert>
+  <div class="sticky__inner">
+    <Wordmark size="bar" href="/" />
+    <MenuButton size="sm" />
+  </div>
+</div>
+
+<style>
+  .sticky {
+    position: fixed; inset: 0 0 auto 0; z-index: var(--z-sticky);
+    height: var(--sticky-h);
+    background: var(--sticky-bg);
+    -webkit-backdrop-filter: blur(calc(var(--sticky-blur) / 2));
+    backdrop-filter: blur(calc(var(--sticky-blur) / 2));
+    border-bottom: 1px solid var(--border-rail);
+    color: var(--text-primary);
+    translate: 0 -100%;
+    visibility: hidden;
+    transition: translate var(--m-sticky-time) var(--ease-smooth), visibility 0s linear var(--m-sticky-time);
+  }
+  .sticky.is-shown { translate: 0 0; visibility: visible; transition: translate var(--m-sticky-time) var(--ease-smooth), visibility 0s; }
+  .sticky__inner { display: flex; align-items: center; justify-content: space-between; height: 100%; padding-inline: var(--side-pad); }
+</style>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-sticky]');
+  const hero = document.querySelector<HTMLElement>('.hero');
+  if (bar) {
+    let lastY = window.scrollY;
+    let raf = 0;
+    const set = (show: boolean) => {
+      if (bar.classList.contains('is-shown') === show) return;
+      bar.classList.toggle('is-shown', show);
+      bar.inert = !show;
+    };
+    const update = () => {
+      raf = 0;
+      const y = window.scrollY;
+      // Don't react while the menu has the page locked.
+      if (document.documentElement.classList.contains('is-locked')) { lastY = y; return; }
+      const pastHero = y > (hero ? hero.offsetTop + hero.offsetHeight : 0);
+      const dy = y - lastY;
+      if (!pastHero) set(false);
+      else if (dy < -4) set(true);   // scrolling up
+      else if (dy > 4) set(false);   // scrolling down
+      if (Math.abs(dy) > 4) lastY = y;
+    };
+    window.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
+  }
+</script>

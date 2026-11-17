@@ -16,14 +16,19 @@ export interface StatementProps {
   title: TwoTone;
 }
 const { index, label, icon, title } = Astro.props as StatementProps;
+// Words for the scroll-linked text reveal; soft words keep the faint colour.
+const words = [
+  ...title.strong.split(/\s+/).map((w) => ({ w, soft: false })),
+  ...(title.soft ?? '').split(/\s+/).filter(Boolean).map((w) => ({ w, soft: true })),
+];
 ---
 
 <section class="statement" aria-labelledby="statement-title">
   <RailFrame index={index} label={label}>
     <div class="statement__body">
       <span data-reveal><IconBadge icon={icon} /></span>
-      <h2 id="statement-title" class="t-h2 statement__title" data-reveal>
-        {title.strong}{title.soft && <> <span class="t-faint">{title.soft}</span></>}
+      <h2 id="statement-title" class="t-h2 statement__title" data-text-reveal>
+        {words.map((x, i) => <>{i > 0 && ' '}<span class:list={['tr-word', { 't-faint': x.soft }]}>{x.w}</span></>)}
       </h2>
     </div>
   </RailFrame>

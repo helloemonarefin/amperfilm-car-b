@@ -172,6 +172,12 @@
   --m-reveal-time:     0.6s;
   --m-reveal-stagger:  0.05s;
   --m-reveal-distance: 24px;
+  /* Scroll-linked text reveal: ghost opacity, and where it starts / ends
+     (fractions of the viewport height measured at the text's top). */
+  --tr-dim: 0.12;
+  --tr-start: 0.9;
+  --tr-end: 0.35;
+  --tr-ease-time: 0.12s;
   --m-bar-time: 1.2s;            /* progress bars fill once on reveal */
   --m-reveal-stagger-max: 1.6s; /* owner: long sequences keep stepping one by one */
 }
@@ -395,6 +401,12 @@
      with padding + an equal negative margin, so the layout doesn't move. */
   --tap-min: 24px;
   --tap-pad: 2px;
+
+  /* Sticky compact header (owner-approved proposal; not in Figma). */
+  --sticky-h: 64px;
+  --sticky-bg: rgb(248 248 243 / 0.88);   /* paper at 88% */
+  --sticky-blur: 24px;                    /* Figma-scale value; CSS halves it */
+  --m-sticky-time: 0.4s;
 
   /* Stacking order. */
   --z-sticky: 40; --z-menu: 50; --z-skip: 100;

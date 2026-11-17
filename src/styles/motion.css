@@ -33,6 +33,13 @@
   animation: rise-in var(--m-reveal-time) var(--m-reveal-ease) var(--reveal-delay, 0s) both;
 }
 
+/* ---------- Scroll-linked text reveal (owner, 2026-11-17) ----------
+   --p (0 → 1) is set per word by scripts/textReveal.ts. */
+.is-text-reveal .tr-word {
+  opacity: calc(var(--tr-dim) + (1 - var(--tr-dim)) * var(--p, 0));
+  transition: opacity var(--tr-ease-time) linear;
+}
+
 /* ---------- Smooth scroll and scroll lock (§1.13) ---------- */
 html { scroll-behavior: smooth; }
 html.is-locked { overflow: hidden; }

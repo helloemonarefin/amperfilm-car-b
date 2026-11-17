@@ -4,10 +4,12 @@ import Hero from '../components/sections/Hero.astro';
 import SectionRenderer from '../components/layout/SectionRenderer.astro';
 import MenuPanel from '../components/layout/MenuPanel.astro';
 import Footer from '../components/layout/Footer.astro';
+import StickyBar from '../components/layout/StickyBar.astro';
 import { hero, home } from '../content/home';
 ---
 
 <Base title={home.title} description={home.description}>
+  <StickyBar />
   <Hero {...hero} />
   <main id="main">
     <SectionRenderer sections={home.sections} />
