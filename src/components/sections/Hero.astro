@@ -36,9 +36,12 @@ export interface HeroProps {
   imagePosition?: string;
   /** Dark top/bottom gradient over the photo (v2.1). Home v2.2 has none. */
   overlay?: boolean;
+  /** WebP quality. 80 keeps the mobile hero light (Lighthouse ≥ 95); raise it
+      only for photos with smooth gradients that band (Home uses 90). */
+  quality?: number;
 }
 
-const { image, imageAlt = '', imagePosition = 'center', overlay = true, headline, chips = [], card, actions, intro } = Astro.props as HeroProps;
+const { image, imageAlt = '', imagePosition = 'center', overlay = true, quality = 80, headline, chips = [], card, actions, intro } = Astro.props as HeroProps;
 
 // Page-load order (owner, 2026-11-17): top-left → top-right → bottom-left
 // (card, then each headline line) → bottom-right (each chip, each button,
@@ -66,7 +69,7 @@ const widths = [640, 960, 1280, 1600, 1920, 2560].filter((w) => w < image.width)
       alt={imageAlt}
       widths={widths}
       sizes="100vw"
-      quality={90}
+      quality={quality}
       style={`object-position: ${imagePosition}`}
       loading="eager"
       fetchpriority="high"

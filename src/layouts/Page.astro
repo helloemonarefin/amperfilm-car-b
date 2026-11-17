@@ -15,12 +15,14 @@ export interface PageContent {
   description: string;
   hero: HeroProps;
   sections: SectionEntry[];
+  /** Keep out of search results (404). */
+  noindex?: boolean;
 }
 interface Props { page: PageContent }
 const { page } = Astro.props;
 ---
 
-<Base title={page.title} description={page.description}>
+<Base title={page.title} description={page.description} noindex={page.noindex}>
   <StickyBar />
   <Hero {...page.hero} />
   <main id="main">

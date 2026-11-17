@@ -70,3 +70,21 @@ export const faqPage: PageContent = {
     b.cta,
   ],
 };
+
+// 404 (BOILERPLATE §4.8). Not in Figma: built from the shared hero, no new
+// design. TODO(owner): confirm the copy.
+export const notFoundPage: PageContent = {
+  title: title('Page not found'),
+  description: 'This page doesn’t exist. Head back home or see our EV protection prices.',
+  hero: {
+    image: modelY,
+    headline: ['This page doesn’t exist.', 'Let’s get you back on track.'],
+    actions: [
+      { label: 'Back to home', href: '/', variant: 'ghost-white' },
+      { label: 'See pricing', href: '/pricing', variant: 'white' },
+    ],
+    intro: `Text your model to ${site.phone} and we'll answer within the hour.`,
+  },
+  sections: [],
+  noindex: true,
+};

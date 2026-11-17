@@ -6,7 +6,7 @@ import sitemap from '@astrojs/sitemap';
 const PRIVATE = ['/styleguide'];
 
 export default defineConfig({
-  // Placeholder domain until the client's is known (replace per client; also in public/robots.txt).
+  // Placeholder domain until the client's is known (replace per client, together with site.ts → url; robots.txt is generated from it).
   site: 'https://amperfilm.example',
   output: 'static',
   trailingSlash: 'ignore',
