@@ -1,0 +1,42 @@
+---
+// Section header row — DESIGN_SYSTEM §7: two-tone `h2` on the left
+// (≤ 760 wide), `body-sm` intro in text-secondary on the right (≤ 320–380),
+// or a slotted action (e.g. a ghost button on Models). Stacks below 1024.
+// Two-tone: the strong part in text-primary, the soft part in text-faint,
+// in ONE heading (DESIGN_SYSTEM §3).
+export interface TwoTone {
+  /** First sentence, ≤ 30 characters (DESIGN_SYSTEM §9). */
+  strong: string;
+  /** The rest, in the faint colour. Section headline total ≈ 60 characters. */
+  soft?: string;
+}
+interface Props {
+  id: string;
+  title: TwoTone;
+  /** ≤ 110 characters (2–3 lines at 320px). */
+  intro?: string;
+  level?: 'h1' | 'h2' | 'h3';
+  /** Role class for the headline (default .t-h2). */
+  size?: 'h2' | 'h2-xl' | 'h2-dark' | 'h2-sm';
+  class?: string;
+}
+const { id, title, intro, level: H = 'h2', size = 'h2', class: className } = Astro.props;
+const hasAside = intro || Astro.slots.has('aside');
+---
+
+<div class:list={['section-head', className]}>
+  <H id={id} class:list={[`t-${size}`, 'section-head__title']} data-reveal>
+    {title.strong}{title.soft && <> <span class="t-faint">{title.soft}</span></>}
+  </H>
+  {hasAside && (
+    <div class="section-head__aside" data-reveal>
+      {intro && <p class="t-body-sm c-secondary section-head__intro">{intro}</p>}
+      <slot name="aside" />
+    </div>
+  )}
+</div>
+
+<style>
+  .section-head__title { max-width: var(--head-title-max); }
+  .section-head__intro { max-width: var(--head-intro-max); }
+</style>

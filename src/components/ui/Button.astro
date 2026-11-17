@@ -1,0 +1,103 @@
+---
+// Button — DESIGN_SYSTEM §7, BOILERPLATE §2.1.
+// Pill; heights sm 42 / md 48 / lg 52; padding 0 22; `button` text; arrow 16, gap 10.
+// Variants: dark, white, ghost, ghost-white, and `cta` (white, 56 tall,
+// padding 24/8, ends in a 40px accent circle with a white arrow).
+// Hover is a colour change only (200ms). Hover colours are PROPOSED tokens.
+import Icon from './Icon.astro';
+
+interface Props {
+  label: string;
+  variant?: 'dark' | 'white' | 'ghost' | 'ghost-white' | 'cta';
+  size?: 'sm' | 'md' | 'lg';
+  /** Fill the parent's width. */
+  block?: boolean;
+  /** Show the trailing arrow (default true). */
+  arrow?: boolean;
+  href?: string;
+  external?: boolean;
+  type?: 'button' | 'submit';
+  class?: string;
+  [key: string]: unknown;
+}
+
+const {
+  label, variant = 'dark', size = 'md', block = false, arrow = true,
+  href, external = false, type = 'button', class: className, ...rest
+} = Astro.props;
+const Tag = href ? 'a' : 'button';
+const tagProps = href
+  ? { href, ...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {}) }
+  : { type };
+---
+
+<Tag
+  class:list={['btn', `btn--${variant}`, variant !== 'cta' && `btn--${size}`, { 'btn--block': block }, 't-button', className]}
+  {...tagProps}
+  {...rest}
+>
+  <span class="btn__label">{label}</span>
+  {external && <span class="sr-only"> (opens in a new tab)</span>}
+  {variant === 'cta'
+    ? <span class="btn__circle" aria-hidden="true"><Icon name="arrow-right" /></span>
+    : arrow && <Icon name="arrow-right" />}
+</Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--gap-tight);
+    height: var(--btn-h-md);
+    padding-inline: var(--btn-pad-x);
+    border: 1px solid transparent;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      background-color var(--m-hover-time) var(--m-hover-ease),
+      border-color var(--m-hover-time) var(--m-hover-ease),
+      color var(--m-hover-time) var(--m-hover-ease);
+  }
+  .btn--sm { height: var(--btn-h-sm); }
+  .btn--lg { height: var(--btn-h-lg); }
+  .btn--block { display: flex; width: 100%; }
+
+  .btn--dark        { background: var(--bg-inverse); color: var(--text-on-dark); }
+  .btn--white       { background: var(--bg-card); color: var(--text-primary); }
+  .btn--ghost       { border-color: var(--border-strong); color: var(--text-primary); }
+  .btn--ghost-white { border-color: var(--border-on-dark-strong); color: var(--text-on-dark); }
+
+  .btn--cta {
+    justify-content: space-between;
+    height: var(--btn-h-cta);
+    padding: 0 var(--space-2) 0 var(--space-6);
+    background: var(--bg-card);
+    color: var(--text-primary);
+  }
+  .btn__circle {
+    display: grid;
+    place-items: center;
+    width: var(--round-lg);
+    height: var(--round-lg);
+    flex: none;
+    border-radius: var(--radius-pill);
+    background: var(--bg-accent);
+    color: var(--text-on-accent);
+    transition: background-color var(--m-hover-time) var(--m-hover-ease);
+  }
+
+  /* Hover (pointer devices) + identical focus-visible state.
+     .is-hover forces the state for the styleguide only. */
+  @media (hover: hover) and (pointer: fine) {
+    .btn--dark:hover, .btn--white:hover { background: var(--hover-solid-bg); color: var(--hover-solid-text); }
+    .btn--ghost:hover { background: var(--hover-ghost-bg); border-color: var(--hover-ghost-bg); color: var(--hover-ghost-text); }
+    .btn--ghost-white:hover { background: var(--hover-ghost-white-bg); border-color: var(--hover-ghost-white-bg); color: var(--hover-ghost-white-text); }
+    .btn--cta:hover .btn__circle { background: var(--bg-inverse); }
+  }
+  .btn--dark:focus-visible, .btn--white:focus-visible, .btn--dark.is-hover, .btn--white.is-hover { background: var(--hover-solid-bg); color: var(--hover-solid-text); }
+  .btn--ghost:focus-visible, .btn--ghost.is-hover { background: var(--hover-ghost-bg); border-color: var(--hover-ghost-bg); color: var(--hover-ghost-text); }
+  .btn--ghost-white:focus-visible, .btn--ghost-white.is-hover { background: var(--hover-ghost-white-bg); border-color: var(--hover-ghost-white-bg); color: var(--hover-ghost-white-text); }
+  .btn--cta:focus-visible .btn__circle, .btn--cta.is-hover .btn__circle { background: var(--bg-inverse); }
+</style>

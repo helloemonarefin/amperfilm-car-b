@@ -1,0 +1,32 @@
+---
+// Text link row — DESIGN_SYSTEM §7 + Figma Services card:
+// `link` 14 Medium on the left + 32 dark round arrow (14 icon) on the right,
+// spread across the card width, top divider, 16 top padding.
+// The whole row is one link; the round button is decorative.
+import RoundButton from './RoundButton.astro';
+interface Props { label: string; href?: string; class?: string }
+const { label, href, class: className } = Astro.props;
+const Tag = href ? 'a' : 'div';
+---
+
+<Tag class:list={['tlink', className]} href={href}>
+  <span class="t-link">{label}</span>
+  <RoundButton as="span" icon="arrow-up-right" iconSize={14} size="md" variant="dark" class="tlink__btn" />
+</Tag>
+
+<style>
+  .tlink {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border-rail);
+    color: var(--text-primary);
+  }
+  .tlink :global(.tlink__btn) { transition: background-color var(--m-hover-time) var(--m-hover-ease); }
+  @media (hover: hover) and (pointer: fine) {
+    a.tlink:hover :global(.tlink__btn) { background: var(--hover-solid-bg); }
+  }
+  a.tlink:focus-visible :global(.tlink__btn), .tlink.is-hover :global(.tlink__btn) { background: var(--hover-solid-bg); }
+</style>

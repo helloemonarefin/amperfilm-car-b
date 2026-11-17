@@ -1,0 +1,60 @@
+---
+// Pills and tags — DESIGN_SYSTEM §7 + Figma.
+//  soft     : `tag` 13 Medium on accent-soft, 8/12, radius 8 (service tags, model tags)
+//  white    : white pill on photos, `eyebrow`, 6/12 ("THEIR CAR", "MODEL · MOST BOOKED")
+//  label    : white pill, 11 Medium, 6/10 (warranty labels on glass)
+//  accent   : accent pill, white `eyebrow-sm` 10, 5/8 ("Delivery week", "You're here" uses 5/10)
+//  glass    : glass-sm pill on photos, `eyebrow`, 7/12 (active hero chip)
+//  plain    : text only, same box as glass (inactive hero chips)
+//  index    : glass index pill "01" on cards, 11 SemiBold (no uppercase), 6/10
+//  outline  : 1px white 30% on dark, `eyebrow`, 8/14
+interface Props {
+  variant?: 'soft' | 'white' | 'label' | 'accent' | 'glass' | 'plain' | 'index' | 'outline';
+  /** Wider accent pill (menu "You're here"). */
+  wide?: boolean;
+  as?: 'span' | 'li' | 'p';
+  class?: string;
+  [key: string]: unknown;
+}
+const { variant = 'soft', wide = false, as: Tag = 'span', class: className, ...rest } = Astro.props;
+const typeClass = {
+  soft: 't-tag', white: 't-eyebrow', label: 't-eyebrow pill__lc', accent: 't-eyebrow-sm',
+  glass: 't-eyebrow', plain: 't-eyebrow', index: 't-eyebrow pill__lc', outline: 't-eyebrow',
+}[variant];
+---
+
+<Tag class:list={['pill', `pill--${variant}`, { 'pill--wide': wide }, typeClass, className]} {...rest}><slot /></Tag>
+
+<style>
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    width: max-content;
+    white-space: nowrap;
+    border-radius: var(--radius-pill);
+    border: 1px solid transparent;
+  }
+  /* Lower-case variants of the eyebrow box (label, index). */
+  .pill__lc { text-transform: none; }
+
+  .pill--soft    { padding: var(--pill-py-lg) var(--pill-px-lg); border-radius: var(--radius-sm); background: var(--bg-accent-soft); color: var(--text-primary); }
+  .pill--white   { padding: var(--pill-py-sm) var(--pill-px-lg); background: var(--bg-card); color: var(--text-primary); }
+  .pill--label   { padding: var(--pill-py-sm) var(--pill-px-md); background: var(--bg-card); color: var(--text-primary); font-weight: var(--fw-medium); letter-spacing: var(--ls-body); }
+  .pill--accent  { padding: var(--pill-py-xs) var(--pill-px-sm); background: var(--bg-accent); color: var(--text-on-accent); }
+  .pill--wide    { padding-inline: var(--pill-px-md); }
+  .pill--glass, .pill--plain { padding: var(--pill-py-md) var(--pill-px-lg); color: var(--text-on-dark); border-width: 0; }
+  .pill--glass {
+    background: var(--glass-sm-bg);
+    -webkit-backdrop-filter: blur(calc(var(--glass-sm-blur) / 2));
+    backdrop-filter: blur(calc(var(--glass-sm-blur) / 2));
+  }
+  .pill--index {
+    padding: var(--pill-py-sm) var(--pill-px-md);
+    background: var(--glass-lg-bg);
+    border-color: var(--border-glass);
+    color: var(--text-on-dark);
+    -webkit-backdrop-filter: blur(calc(var(--glass-sm-blur) / 2));
+    backdrop-filter: blur(calc(var(--glass-sm-blur) / 2));
+  }
+  .pill--outline { padding: var(--pill-py-lg) var(--pill-px-xl); border-color: var(--border-pill-on-dark); color: var(--text-on-dark); }
+</style>

@@ -60,3 +60,7 @@ html { font-family: var(--font-sans); font-optical-sizing: auto; }
 /* ---------- Two-tone headlines (DESIGN_SYSTEM §3) ----------
    One heading; the second sentence is a <span class="t-faint">. */
 .t-faint { color: var(--text-faint); }
+
+/* ---------- Line-height modifiers (shared Figma values) ---------- */
+.lh-tighter { line-height: var(--lh-tighter); }
+.lh-snug    { line-height: var(--lh-snug); }

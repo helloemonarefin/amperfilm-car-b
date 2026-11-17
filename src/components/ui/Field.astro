@@ -1,0 +1,100 @@
+---
+// Form field — DESIGN_SYSTEM §7 "Form (dark)" / "Form (light, footer)".
+// Dark: `micro` label at white 50%, `body-lg` value (1.3), white 25% underline,
+//       gap 10, 12 below the value.
+// Light: the label is the large `h3` line above ("Get your price by text."),
+//        `--border-strong` underline, optional trailing icon.
+// Inputs are ≥ 16px so iOS doesn't zoom (Figma's 15px footer input → 16).
+// Children: pass <option>s to render a native <select> instead of an <input>.
+import Icon, { type IconName } from './Icon.astro';
+
+interface Props {
+  id: string;
+  name: string;
+  label: string;
+  theme?: 'dark' | 'light';
+  /** Light theme: the label is a visible `h3` line (footer). */
+  labelStyle?: 'micro' | 'h3';
+  type?: 'text' | 'tel' | 'email';
+  placeholder?: string;
+  autocomplete?: string;
+  required?: boolean;
+  icon?: IconName;
+  /** Renders a native <select>; the slot holds the <option>s. */
+  select?: boolean;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const {
+  id, name, label, theme = 'dark', labelStyle = 'micro', type = 'text', placeholder,
+  autocomplete, required = false, icon, select = false, class: className, ...rest
+} = Astro.props;
+const trailing: IconName | undefined = select ? 'chevron-down' : icon;
+---
+
+<div class:list={['field', `field--${theme}`, `field--label-${labelStyle}`, className]}>
+  <label for={id} class:list={['field__label', labelStyle === 'h3' ? 't-h3' : 't-micro']}>{label}</label>
+  <div class="field__control">
+    {select
+      ? <select id={id} name={name} required={required} autocomplete={autocomplete} class="field__input" {...rest}><slot /></select>
+      : <input id={id} name={name} type={type} placeholder={placeholder} autocomplete={autocomplete} required={required} class="field__input" {...rest} />}
+    {trailing && <Icon name={trailing} class="field__icon" />}
+  </div>
+</div>
+
+<style>
+  .field { display: flex; flex-direction: column; gap: var(--gap-tight); min-width: 0; }
+  .field--label-h3 { gap: var(--space-5); }
+
+  .field__control {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--field-line);
+  }
+  .field__input {
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--field-text);
+    font-size: var(--field-fs);
+    line-height: var(--lh-snug);
+    letter-spacing: var(--ls-body-lg);
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .field__input::placeholder { color: var(--field-placeholder); opacity: 1; }
+  .field__input:focus { outline: none; }
+  /* Focus shows on the underline, so the ring doesn't box a borderless input. */
+  .field__control:has(.field__input:focus-visible) { border-bottom-color: var(--focus-color); box-shadow: 0 1px 0 var(--focus-color); }
+  select.field__input { cursor: pointer; padding-right: var(--space-8); }
+  .field :global(.field__icon) { color: var(--field-icon); pointer-events: none; }
+  .field:has(select) :global(.field__icon) { position: absolute; right: 0; top: 0; }
+
+  .field--dark {
+    --field-line: var(--border-on-dark);
+    --field-text: var(--text-on-dark);
+    --field-placeholder: var(--text-on-dark-tertiary);
+    --field-icon: var(--text-on-dark);
+    --field-fs: var(--fs-body-lg);
+    color-scheme: dark;
+  }
+  .field--dark .field__label { color: var(--text-on-dark-tertiary); }
+  .field--light {
+    --field-line: var(--border-strong);
+    --field-text: var(--text-primary);
+    --field-placeholder: var(--text-tertiary);
+    --field-icon: var(--text-primary);
+    --field-fs: var(--fs-body);
+  }
+  .field--light .field__label { color: var(--text-primary); }
+  .field--light.field--label-micro .field__label { color: var(--text-tertiary); }
+  /* Native dropdown list stays readable on every OS. */
+  .field option { color: var(--text-primary); background: var(--bg-card); }
+</style>

@@ -1,0 +1,39 @@
+---
+// Menu button — DESIGN_SYSTEM §7: 68 × 36, three 3.83px lines, in
+// currentColor (white on the hero). Opens the menu panel (MenuPanel.astro).
+// Every instance (hero, sticky bar) shares data-menu-toggle; the panel
+// script keeps aria-expanded in sync on all of them.
+interface Props { size?: 'md' | 'sm'; class?: string }
+const { size = 'md', class: className } = Astro.props;
+---
+
+<button
+  class:list={['menu-btn', `menu-btn--${size}`, className]}
+  type="button"
+  aria-label="Open menu"
+  aria-expanded="false"
+  aria-controls="site-menu"
+  data-menu-toggle
+>
+  <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+</button>
+
+<style>
+  .menu-btn {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: none;
+    width: var(--menu-btn-w);
+    height: var(--menu-btn-h);
+    color: inherit;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .menu-btn span { display: block; height: var(--menu-btn-bar); background: currentColor; }
+  /* Compact sticky bar: half size, same proportions. */
+  .menu-btn--sm { width: calc(var(--menu-btn-w) / 2); height: calc(var(--menu-btn-h) / 2); }
+  .menu-btn--sm span { height: calc(var(--menu-btn-bar) / 2); }
+  /* Keep the tap target ≥ 24px even when drawn small. */
+  .menu-btn--sm::after { content: ''; position: absolute; inset: calc(var(--space-2) * -1); }
+</style>

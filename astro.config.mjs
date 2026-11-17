@@ -20,7 +20,7 @@ export default defineConfig({
       name: 'DM Sans',
       cssVariable: '--font-dm-sans',
       provider: fontProviders.fontsource(),
-      weights: [300, 400, 500, 600],
+      weights: ['300 600'],
       styles: ['normal'],
       subsets: ['latin'],
       display: 'swap',

@@ -186,6 +186,11 @@
   --focus-width: 2px;
   --focus-offset: 2px;
 
+  /* Blur convention: every blur token holds the FIGMA value. Figma's blur is
+     twice the CSS standard deviation, so CSS always uses calc(token / 2)
+     (verified: Figma "blur 220" exports as stdDeviation 110). */
+  --backdrop-blur: 6px; /* page behind the open menu (Figma 6 → CSS 3) */
+
   /* Glows (DESIGN_SYSTEM §4). Size and position are set per placement. */
   --glow-hero-bg: rgb(var(--brand-accent-rgb) / 0.55);
   --glow-hero-blur: 220px;
@@ -193,4 +198,51 @@
   --glow-panel-blur: 180px;
   --glow-diagram-bg: radial-gradient(closest-side, var(--brand-accent), rgb(var(--brand-accent-rgb) / 0.55));
   --glow-diagram-blur: 90px;
+
+  /* Extra line heights used by 2+ components (Figma). */
+  --lh-tighter: 1.1;  /* menu links */
+  --lh-snug: 1.3;     /* footer/menu link lists, input values, check lists */
+
+  /* Pills (DESIGN_SYSTEM §7, Figma paddings). */
+  --pill-py-xs: 5px; --pill-py-sm: 6px; --pill-py-md: 7px; --pill-py-lg: 8px;
+  --pill-px-sm: 8px; --pill-px-md: 10px; --pill-px-lg: 12px; --pill-px-xl: 14px;
+
+  /* Round buttons and icon tiles (Figma sizes). */
+  --round-sm: 28px; --round-md: 32px; --round-lg: 40px; --round-xl: 44px;
+  --gap-tight: 10px; /* button label → arrow, field label → value */
+  --head-title-max: 760px; --head-intro-max: 320px;
+  --menu-btn-w: 68px; --menu-btn-h: 36px; --menu-btn-bar: 3.83px;
+
+  /* Menu motion (BUILD_PROMPT §3: slide ≈24px from the right + fade). */
+  --m-menu-time: 0.5s;
+  --m-menu-ease: var(--ease-smooth);
+  --m-menu-distance: 24px;
+  --m-menu-item-delay: 0.12s;
+  --m-menu-item-time: 0.5s;
+  --m-menu-item-distance: 12px;
+  --m-menu-item-stagger: var(--m-reveal-stagger);
+
+  /* Hover colours — PROPOSED (Figma has no hover states; awaiting owner OK). */
+  --hover-solid-bg: var(--brand-accent);      /* dark + white buttons, dark round buttons */
+  --hover-solid-text: var(--text-on-accent);
+  --hover-ghost-bg: var(--brand-ink);         /* ghost button */
+  --hover-ghost-text: var(--text-on-dark);
+  --hover-ghost-white-bg: #FFFFFF;            /* ghost-white button */
+  --hover-ghost-white-text: var(--brand-ink);
+
+  /* Menu panel (Figma 373:157) — component tokens. */
+  --menu-pad: 28px 28px 28px 32px;
+  --menu-link-py: 9px;
+  --menu-link-gap: 16px;   /* index → label */
+  --menu-card-gap: 14px;
+  --menu-thumb: 64px;
+  --menu-thumb-radius: 10px;
+  --menu-dot: 8px;
+
+  /* Footer (Figma 337:972) — component tokens. */
+  --footer-form-w: 560px;
+  --footer-legal-gap: 14px;
+
+  /* Stacking order. */
+  --z-sticky: 40; --z-menu: 50; --z-skip: 100;
 }

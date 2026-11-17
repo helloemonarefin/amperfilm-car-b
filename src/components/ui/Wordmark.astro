@@ -1,0 +1,33 @@
+---
+// Wordmark — live text from site.ts, never an image (DESIGN_SYSTEM §1).
+// Sizes: hero 128 (.t-wordmark), glass 15 Medium, footer 304 (.t-wordmark-xl).
+// It is never the page's <h1>. With `href` it links home with an accessible name.
+import { site } from '../../content/site';
+
+interface Props {
+  size?: 'xl' | 'hero' | 'sm';
+  href?: string;
+  /** The footer giant wordmark is decorative (the name is already in the legal line). */
+  decorative?: boolean;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { size = 'hero', href, decorative = false, class: className, ...rest } = Astro.props;
+const roleClass = { xl: 't-wordmark-xl', hero: 't-wordmark', sm: 't-body-sm t-medium wordmark--sm' }[size];
+const Tag = href ? 'a' : 'p';
+---
+
+<Tag
+  class:list={['wordmark', roleClass, className]}
+  href={href}
+  aria-label={href ? `${site.legalName} — home` : undefined}
+  aria-hidden={decorative ? 'true' : undefined}
+  {...rest}
+>{site.brand}{site.mark && <span class="wordmark__mark">{site.mark}</span>}</Tag>
+
+<style>
+  .wordmark { display: block; width: max-content; }
+  /* Glass wordmark: 15 Medium, −1% (Figma). */
+  .wordmark--sm { letter-spacing: var(--ls-name); line-height: var(--lh-tight); }
+</style>

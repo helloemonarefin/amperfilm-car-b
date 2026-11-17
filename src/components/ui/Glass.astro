@@ -1,0 +1,14 @@
+---
+// Glass panel — DESIGN_SYSTEM §4. One `.glass` class with size modifiers
+// (global.css); this component only picks the tag and the modifier.
+// Always on a photo or a dark/blue area, never on paper.
+interface Props {
+  size?: 'sm' | 'md' | 'lg' | 'menu';
+  as?: string;
+  class?: string;
+  [key: string]: unknown;
+}
+const { size = 'md', as: Tag = 'div', class: className, ...rest } = Astro.props;
+---
+
+<Tag class:list={['glass', `glass--${size}`, className]} {...rest}><slot /></Tag>

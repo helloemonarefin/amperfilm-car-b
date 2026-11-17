@@ -1,0 +1,22 @@
+---
+// Icon badge — DESIGN_SYSTEM §7: 44 accent circle with a white 20px icon,
+// centred above a centred headline (Statement, How it works). Decorative.
+import Icon, { type IconName } from './Icon.astro';
+interface Props { icon: IconName; class?: string }
+const { icon, class: className } = Astro.props;
+---
+
+<span class:list={['badge', className]} aria-hidden="true"><Icon name={icon} size={20} /></span>
+
+<style>
+  .badge {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: var(--icon-badge);
+    height: var(--icon-badge);
+    border-radius: var(--radius-pill);
+    background: var(--bg-accent);
+    color: var(--text-on-accent);
+  }
+</style>

@@ -1,0 +1,134 @@
+---
+// Footer — DESIGN_SYSTEM §7 (Figma 337:972), BOILERPLATE §2.4.
+// Top: `meta` eyebrow + `h2-sm` statement left; 3 link columns right
+//      (`meta` heading + `body-sm` links at 1.3, gap 12, column gap 56).
+// Middle: top border; legal + service area left; "Get your price by text"
+//      Netlify form right (560 wide).
+// Bottom: giant `wordmark-xl`, 24 from the left edge, sitting on the page
+//      bottom (descenders clipped as in Figma). Decorative: aria-hidden.
+import Wordmark from '../ui/Wordmark.astro';
+import Field from '../ui/Field.astro';
+import Button from '../ui/Button.astro';
+import { site, telHref } from '../../content/site';
+
+const f = site.footer;
+const studio = [
+  { label: site.address.street },
+  { label: site.address.city },
+  { label: site.phone, href: telHref },
+  { label: site.email, href: `mailto:${site.email}` },
+  { label: site.hours },
+];
+const columns = [...f.columns, { heading: site.menu.studioLabel, links: studio }];
+---
+
+<footer class="footer">
+  <div class="footer__top frame">
+    <div class="footer__brand">
+      <p class="t-meta c-tertiary" data-reveal>{f.eyebrow}</p>
+      <p class="t-h2-sm footer__statement" data-reveal>
+        {f.statement.map((line, i) => <>{i > 0 && <br />}{line}</>)}
+      </p>
+    </div>
+    <nav class="footer__cols" aria-label="Footer">
+      {columns.map((col) => (
+        <div class="footer__col" data-reveal>
+          <h2 class="t-meta c-tertiary">{col.heading}</h2>
+          <ul role="list">
+            {col.links.map((link) => (
+              <li class="t-body-sm lh-snug">
+                {link.href ? <a class="footer__link" href={link.href}>{link.label}</a> : <span>{link.label}</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </nav>
+  </div>
+
+  <div class="footer__mid frame">
+    <div class="footer__legal" data-reveal>
+      <p class="t-micro t-medium footer__rights">
+        <span>©{site.year} {site.legalName}</span><span>{f.rightsReserved}</span>
+      </p>
+      <p class="t-small c-secondary">{f.serving} {site.serviceArea.join(' · ')}</p>
+    </div>
+
+    <form
+      class="footer__form"
+      name="price-by-text"
+      method="POST"
+      data-netlify="true"
+      netlify-honeypot="bot-field"
+      data-reveal
+    >
+      <input type="hidden" name="form-name" value="price-by-text" />
+      <p class="sr-only"><label>Leave this empty: <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+      <Field
+        id="footer-phone"
+        name="phone"
+        type="tel"
+        theme="light"
+        labelStyle="h3"
+        label={f.form.label}
+        placeholder={f.form.placeholder}
+        autocomplete="tel"
+        required
+        icon="chat"
+      />
+      <Button type="submit" variant="dark" size="sm" label={f.form.button} />
+    </form>
+  </div>
+
+  <div class="footer__wm frame">
+    <Wordmark size="xl" decorative />
+  </div>
+</footer>
+
+<style>
+  .footer { background: var(--bg-page); color: var(--text-primary); }
+
+  .footer__top {
+    display: flex; flex-direction: column; gap: var(--space-10);
+    padding: var(--space-18) var(--side-pad) var(--space-16);
+  }
+  .footer__brand { display: flex; flex-direction: column; gap: var(--space-4); }
+  .footer__cols { display: grid; grid-template-columns: repeat(2, max-content); gap: var(--space-10) var(--space-14); }
+  .footer__col { display: flex; flex-direction: column; gap: var(--space-3); }
+  .footer__col ul { display: flex; flex-direction: column; gap: var(--space-3); }
+  .footer__col li { display: flex; color: var(--text-strong); }
+  .footer__link {
+    text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 3px;
+    transition: text-decoration-color var(--m-hover-time) var(--m-hover-ease), color var(--m-hover-time) var(--m-hover-ease);
+  }
+  @media (hover: hover) and (pointer: fine) { .footer__link:hover { color: var(--text-primary); text-decoration-color: currentColor; } }
+  .footer__link:focus-visible { color: var(--text-primary); text-decoration-color: currentColor; }
+
+  .footer__mid {
+    display: flex; flex-direction: column; gap: var(--space-10);
+    padding: var(--space-10) var(--side-pad);
+    border-top: 1px solid var(--border-rail);
+  }
+  .footer__legal { display: flex; flex-direction: column; gap: var(--footer-legal-gap); }
+  .footer__rights {
+    display: flex; flex-wrap: wrap; column-gap: var(--space-3);
+    color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: var(--ls-button);
+  }
+  .footer__form { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-5); width: 100%; }
+  .footer__form > :global(.field) { width: 100%; }
+
+  /* Giant wordmark: sits on the page bottom; the line box (0.86) clips the
+     descender exactly like the Figma frame. */
+  .footer__wm { overflow: hidden; padding: var(--space-5) 0 0 var(--space-6); }
+
+  @media (min-width: 768px) {
+    .footer__cols { grid-template-columns: repeat(3, max-content); }
+  }
+  @media (min-width: 1024px) {
+    .footer__top { flex-direction: row; justify-content: space-between; align-items: flex-start; }
+    .footer__cols { display: flex; gap: var(--space-14); }
+    .footer__mid { flex-direction: row; justify-content: space-between; align-items: flex-start; }
+    .footer__form { width: var(--footer-form-w); }
+  }
+</style>

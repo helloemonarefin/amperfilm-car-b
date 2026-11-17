@@ -1,0 +1,72 @@
+---
+// Round icon button — DESIGN_SYSTEM §7. 28–44 circle.
+// Variants: dark (ink, white icon), outline (1px border-default), white,
+// accent, glass (menu close: white 16% + glass border).
+// Interactive (href/button) needs `label`. Use as="span" when it only
+// decorates a larger link (card arrows, text-link rows).
+import Icon, { type IconName } from './Icon.astro';
+
+interface Props {
+  icon: IconName;
+  iconSize?: number;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  variant?: 'dark' | 'outline' | 'white' | 'accent' | 'glass';
+  label?: string;
+  href?: string;
+  as?: 'button' | 'a' | 'span';
+  type?: 'button' | 'submit';
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { icon, iconSize, size = 'sm', variant = 'dark', label, href, as, type = 'button', class: className, ...rest } = Astro.props;
+const Tag = as ?? (href ? 'a' : 'button');
+const isControl = Tag !== 'span';
+---
+
+<Tag
+  class:list={['round', `round--${size}`, `round--${variant}`, className]}
+  href={Tag === 'a' ? href : undefined}
+  type={Tag === 'button' ? type : undefined}
+  aria-label={isControl ? label : undefined}
+  aria-hidden={isControl ? undefined : 'true'}
+  {...rest}
+>
+  <Icon name={icon} size={iconSize} />
+</Tag>
+
+<style>
+  .round {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: var(--round-size);
+    height: var(--round-size);
+    border: 1px solid transparent;
+    border-radius: var(--radius-pill);
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      background-color var(--m-hover-time) var(--m-hover-ease),
+      border-color var(--m-hover-time) var(--m-hover-ease),
+      color var(--m-hover-time) var(--m-hover-ease);
+  }
+  .round--sm { --round-size: var(--round-sm); }
+  .round--md { --round-size: var(--round-md); }
+  .round--lg { --round-size: var(--round-lg); }
+  .round--xl { --round-size: var(--round-xl); }
+
+  .round--dark    { background: var(--bg-inverse); color: var(--text-on-dark); }
+  .round--outline { border-color: var(--border-default); color: var(--text-primary); }
+  .round--white   { background: var(--bg-card); color: var(--text-primary); }
+  .round--accent  { background: var(--bg-accent); color: var(--text-on-accent); }
+  .round--glass   { background: var(--glass-md-bg); border-color: var(--border-glass); color: var(--text-on-dark); }
+
+  @media (hover: hover) and (pointer: fine) {
+    :is(a, button).round--dark:hover, :is(a, button).round--white:hover { background: var(--hover-solid-bg); color: var(--hover-solid-text); }
+    :is(a, button).round--outline:hover { border-color: var(--text-primary); }
+    :is(a, button).round--glass:hover { background: var(--glass-lg-bg); }
+  }
+  :is(a, button).round--dark:focus-visible, :is(a, button).round--white:focus-visible, .round--dark.is-hover, .round--white.is-hover { background: var(--hover-solid-bg); color: var(--hover-solid-text); }
+  :is(a, button).round--outline:focus-visible, .round--outline.is-hover { border-color: var(--text-primary); }
+  :is(a, button).round--glass:focus-visible, .round--glass.is-hover { background: var(--glass-lg-bg); }
+</style>

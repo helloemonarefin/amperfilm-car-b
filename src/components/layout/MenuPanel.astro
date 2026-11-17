@@ -1,0 +1,228 @@
+---
+// Menu panel — DESIGN_SYSTEM §7 (Figma 373:121), BOILERPLATE §1.8 behaviour.
+// A floating glass panel from the right (520 wide, 16 from the edges, r24,
+// glass-menu) over a backdrop that dims and blurs the page.
+// Contents: "Menu" label + close; 8 numbered links (current page = "You're
+// here" pill + aria-current); featured offer card; CTA; two contact columns.
+// Behaviour: focus trap, Esc, backdrop click, scroll lock, aria-expanded on
+// every [data-menu-toggle]. Without JS the menu stays closed; the footer
+// carries the same links.
+import { Image } from 'astro:assets';
+import Icon from '../ui/Icon.astro';
+import Pill from '../ui/Pill.astro';
+import RoundButton from '../ui/RoundButton.astro';
+import Button from '../ui/Button.astro';
+import { site, telHref } from '../../content/site';
+import { model, price } from '../../content/pricing';
+
+interface Props {
+  /** Override the current path (styleguide demo of the "You're here" state). */
+  currentPath?: string;
+}
+const here = ((Astro.props.currentPath ?? Astro.url.pathname).replace(/\/$/, '') || '/');
+const isCurrent = (href?: string) => href != null && (href.replace(/\/$/, '') || '/') === here;
+const offer = site.menu.offer;
+const offerPrice = price(offer.model, offer.package);
+---
+
+<div class="menu" id="site-menu" data-menu inert>
+  <div class="menu__backdrop" data-menu-close aria-hidden="true"></div>
+  <div class="menu__panel glass glass--menu" role="dialog" aria-modal="true" aria-labelledby="menu-title" data-lenis-prevent>
+    <div class="menu__head">
+      <p class="menu__title t-eyebrow" id="menu-title"><span class="menu__dot" aria-hidden="true"></span>{site.menu.title}</p>
+      <RoundButton icon="close" size="xl" variant="glass" label="Close menu" data-menu-close />
+    </div>
+
+    <nav class="menu__nav" aria-label="Main">
+      <ol role="list">
+        {site.nav.map((link, i) => (
+          <li class="menu__item" style={`--i:${i}`}>
+            <a class="menu__link" href={link.href} aria-current={isCurrent(link.href) ? 'page' : undefined}>
+              <span class="menu__label">
+                <span class="menu__index t-micro t-medium" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                <span class="t-h3 lh-tighter menu__text">{link.label}</span>
+              </span>
+              {isCurrent(link.href)
+                ? <Pill variant="accent" wide>{site.menu.here}</Pill>
+                : <Icon name="arrow-up-right" />}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <div class="menu__spacer"></div>
+
+    <a class="menu__offer menu__item" href={offer.href} style={`--i:${site.nav.length}`}>
+      <Image class="menu__thumb" src={offer.image} alt={offer.imageAlt} widths={[64, 128]} sizes="64px" />
+      <span class="menu__offer-text">
+        <span class="t-name menu__offer-title">{offer.title}</span>
+        <span class="t-micro menu__offer-sub">{model(offer.model).name} {offerPrice} · {offer.note}</span>
+      </span>
+      <RoundButton as="span" icon="arrow-right" size="lg" variant="white" />
+    </a>
+
+    <div class="menu__item menu__cta" style={`--i:${site.nav.length + 1}`}>
+      <Button variant="cta" block label={site.menu.cta.label} href={site.menu.cta.href} />
+    </div>
+
+    <div class="menu__contact menu__item" style={`--i:${site.nav.length + 2}`}>
+      <div class="menu__col">
+        <p class="menu__col-label t-micro t-medium"><Icon name="phone" />{site.menu.contactLabel}</p>
+        <p class="t-meta lh-snug menu__col-text">
+          <a href={telHref}>{site.phone}</a><br />
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+        </p>
+      </div>
+      <div class="menu__col">
+        <p class="menu__col-label t-micro t-medium"><Icon name="pin" />{site.menu.studioLabel}</p>
+        <p class="t-meta lh-snug menu__col-text">{site.address.street}<br />{site.hours}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .menu { position: fixed; inset: 0; z-index: var(--z-menu); visibility: hidden; transition: visibility 0s linear var(--menu-close); --menu-close: calc(var(--m-menu-time) * 0.5); }
+  .menu.is-open { visibility: visible; transition: visibility 0s; }
+
+  .menu__backdrop {
+    position: absolute; inset: 0;
+    background: var(--bg-backdrop);
+    -webkit-backdrop-filter: blur(calc(var(--backdrop-blur) / 2));
+    backdrop-filter: blur(calc(var(--backdrop-blur) / 2));
+    opacity: 0;
+    transition: opacity var(--menu-close) var(--ease-in);
+  }
+  .is-open .menu__backdrop { opacity: 1; transition: opacity var(--m-menu-time) var(--m-menu-ease); }
+
+  .menu__panel {
+    position: absolute;
+    top: var(--menu-inset); right: var(--menu-inset); bottom: var(--menu-inset);
+    width: min(var(--menu-w), calc(100% - 2 * var(--menu-inset)));
+    display: flex; flex-direction: column;
+    padding: var(--menu-pad);
+    padding-bottom: calc(var(--space-7) + env(safe-area-inset-bottom));
+    border-color: var(--border-glass);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    opacity: 0;
+    translate: var(--m-menu-distance) 0;
+    transition: opacity var(--menu-close) var(--ease-in), translate var(--menu-close) var(--ease-in);
+  }
+  .is-open .menu__panel {
+    opacity: 1; translate: 0 0;
+    transition: opacity var(--m-menu-time) var(--m-menu-ease), translate var(--m-menu-time) var(--m-menu-ease);
+  }
+
+  /* Items rise in with the §7 stagger after the panel starts moving. */
+  .menu__item { opacity: 0; translate: 0 var(--m-menu-item-distance); transition: opacity var(--menu-close) ease, translate var(--menu-close) ease; }
+  .is-open .menu__item {
+    opacity: 1; translate: 0 0;
+    --d: calc(var(--m-menu-item-delay) + var(--i, 0) * var(--m-menu-item-stagger));
+    transition: opacity var(--m-menu-item-time) var(--m-menu-ease) var(--d), translate var(--m-menu-item-time) var(--m-menu-ease) var(--d);
+  }
+
+  .menu__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-7); }
+  .menu__title { display: flex; align-items: center; gap: var(--gap-tight); color: var(--text-on-dark-strong); }
+  .menu__dot { width: var(--menu-dot); height: var(--menu-dot); border-radius: var(--radius-pill); background: var(--bg-accent); }
+
+  .menu__link {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+    padding-block: var(--menu-link-py);
+    border-bottom: 1px solid var(--border-menu);
+    color: var(--text-on-dark-strong);
+    transition: color var(--m-hover-time) var(--m-hover-ease);
+  }
+  .menu__link[aria-current='page'] { color: var(--text-on-dark); }
+  .menu__label { display: flex; align-items: baseline; gap: var(--menu-link-gap); min-width: 0; }
+  .menu__index { color: var(--text-on-dark-tertiary); }
+  .menu__text { letter-spacing: var(--ls-h3-lg); }
+  @media (hover: hover) and (pointer: fine) { .menu__link:hover { color: var(--text-on-dark); } }
+  .menu__link:focus-visible { color: var(--text-on-dark); }
+
+  .menu__spacer { flex: 1 0 var(--space-8); }
+
+  .menu__offer {
+    display: flex; align-items: center; gap: var(--menu-card-gap);
+    padding: var(--space-3);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-lg);
+    background: var(--glass-sm-bg);
+    color: var(--text-on-dark);
+  }
+  .menu__offer :global(.menu__thumb) { width: var(--menu-thumb); height: var(--menu-thumb); flex: none; object-fit: cover; border-radius: var(--menu-thumb-radius); }
+  .menu__offer-text { display: flex; flex-direction: column; gap: var(--space-1); flex: 1; min-width: 0; }
+  .menu__offer-title { font-size: var(--fs-body); }
+  .menu__offer-sub { color: var(--text-on-dark-secondary); line-height: var(--lh-snug); }
+
+  .menu__cta { margin-top: var(--space-4); }
+
+  .menu__contact {
+    display: grid; grid-template-columns: 1fr 1fr;
+    margin-top: var(--space-6); padding-top: var(--space-5);
+    border-top: 1px solid var(--border-menu);
+  }
+  .menu__col { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+  .menu__col + .menu__col { padding-left: var(--space-5); border-left: 1px solid var(--border-menu); }
+  .menu__col-label { display: flex; align-items: center; gap: var(--space-2); color: var(--text-on-dark-tertiary); }
+  .menu__col-text { color: var(--text-on-dark-strong); }
+  .menu__col-text a { text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 3px; transition: text-decoration-color var(--m-hover-time); }
+  @media (hover: hover) and (pointer: fine) { .menu__col-text a:hover { text-decoration-color: currentColor; } }
+  .menu__col-text a:focus-visible { text-decoration-color: currentColor; }
+
+  @media (max-width: 479px) {
+    .menu__contact { grid-template-columns: 1fr; gap: var(--space-5); }
+    .menu__col + .menu__col { padding-left: 0; border-left: 0; }
+  }
+</style>
+
+<script>
+  import { lockScroll } from '../../scripts/scroll';
+
+  const menu = document.querySelector<HTMLElement>('[data-menu]');
+  if (menu) {
+    const panel = menu.querySelector<HTMLElement>('[role="dialog"]')!;
+    const toggles = () => document.querySelectorAll<HTMLButtonElement>('[data-menu-toggle]');
+    let opener: HTMLElement | null = null;
+
+    const focusables = () =>
+      [...panel.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')].filter((el) => el.offsetParent !== null);
+
+    const setOpen = (open: boolean, returnFocus = true) => {
+      menu.classList.toggle('is-open', open);
+      menu.inert = !open;
+      toggles().forEach((t) => {
+        t.setAttribute('aria-expanded', String(open));
+        t.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      });
+      lockScroll(open);
+      if (open) {
+        opener = document.activeElement as HTMLElement | null;
+        // Focus the close button first so the panel is announced from the top.
+        panel.querySelector<HTMLElement>('[data-menu-close]')?.focus();
+      } else if (returnFocus) {
+        opener?.focus();
+      }
+    };
+
+    document.addEventListener('click', (e) => {
+      const target = e.target as Element;
+      if (target.closest('[data-menu-toggle]')) setOpen(!menu.classList.contains('is-open'));
+      else if (target.closest('[data-menu-close]')) setOpen(false);
+    });
+    // Following a link closes the menu without pulling focus back.
+    panel.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false, false)));
+
+    menu.addEventListener('keydown', (e) => {
+      if (!menu.classList.contains('is-open')) return;
+      if (e.key === 'Escape') { e.preventDefault(); setOpen(false); return; }
+      if (e.key !== 'Tab') return;
+      const items = focusables();
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last?.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus(); }
+    });
+  }
+</script>

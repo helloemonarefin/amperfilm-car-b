@@ -5,6 +5,21 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import photo from '../assets/images/home/delivery-week.jpg';
 import { site } from '../content/site';
+import Icon, { icons, type IconName } from '../components/ui/Icon.astro';
+import Wordmark from '../components/ui/Wordmark.astro';
+import Button from '../components/ui/Button.astro';
+import RoundButton from '../components/ui/RoundButton.astro';
+import IconBadge from '../components/ui/IconBadge.astro';
+import Pill from '../components/ui/Pill.astro';
+import TextLink from '../components/ui/TextLink.astro';
+import SectionMeta from '../components/ui/SectionMeta.astro';
+import SectionHeader from '../components/ui/SectionHeader.astro';
+import Glass from '../components/ui/Glass.astro';
+import Field from '../components/ui/Field.astro';
+import MenuButton from '../components/layout/MenuButton.astro';
+import MenuPanel from '../components/layout/MenuPanel.astro';
+import Footer from '../components/layout/Footer.astro';
+import cta from '../assets/images/cta/cta.jpg';
 
 const colours = [
   { group: 'Brand (per client)', tokens: ['--brand-paper', '--brand-ink', '--brand-accent', '--brand-accent-soft'] },
@@ -55,6 +70,11 @@ const roles: { role: string; sample: string; d: string; m: string; w: string; da
 
 const spaces = [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 14, 16, 18, 20, 28];
 const radii = ['--radius-xs', '--radius-media', '--radius-card-sm', '--radius-sm', '--radius-md', '--radius-glass-md', '--radius-lg', '--radius-xl', '--radius-menu', '--radius-pill'];
+const iconNames = Object.keys(icons) as IconName[];
+const btnVariants = ['dark', 'white', 'ghost', 'ghost-white'] as const;
+const btnSizes = ['sm', 'md', 'lg'] as const;
+const roundVariants = ['dark', 'outline', 'white', 'accent', 'glass'] as const;
+const roundSizes = ['sm', 'md', 'lg', 'xl'] as const;
 const glasses = [
   { cls: 'glass--sm', name: 'glass-sm', note: '14% · blur 12 · r12' },
   { cls: 'glass--md', name: 'glass-md', note: '16% · blur 16 · r16' },
@@ -63,7 +83,7 @@ const glasses = [
 ---
 
 <Base title="Styleguide" noindex>
-  <main id="main" class="sg">
+  <main id="main" class="sg" style={`--sg-photo: url(${cta.src})`}>
     <header class="container sg__head">
       <p class="t-meta c-tertiary">Private · noindex · not in sitemap</p>
       <h1 class="t-h2">Master D <span class="t-faint">styleguide.</span></h1>
@@ -211,6 +231,120 @@ const glasses = [
       </div>
     </section>
 
+
+    <!-- Components (Phase 2) -->
+    <section class="sg__section" aria-labelledby="sg-components">
+      <div class="section-meta t-meta"><span>(06)</span><span>Components</span></div>
+      <div class="container sg__comp">
+        <h2 id="sg-components" class="t-h3 sg__title">Components</h2>
+        <p class="t-small c-secondary sg__note">"Hover" columns use the styleguide-only <code>.is-hover</code> class; focus-visible looks identical. Hover colours are a proposal (Figma has none).</p>
+
+        <h3 class="t-meta c-tertiary sg__sub">Wordmark · live text from site.ts</h3>
+        <div class="sg__dark sg__row">
+          <Wordmark size="hero" />
+          <Wordmark size="sm" />
+        </div>
+
+        <h3 class="t-meta c-tertiary sg__sub">Icons · Figma paths, currentColor</h3>
+        <ul class="sg__icons" role="list">
+          {iconNames.map((n) => (
+            <li><Icon name={n} size={24} /><code class="t-micro">{n}</code><span class="t-micro c-tertiary">{icons[n].view}px · {icons[n].stroke}</span></li>
+          ))}
+        </ul>
+
+        <h3 class="t-meta c-tertiary sg__sub">Buttons · default / hover · sm 42 · md 48 · lg 52</h3>
+        {btnVariants.map((v) => (
+          <div class:list={['sg__row sg__btnrow', { 'sg__photo-bg': v === 'ghost-white' || v === 'white' }]}>
+            <code class="t-micro sg__rowlabel">{v}</code>
+            {btnSizes.map((z) => <Button variant={v} size={z} label={`${v} ${z}`} />)}
+            <Button variant={v} label="hover" class="is-hover" />
+            <Button variant={v} label="no arrow" arrow={false} />
+          </div>
+        ))}
+        <div class="sg__row sg__photo-bg sg__btnrow">
+          <code class="t-micro sg__rowlabel">cta</code>
+          <div class="sg__cta"><Button variant="cta" block label="Get my price in 60 seconds" href="#" /></div>
+          <div class="sg__cta"><Button variant="cta" block label="hover" class="is-hover" /></div>
+        </div>
+
+        <h3 class="t-meta c-tertiary sg__sub">Round icon buttons · 28 · 32 · 40 · 44 (last = hover)</h3>
+        {roundVariants.map((v) => (
+          <div class:list={['sg__row', { 'sg__photo-bg': v === 'glass' || v === 'white' }]}>
+            <code class="t-micro sg__rowlabel">{v}</code>
+            {roundSizes.map((z) => <RoundButton variant={v} size={z} icon={v === 'glass' ? 'close' : 'arrow-up-right'} iconSize={z === 'sm' || z === 'md' ? 14 : undefined} label={`${v} ${z}`} />)}
+            <RoundButton variant={v} size="lg" icon="arrow-right" label="hover" class="is-hover" />
+          </div>
+        ))}
+
+        <h3 class="t-meta c-tertiary sg__sub">Icon badge</h3>
+        <div class="sg__row"><IconBadge icon="bolt" /><IconBadge icon="shield" /></div>
+
+        <h3 class="t-meta c-tertiary sg__sub">Pills and tags</h3>
+        <div class="sg__row">
+          <Pill variant="soft">PPF</Pill><Pill variant="soft">Model Y</Pill>
+          <Pill variant="accent">Delivery week</Pill><Pill variant="accent" wide>You're here</Pill>
+        </div>
+        <div class="sg__row sg__photo-bg">
+          <Pill variant="white">Their car</Pill>
+          <Pill variant="label">10-yr warranty</Pill>
+          <Pill variant="index">01</Pill>
+          <Pill variant="glass">Ceramic tint</Pill>
+          <Pill variant="plain">Ceramic coating</Pill>
+        </div>
+        <div class="sg__row sg__dark">
+          <Pill variant="outline">PPF</Pill><Pill variant="outline">Ceramic tint</Pill>
+          <Pill variant="accent">Exact price</Pill>
+        </div>
+
+        <h3 class="t-meta c-tertiary sg__sub">Text link · default / hover</h3>
+        <div class="sg__row sg__card">
+          <TextLink label="Explore PPF" href="#" />
+          <TextLink label="Explore Tint" href="#" class="is-hover" />
+        </div>
+
+        <h3 class="t-meta c-tertiary sg__sub">Glass panel (component)</h3>
+        <div class="sg__row sg__photo-bg sg__glassrow">
+          <Glass size="sm" class="sg__gp"><Pill variant="accent">Delivery week</Pill><span class="t-meta">Book before delivery day.</span></Glass>
+          <Glass size="md" class="sg__gp"><span class="t-eyebrow-sm">PPF</span><span class="t-spec">Model-specific</span></Glass>
+          <Glass size="lg" class="sg__gp"><Wordmark size="sm" /><span class="t-num-lg">60<span class="t-unit"> sec</span></span></Glass>
+        </div>
+
+        <h3 class="t-meta c-tertiary sg__sub">Form fields · dark (select, filled input, placeholder) and light</h3>
+        <div class="sg__dark sg__form">
+          <div class="sg__form-row">
+            <Field id="sg-car" name="car" label="Car" select><option>Model Y</option><option>Model 3</option></Field>
+            <Field id="sg-pkg" name="package" label="Package" select><option>Delivery Day</option></Field>
+          </div>
+          <Field id="sg-contact" name="contact" label="Phone or email" placeholder="(512) 555-0000" />
+          <Field id="sg-filled" name="filled" label="Filled" value="(512) 555-0187" />
+        </div>
+        <div class="sg__form sg__form--light">
+          <Field id="sg-light" name="phone" type="tel" theme="light" labelStyle="h3" label="Get your price by text." placeholder="Your phone number" icon="chat" />
+          <Button variant="dark" size="sm" label="Send" />
+        </div>
+
+        <h3 class="t-meta c-tertiary sg__sub">Menu button + menu panel (opens the real panel; "You're here" shown on Pricing)</h3>
+        <div class="sg__row sg__photo-bg sg__menurow">
+          <MenuButton />
+          <MenuButton size="sm" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Section meta + header, full width -->
+    <section class="sg__section" aria-labelledby="sg-head-demo">
+      <SectionMeta index={6} label="What we install" />
+      <div class="container">
+        <SectionHeader id="sg-head-demo" title={{ strong: 'Everything we install.', soft: "Nothing we don't." }} intro="Three services, each chosen for how electric cars are built and driven." />
+      </div>
+      <SectionMeta index={7} label="Models" />
+      <div class="container">
+        <SectionHeader id="sg-head-demo-2" title={{ strong: 'Section header', soft: 'with a button on the right.' }}>
+          <Button slot="aside" variant="ghost" label="All models" href="#" />
+        </SectionHeader>
+      </div>
+    </section>
+
     <!-- Page-wide grid overlay (toggle) -->
     <div class="sg__overlay" data-grid-overlay hidden aria-hidden="true">
       <div class="container grid-12">
@@ -218,6 +352,8 @@ const glasses = [
       </div>
     </div>
   </main>
+  <MenuPanel currentPath="/pricing" />
+  <Footer />
 </Base>
 
 <script>
@@ -305,4 +441,23 @@ const glasses = [
   .sg__overlay { position: fixed; inset: 0; z-index: 50; pointer-events: none; }
   .sg__overlay .grid-12 { height: 100%; }
   .sg__overlay span { background: rgb(var(--brand-accent-rgb) / 0.08); border-inline: 1px solid rgb(var(--brand-accent-rgb) / 0.25); }
+
+  /* Components section */
+  .sg__sub { padding: var(--space-8) 0 var(--space-3); }
+  .sg__row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); padding: var(--space-4); border-radius: var(--radius-md); }
+  .sg__rowlabel { width: 6rem; }
+  .sg__dark { background: var(--bg-inverse); color: var(--text-on-dark); padding: var(--space-6); border-radius: var(--radius-md); }
+  .sg__dark.sg__row { gap: var(--space-8); align-items: end; }
+  .sg__photo-bg { background: center / cover no-repeat var(--sg-photo); color: var(--text-on-dark); }
+  .sg__card { background: var(--bg-card); display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: var(--space-8); padding: var(--space-6); }
+  .sg__icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr)); gap: var(--space-3); }
+  .sg__icons li { display: grid; justify-items: start; gap: var(--space-2); padding: var(--space-4); background: var(--bg-card); border-radius: var(--radius-sm); }
+  .sg__cta { width: min(100%, 28rem); }
+  .sg__glassrow { padding: var(--space-10); gap: var(--space-4); }
+  .sg__gp { display: grid; gap: var(--space-3); padding: var(--space-5); }
+  .sg__form { display: grid; gap: var(--space-7); padding: var(--space-10); }
+  .sg__form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-8); }
+  .sg__form--light { background: var(--bg-page); border: 1px solid var(--border-rail); border-radius: var(--radius-md); justify-items: start; gap: var(--space-5); margin-top: var(--space-3); }
+  .sg__form--light > :global(.field) { width: min(100%, 35rem); }
+  .sg__menurow { padding: var(--space-10); gap: var(--space-10); }
 </style>
