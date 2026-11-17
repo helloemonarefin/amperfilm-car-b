@@ -3,9 +3,12 @@
 // A floating glass panel from the right (520 wide, 16 from the edges, r24,
 // glass-menu) over a backdrop that dims and blurs the page.
 // The menu button never moves (owner, 2026-11-17): on open, a copy of the
-// clicked hamburger is placed exactly over it, morphs into a cross and acts
-// as the close button, while the panel's background grows out of it (a
-// circular clip-path reveal from the button's centre). Closing reverses it.
+// clicked hamburger is placed exactly over it, then shrinks a little and
+// glides into the panel's top-right corner (inside its padding) while it
+// morphs into the cross, which acts as the close button. The panel's
+// background grows out of the button (a circular clip-path reveal from its
+// centre). Closing reverses it: the cross glides back and becomes the
+// hamburger again. "Menu" label + dot: tablet/desktop only (owner).
 // Contents: "Menu" label; 8 numbered links (current page = "You're
 // here" pill + aria-current); featured offer card; CTA; two contact columns.
 // Behaviour: focus trap, Esc, backdrop click, scroll lock, aria-expanded on
@@ -91,7 +94,16 @@ const offerPrice = price(offer.model, offer.package);
 </div>
 
 <style>
-  .menu { position: fixed; inset: 0; z-index: var(--z-menu); visibility: hidden; transition: visibility 0s linear var(--menu-close); --menu-close: calc(var(--m-menu-reveal-time) * 0.6); }
+  .menu {
+    position: fixed; inset: 0; z-index: var(--z-menu);
+    visibility: hidden;
+    /* Stay visible until the cross has glided back to the button. */
+    transition: visibility 0s linear max(var(--menu-close), var(--m-menu-x-time));
+    --menu-close: calc(var(--m-menu-reveal-time) * 0.6);
+    /* The cross's box inside the panel (--gx/--gy set by JS from the panel). */
+    --gw: var(--menu-x-w); --gh: var(--menu-x-h); --gb: var(--menu-x-bar);
+  }
+  @media (min-width: 768px) { .menu { --gw: var(--menu-x-w-d); --gh: var(--menu-x-h-d); --gb: var(--menu-x-bar-d); } }
   .menu.is-open { visibility: visible; transition: visibility 0s; }
   /* The clicked hamburger hides while its stand-in is on screen. !important
      beats the finished intro animation's opacity. */
@@ -133,21 +145,27 @@ const offerPrice = price(offer.model, offer.package);
     left: var(--tx); top: var(--ty); width: var(--tw); height: var(--th);
     display: flex; flex-direction: column; justify-content: space-between;
     color: var(--tc, var(--text-on-dark));
-    transition: color var(--m-burger-time) var(--m-burger-ease);
+    transition:
+      color var(--m-burger-time) var(--m-burger-ease),
+      left var(--m-menu-x-time) var(--m-menu-ease), top var(--m-menu-x-time) var(--m-menu-ease),
+      width var(--m-menu-x-time) var(--m-menu-ease), height var(--m-menu-x-time) var(--m-menu-ease);
   }
   .menu__toggle span {
     display: block; height: var(--tb); background: currentColor; transform-origin: center;
     transition:
+      height var(--m-menu-x-time) var(--m-menu-ease),
       translate var(--m-burger-time) var(--m-burger-ease),
       rotate var(--m-burger-time) var(--m-burger-ease),
       scale var(--m-burger-time) var(--m-burger-ease),
       opacity var(--m-burger-time) var(--m-burger-ease);
   }
   .menu__toggle::after { content: ''; position: absolute; inset: calc(var(--space-2) * -1); } /* ≥ 24px tap target */
-  .is-morph .menu__toggle { color: var(--text-on-dark); }
-  .is-morph .menu__toggle span:nth-child(1) { translate: 0 calc((var(--th) - var(--tb)) / 2); rotate: 45deg; }
+  /* Open: smaller, in the panel's top-right corner, crossed. */
+  .is-morph .menu__toggle { color: var(--text-on-dark); left: var(--gx); top: var(--gy); width: var(--gw); height: var(--gh); }
+  .is-morph .menu__toggle span { height: var(--gb); }
+  .is-morph .menu__toggle span:nth-child(1) { translate: 0 calc((var(--gh) - var(--gb)) / 2); rotate: 45deg; }
   .is-morph .menu__toggle span:nth-child(2) { scale: 0 1; opacity: 0; }
-  .is-morph .menu__toggle span:nth-child(3) { translate: 0 calc((var(--th) - var(--tb)) / -2); rotate: -45deg; }
+  .is-morph .menu__toggle span:nth-child(3) { translate: 0 calc((var(--gh) - var(--gb)) / -2); rotate: -45deg; }
 
   /* Items rise in with the §7 stagger after the panel starts moving. */
   .menu__item { opacity: 0; translate: 0 var(--m-menu-item-distance); transition: opacity var(--menu-close) ease, translate var(--menu-close) ease; }
@@ -157,16 +175,16 @@ const offerPrice = price(offer.model, offer.package);
     transition: opacity var(--m-menu-item-time) var(--m-menu-ease) var(--d), translate var(--m-menu-item-time) var(--m-menu-ease) var(--d);
   }
 
-  /* Header row is as tall as the cross (it sits over the clicked button, so
-     its position comes from --ty/--th/--tw): the links start below it plus
-     the usual 28px, and "Menu" lines up with the cross's centre (owner).
-     Cross half-height = half the bar length × sin 45° ≈ 0.36 × width. */
+  /* Header row = the cross's box in the corner; the links start the usual
+     28px below it, and "Menu" (≥ 768) lines up with the cross's centre. */
   .menu__head {
     display: flex; align-items: center; justify-content: space-between;
-    min-height: calc(var(--ty, 0px) + var(--th, 0px) / 2 + var(--tw, 0px) * 0.36 - var(--menu-inset) - var(--menu-pad-top));
+    min-height: var(--gh);
     margin-bottom: var(--space-7);
   }
-  .menu__title { display: flex; align-items: center; gap: var(--gap-tight); color: var(--text-on-dark-strong); }
+  /* Phones: no "Menu" label or dot, only the cross (owner, 2026-11-17). */
+  .menu__title { display: none; align-items: center; gap: var(--gap-tight); color: var(--text-on-dark-strong); }
+  @media (min-width: 768px) { .menu__title { display: flex; } }
 
   .menu__dot { width: var(--menu-dot); height: var(--menu-dot); border-radius: var(--radius-pill); background: var(--bg-accent); }
 
@@ -275,6 +293,11 @@ const offerPrice = price(offer.model, offer.package);
       const cy = r.top + r.height / 2 - p.top;
       const far = Math.max(Math.hypot(cx, cy), Math.hypot(p.width - cx, cy), Math.hypot(cx, p.height - cy), Math.hypot(p.width - cx, p.height - cy));
       set('--cx', `${cx}px`); set('--cy', `${cy}px`); set('--cr', `${far + 80}px`); // +80 keeps the shadow
+      // The cross's resting place: the panel's top-right corner, inside its padding.
+      const ps = getComputedStyle(panel);
+      const gw = parseFloat(getComputedStyle(menu).getPropertyValue('--gw')) || 32;
+      set('--gx', `${p.right - parseFloat(ps.paddingRight) - gw}px`);
+      set('--gy', `${p.top + parseFloat(ps.paddingTop)}px`);
     };
 
     const focusables = () =>
@@ -302,7 +325,7 @@ const offerPrice = price(offer.model, offer.package);
         const src = opener;
         if (returnFocus) src?.focus({ preventScroll: true });
         // Swap back to the real button once the cross is a hamburger again.
-        closeTimer = window.setTimeout(() => src?.classList.remove('is-menu-source'), Math.max(ms('--m-burger-time'), ms('--m-menu-reveal-time') * 0.6));
+        closeTimer = window.setTimeout(() => src?.classList.remove('is-menu-source'), Math.max(ms('--m-burger-time'), ms('--m-menu-x-time'), ms('--m-menu-reveal-time') * 0.6));
       }
     };
 

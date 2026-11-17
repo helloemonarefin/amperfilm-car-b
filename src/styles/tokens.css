@@ -248,6 +248,7 @@
   --menu-link-hover-x: 12px;      /* background bleeds past the text column */
   /* Hamburger ↔ cross morph (owner, 2026-11-17). */
   --m-burger-time: 0.35s;
+  --m-menu-x-time: 0.5s;          /* stand-in glides from the button to the panel corner (owner) */
   --m-burger-ease: var(--ease-smooth);
   /* Diagram dotted ring: one slow turn (owner, 2026-11-17). */
   --m-ring-time: 90s;
@@ -263,6 +264,12 @@
   /* Menu panel (Figma 373:157) — component tokens. */
   --menu-pad: 28px 28px 28px 32px;
   --menu-pad-top: 28px;
+  /* Close cross inside the panel (owner, 2026-11-17): on open, the clicked
+     hamburger's stand-in shrinks a little and glides to the panel's top-right
+     corner (inside its padding) while it morphs into the cross. Box = the
+     hamburger it morphs from; the cross itself is ≈ 0.71 × the width. */
+  --menu-x-w: 32px; --menu-x-h: 20px; --menu-x-bar: 2.5px;   /* phones */
+  --menu-x-w-d: 40px; --menu-x-h-d: 24px; --menu-x-bar-d: 3px; /* ≥ 768 */
   --menu-link-py: 9px;
   --menu-link-gap: 16px;   /* index → label */
   --menu-card-gap: 14px;
@@ -409,14 +416,7 @@
   --tap-pad: 2px;
 
   /* Sticky compact header (owner-approved proposal; not in Figma). */
-  /* The bar's menu button sits exactly at the menu panel's inner top-right
-     corner (inset + padding = 44), at the hero button's size, so the cross
-     lands inside the panel like it does from the hero (owner, 2026-11-17).
-     Bar height = that inset above and below the button. */
-  --sticky-btn-inset: calc(var(--menu-inset) + var(--menu-pad-top));
-  --sticky-h: calc(var(--sticky-btn-inset) * 2 + var(--menu-btn-h-m));
-  --sticky-h-d: calc(var(--sticky-btn-inset) * 2 + var(--menu-btn-h-d));
-  --wordmark-scale-bar: 0.5;      /* bar wordmark = half the hero wordmark */
+  --sticky-h: 64px;
   --sticky-bg: rgb(248 248 243 / 0.88);   /* paper at 88% */
   --sticky-blur: 24px;                    /* Figma-scale value; CSS halves it */
   --m-sticky-time: 0.4s;

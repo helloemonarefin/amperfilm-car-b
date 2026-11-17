@@ -1,9 +1,6 @@
 ---
-// Sticky header — owner-approved proposal (BUILD_PROMPT §3 item 5; not in
-// Figma). Wordmark + menu button on a translucent paper bar. The button is
-// the hero's size and sits at the menu panel's inner corner (44 from the
-// top and right), so opening the menu from here lines the cross up with the
-// panel (owner, 2026-11-17).
+// Compact sticky header — owner-approved proposal (BUILD_PROMPT §3 item 5;
+// not in Figma). Small wordmark + menu button on a translucent paper bar.
 // Appears only after the hero AND only while scrolling up; hides when
 // scrolling down or back over the hero. Hidden = inert (not tabbable).
 import Wordmark from '../ui/Wordmark.astro';
@@ -12,8 +9,8 @@ import MenuButton from './MenuButton.astro';
 
 <div class="sticky" data-sticky inert>
   <div class="sticky__inner">
-    <Wordmark size="bar" href="/" class="sticky__wm" />
-    <MenuButton class="sticky__menu" />
+    <Wordmark size="bar" href="/" />
+    <MenuButton size="sm" />
   </div>
 </div>
 
@@ -31,13 +28,7 @@ import MenuButton from './MenuButton.astro';
     transition: translate var(--m-sticky-time) var(--ease-smooth), visibility 0s linear var(--m-sticky-time);
   }
   .sticky.is-shown { translate: 0 0; visibility: visible; transition: translate var(--m-sticky-time) var(--ease-smooth), visibility 0s; }
-  .sticky__inner { display: flex; align-items: center; justify-content: space-between; height: 100%; padding-inline: var(--side-pad) var(--sticky-btn-inset); }
-  .sticky__inner :global(.sticky__wm) { font-size: calc(var(--fs-wordmark) * var(--wordmark-scale-bar)); }
-  .sticky__inner :global(.sticky__menu) { --menu-btn-w: var(--menu-btn-w-m); --menu-btn-h: var(--menu-btn-h-m); --menu-btn-bar: var(--menu-btn-bar-m); }
-  @media (min-width: 768px) {
-    .sticky { height: var(--sticky-h-d); }
-    .sticky__inner :global(.sticky__menu) { --menu-btn-w: var(--menu-btn-w-d); --menu-btn-h: var(--menu-btn-h-d); --menu-btn-bar: var(--menu-btn-bar-d); }
-  }
+  .sticky__inner { display: flex; align-items: center; justify-content: space-between; height: 100%; padding-inline: var(--side-pad); }
 </style>
 
 <script>
