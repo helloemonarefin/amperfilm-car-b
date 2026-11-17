@@ -30,7 +30,10 @@ const offerPrice = price(offer.model, offer.package);
   <div class="menu__panel glass glass--menu" role="dialog" aria-modal="true" aria-labelledby="menu-title" data-lenis-prevent>
     <div class="menu__head">
       <p class="menu__title t-eyebrow" id="menu-title"><span class="menu__dot" aria-hidden="true"></span>{site.menu.title}</p>
-      <RoundButton icon="close" size="xl" variant="glass" label="Close menu" data-menu-close />
+      <RoundButton size="xl" variant="glass" label="Close menu" data-menu-close>
+        <!-- Hamburger that turns into the cross once the panel arrives (owner, 2026-11-17). -->
+        <span class="menu__x" aria-hidden="true"><span></span><span></span><span></span></span>
+      </RoundButton>
     </div>
 
     <nav class="menu__nav" aria-label="Main">
@@ -125,6 +128,17 @@ const offerPrice = price(offer.model, offer.package);
 
   .menu__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-7); }
   .menu__title { display: flex; align-items: center; gap: var(--gap-tight); color: var(--text-on-dark-strong); }
+  /* Close icon: 3 bars (18 wide, Figma close-icon size) → cross. */
+  .menu__x { position: relative; display: flex; flex-direction: column; justify-content: space-between; width: var(--menu-x-w); height: var(--menu-x-h); }
+  .menu__x span {
+    height: var(--menu-x-bar); border-radius: var(--menu-x-bar); background: currentColor;
+    transition: translate var(--m-burger-time) var(--m-burger-ease), rotate var(--m-burger-time) var(--m-burger-ease), scale var(--m-burger-time) var(--m-burger-ease), opacity var(--m-burger-time) var(--m-burger-ease);
+  }
+  .is-open .menu__x span { transition-delay: var(--m-menu-item-delay); }
+  .is-open .menu__x span:nth-child(1) { translate: 0 calc((var(--menu-x-h) - var(--menu-x-bar)) / 2); rotate: 45deg; }
+  .is-open .menu__x span:nth-child(2) { scale: 0 1; opacity: 0; }
+  .is-open .menu__x span:nth-child(3) { translate: 0 calc((var(--menu-x-h) - var(--menu-x-bar)) / -2); rotate: -45deg; }
+
   .menu__dot { width: var(--menu-dot); height: var(--menu-dot); border-radius: var(--radius-pill); background: var(--bg-accent); }
 
   .menu__link {

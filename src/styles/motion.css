@@ -10,6 +10,9 @@
   to   { opacity: 1;     translate: 0 0; }
 }
 
+/* ---------- Continuous spin (diagram dotted ring) ---------- */
+@keyframes spin { to { rotate: 360deg; } }
+
 /* ---------- Page-load intro (§7.4) ----------
    CSS only. Add data-intro + style="--i:n" in reading order. */
 [data-intro] {

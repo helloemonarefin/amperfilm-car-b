@@ -7,7 +7,8 @@
 import Icon, { type IconName } from './Icon.astro';
 
 interface Props {
-  icon: IconName;
+  /** Omit to pass custom content in the default slot. */
+  icon?: IconName;
   iconSize?: number;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   variant?: 'dark' | 'outline' | 'white' | 'accent' | 'glass';
@@ -32,7 +33,7 @@ const isControl = Tag !== 'span';
   aria-hidden={isControl ? undefined : 'true'}
   {...rest}
 >
-  <Icon name={icon} size={iconSize} />
+  {icon ? <Icon name={icon} size={iconSize} /> : <slot />}
 </Tag>
 
 <style>

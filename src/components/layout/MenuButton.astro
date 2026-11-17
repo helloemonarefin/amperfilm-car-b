@@ -3,8 +3,8 @@
 // currentColor (white on the hero). Opens the menu panel (MenuPanel.astro).
 // Every instance (hero, sticky bar) shares data-menu-toggle; the panel
 // script keeps aria-expanded in sync on all of them.
-interface Props { size?: 'md' | 'sm'; class?: string }
-const { size = 'md', class: className } = Astro.props;
+interface Props { size?: 'md' | 'sm'; class?: string; [key: string]: unknown }
+const { size = 'md', class: className, ...rest } = Astro.props;
 ---
 
 <button
@@ -14,6 +14,7 @@ const { size = 'md', class: className } = Astro.props;
   aria-expanded="false"
   aria-controls="site-menu"
   data-menu-toggle
+  {...rest}
 >
   <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
 </button>
@@ -30,7 +31,22 @@ const { size = 'md', class: className } = Astro.props;
     color: inherit;
     -webkit-tap-highlight-color: transparent;
   }
-  .menu-btn span { display: block; height: var(--menu-btn-bar); background: currentColor; }
+  .menu-btn span {
+    display: block;
+    height: var(--menu-btn-bar);
+    background: currentColor;
+    transform-origin: center;
+    transition:
+      translate var(--m-burger-time) var(--m-burger-ease),
+      rotate var(--m-burger-time) var(--m-burger-ease),
+      scale var(--m-burger-time) var(--m-burger-ease),
+      opacity var(--m-burger-time) var(--m-burger-ease);
+  }
+  /* Open: the middle bar collapses, top and bottom meet in the middle and
+     rotate ±45° into a cross (owner, 2026-11-17). */
+  .menu-btn[aria-expanded='true'] span:nth-child(1) { translate: 0 calc((var(--menu-btn-h) - var(--menu-btn-bar)) / 2); rotate: 45deg; }
+  .menu-btn[aria-expanded='true'] span:nth-child(2) { scale: 0 1; opacity: 0; }
+  .menu-btn[aria-expanded='true'] span:nth-child(3) { translate: 0 calc((var(--menu-btn-h) - var(--menu-btn-bar)) / -2); rotate: -45deg; }
   /* Compact sticky bar: half size, same proportions. */
   .menu-btn--sm { width: calc(var(--menu-btn-w) / 2); height: calc(var(--menu-btn-h) / 2); }
   .menu-btn--sm span { height: calc(var(--menu-btn-bar) / 2); }

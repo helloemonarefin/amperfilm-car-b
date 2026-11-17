@@ -27,9 +27,27 @@ export interface HeroProps {
   actions: { label: string; href: string; variant: 'ghost-white' | 'white' }[];
   /** Right-aligned intro, ≤ 160 characters (3 lines at 430px). */
   intro?: string;
+  /** CSS object-position for the photo crop (e.g. "70% center" on phones). */
+  imagePosition?: string;
 }
 
-const { image, imageAlt = '', headline, chips = [], card, actions, intro } = Astro.props as HeroProps;
+const { image, imageAlt = '', imagePosition = 'center', headline, chips = [], card, actions, intro } = Astro.props as HeroProps;
+
+// Page-load order (owner, 2026-11-17): top-left → top-right → chips one by one
+// → bottom-left (card, then each headline line) → bottom-right (each button,
+// then the paragraph). Every element gets its own step (--m-intro-stagger).
+let step = 0;
+const intro_ = () => ({ 'data-intro': '', style: `--i:${step++}` });
+const iWordmark = intro_();
+const iMenu = intro_();
+const iChips = chips.map(() => intro_());
+const iCard = card ? intro_() : undefined;
+const iLines = headline.map(() => intro_());
+const iButtons = actions.map(() => intro_());
+const iIntro = intro ? intro_() : undefined;
+
+// Responsive widths up to the source size (a sharper upload gets more widths).
+const widths = [640, 960, 1280, 1600, 1920, 2560].filter((w) => w < image.width).concat(image.width);
 ---
 
 <header class="hero">
@@ -38,8 +56,9 @@ const { image, imageAlt = '', headline, chips = [], card, actions, intro } = Ast
       class="hero__img"
       src={image}
       alt={imageAlt}
-      widths={[image.width]}
+      widths={widths}
       sizes="100vw"
+      style={`object-position: ${imagePosition}`}
       loading="eager"
       fetchpriority="high"
     />
@@ -51,18 +70,18 @@ const { image, imageAlt = '', headline, chips = [], card, actions, intro } = Ast
   </div>
 
   <div class="hero__frame frame">
-    <Wordmark size="hero" href="/" class="hero__wm" data-intro style="--i:0" />
-    <MenuButton class="hero__menu" />
+    <Wordmark size="hero" href="/" class="hero__wm" {...iWordmark} />
+    <MenuButton class="hero__menu" {...iMenu} />
 
     {chips.length > 0 && (
-      <ul class="hero__chips" role="list" data-intro style="--i:3">
-        {chips.map((c) => <li><Pill variant={c.active ? 'glass' : 'plain'}>{c.label}</Pill></li>)}
+      <ul class="hero__chips" role="list">
+        {chips.map((c, i) => <li {...iChips[i]}><Pill variant={c.active ? 'glass' : 'plain'}>{c.label}</Pill></li>)}
       </ul>
     )}
 
     <div class="hero__main">
       {card && (
-        <div class="hero__card glass glass--sm" data-intro style="--i:3">
+        <div class="hero__card glass glass--sm" {...iCard}>
           <Image class="hero__thumb" src={card.image} alt={card.imageAlt ?? ''} widths={[52, 104]} sizes="52px" />
           <div class="hero__card-text">
             <Pill variant="accent">{card.tag}</Pill>
@@ -70,16 +89,16 @@ const { image, imageAlt = '', headline, chips = [], card, actions, intro } = Ast
           </div>
         </div>
       )}
-      <h1 class="t-hero hero__title" data-intro style="--i:1">
-        {headline.map((line, i) => <>{i > 0 && ' '}<span class="hero__line-break">{line}</span></>)}
+      <h1 class="t-hero hero__title">
+        {headline.map((line, i) => <>{i > 0 && ' '}<span class="hero__hline" {...iLines[i]}>{line}</span></>)}
       </h1>
     </div>
 
-    <div class="hero__actions" data-intro style="--i:2">
+    <div class="hero__actions">
       <div class="hero__buttons">
-        {actions.map((a) => <Button variant={a.variant} label={a.label} href={a.href} />)}
+        {actions.map((a, i) => <Button variant={a.variant} label={a.label} href={a.href} {...iButtons[i]} />)}
       </div>
-      {intro && <p class="t-small hero__intro">{intro}</p>}
+      {intro && <p class="t-small hero__intro" {...iIntro}>{intro}</p>}
     </div>
   </div>
 </header>
@@ -115,9 +134,9 @@ const { image, imageAlt = '', headline, chips = [], card, actions, intro } = Ast
   .hero__main { margin-top: auto; }
   .hero__card { display: none; }
   .hero__title { color: var(--text-on-dark); }
-  /* Figma's two lines from 768; below that the headline wraps (balanced)
-     so no line is left with a single word. */
-  @media (min-width: 768px) { .hero__line-break { display: block; } }
+  /* One block per Figma line (each animates on its own); each line wraps
+     balanced on phones so no line is left with a single word. */
+  .hero__hline { display: block; text-wrap-style: balance; }
   /* Phones: a smaller menu button so it clears the 64px wordmark (proposed). */
   @media (max-width: 767px) {
     .hero__frame :global(.hero__menu) { --menu-btn-w: var(--menu-btn-w-m); --menu-btn-h: var(--menu-btn-h-m); --menu-btn-bar: var(--menu-btn-bar-m); top: var(--space-10); }

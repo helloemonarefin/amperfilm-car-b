@@ -6,14 +6,32 @@ import type { ProofProps } from '../components/sections/ProofStrip.astro';
 import type { StatementProps } from '../components/sections/Statement.astro';
 import type { WhyProps } from '../components/sections/WhyDiagram.astro';
 import type { SectionEntry } from '../lib/sections';
+import type { ImageMetadata } from 'astro';
 import { site } from './site';
-import heroImage from '../assets/images/home/hero.png';
 import deliveryWeek from '../assets/images/home/delivery-week.jpg';
 
 const thousands = new Intl.NumberFormat('en-US');
 
+// HERO PHOTO — to replace it, drop ONE file named `hero.jpg` / `hero.jpeg` /
+// `hero.png` / `hero.webp` / `hero.avif` into src/assets/images/home/ and
+// delete the old one. No code change needed. Use at least 2560 px wide for a
+// sharp result on large screens (Astro makes the smaller sizes). Adjust the
+// crop on phones with `imagePosition` below.
+const heroFiles = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/images/home/hero.{jpg,jpeg,png,webp,avif}',
+  { eager: true },
+);
+const heroMatches = Object.values(heroFiles);
+if (heroMatches.length !== 1) {
+  throw new Error(
+    `home.ts: expected exactly one hero.* image in src/assets/images/home/, found ${heroMatches.length}.`,
+  );
+}
+const heroImage = heroMatches[0].default;
+
 export const hero: HeroProps = {
   image: heroImage,
+  imagePosition: 'center',
   headline: ['Protect your EV in 48 hours.', 'Before the first rock chip.'],
   chips: [
     { label: 'Paint protection film' },

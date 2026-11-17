@@ -156,7 +156,7 @@
   --m-intro-ease:     var(--ease-smooth);
   --m-intro-time:     0.7s;
   --m-intro-delay:    0.1s;
-  --m-intro-stagger:  0.07s;
+  --m-intro-stagger:  0.05s;  /* gap between items (owner: 0.04–0.05, 2026-11-17) */
   --m-intro-distance: 20px;
 
   /* Nav intro: kept for completeness; Master D has no inline nav (BUILD_PROMPT §3). */
@@ -222,6 +222,11 @@
   --m-menu-item-time: 0.5s;
   --m-menu-item-distance: 12px;
   --m-menu-item-stagger: var(--m-reveal-stagger);
+  /* Hamburger ↔ cross morph (owner, 2026-11-17). */
+  --m-burger-time: 0.35s;
+  --m-burger-ease: var(--ease-smooth);
+  /* Diagram dotted ring: one slow turn (owner, 2026-11-17). */
+  --m-ring-time: 90s;
 
   /* Hover colours — PROPOSED (Figma has no hover states; awaiting owner OK). */
   --hover-solid-bg: var(--brand-accent);      /* dark + white buttons, dark round buttons */
@@ -239,6 +244,7 @@
   --menu-thumb: 64px;
   --menu-thumb-radius: 10px;
   --menu-dot: 8px;
+  --menu-x-w: 18px; --menu-x-h: 12px; --menu-x-bar: 1.8px; /* close icon bars (cross spans ~13px like Figma's 9px-arm X) */
 
   /* Footer (Figma 337:972) — component tokens. */
   --footer-form-w: 560px;
