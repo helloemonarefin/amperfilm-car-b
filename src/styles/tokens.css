@@ -264,18 +264,17 @@
   /* Menu panel (Figma 373:157) — component tokens. */
   --menu-pad: 28px 28px 28px 32px;
   --menu-pad-top: 28px;
-  /* Close cross inside the panel (owner, 2026-11-17): on open, the clicked
-     hamburger's stand-in shrinks a little and glides to the panel's top-right
-     corner (inside its padding) while it morphs into the cross. Box = the
-     hamburger it morphs from; the cross itself is ≈ 0.71 × the width. */
-  --menu-x-w: 32px; --menu-x-h: 20px; --menu-x-bar: 2.5px;   /* phones */
-  --menu-x-w-d: 40px; --menu-x-h-d: 24px; --menu-x-bar-d: 3px; /* ≥ 768 */
+  /* Close button (Figma "Menu open" 373:162): a 44 × 44 round button flush
+     right in a 44-tall header row; the cross is two 50 × 4.17 bars at ±45°.
+     On open, the clicked hamburger's stand-in glides into it and morphs
+     (owner, 2026-11-17). --menu-x-h is the hamburger box mid-glide. */
+  --menu-x-size: 44px;
+  --menu-x-len: 50px; --menu-x-bar: 4.17px; --menu-x-h: 24px;
   --menu-link-py: 9px;
   --menu-link-gap: 16px;   /* index → label */
   --menu-card-gap: 14px;
   --menu-thumb: 64px;
   --menu-thumb-radius: 10px;
-  --menu-dot: 8px;
 
   /* Footer (Figma 337:972) — component tokens. */
   --footer-form-w: 560px;

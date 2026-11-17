@@ -8,7 +8,8 @@
 // morphs into the cross, which acts as the close button. The panel's
 // background grows out of the button (a circular clip-path reveal from its
 // centre). Closing reverses it: the cross glides back and becomes the
-// hamburger again. "Menu" label + dot: tablet/desktop only (owner).
+// hamburger again. The cross lands in the close button of Figma "Menu open"
+// (373:121); the "Menu" label is hidden there, so it's screen-reader only.
 // Contents: "Menu" label; 8 numbered links (current page = "You're
 // here" pill + aria-current); featured offer card; CTA; two contact columns.
 // Behaviour: focus trap, Esc, backdrop click, scroll lock, aria-expanded on
@@ -41,7 +42,7 @@ const offerPrice = price(offer.model, offer.package);
   </button>
   <div class="menu__panel glass glass--menu" role="dialog" aria-modal="true" aria-labelledby="menu-title" data-lenis-prevent>
     <div class="menu__head">
-      <p class="menu__title t-eyebrow" id="menu-title"><span class="menu__dot" aria-hidden="true"></span>{site.menu.title}</p>
+      <p class="sr-only" id="menu-title">{site.menu.title}</p>
     </div>
 
     <nav class="menu__nav" aria-label="Main">
@@ -101,9 +102,8 @@ const offerPrice = price(offer.model, offer.package);
     transition: visibility 0s linear max(var(--menu-close), var(--m-menu-x-time));
     --menu-close: calc(var(--m-menu-reveal-time) * 0.6);
     /* The cross's box inside the panel (--gx/--gy set by JS from the panel). */
-    --gw: var(--menu-x-w); --gh: var(--menu-x-h); --gb: var(--menu-x-bar);
+    --gw: var(--menu-x-len); --gh: var(--menu-x-h); --gb: var(--menu-x-bar);
   }
-  @media (min-width: 768px) { .menu { --gw: var(--menu-x-w-d); --gh: var(--menu-x-h-d); --gb: var(--menu-x-bar-d); } }
   .menu.is-open { visibility: visible; transition: visibility 0s; }
   /* The clicked hamburger hides while its stand-in is on screen. !important
      beats the finished intro animation's opacity. */
@@ -175,18 +175,14 @@ const offerPrice = price(offer.model, offer.package);
     transition: opacity var(--m-menu-item-time) var(--m-menu-ease) var(--d), translate var(--m-menu-item-time) var(--m-menu-ease) var(--d);
   }
 
-  /* Header row = the cross's box in the corner; the links start the usual
-     28px below it, and "Menu" (≥ 768) lines up with the cross's centre. */
+  /* Header row (Figma 373:158): 44 tall, holds the close button flush right
+     (the stand-in cross lands there); links start 28 below. No visible
+     "Menu" label (hidden in Figma) — it stays as the dialog's name. */
   .menu__head {
-    display: flex; align-items: center; justify-content: space-between;
-    min-height: var(--gh);
+    min-height: var(--menu-x-size);
     margin-bottom: var(--space-7);
   }
-  /* Phones: no "Menu" label or dot, only the cross (owner, 2026-11-17). */
-  .menu__title { display: none; align-items: center; gap: var(--gap-tight); color: var(--text-on-dark-strong); }
-  @media (min-width: 768px) { .menu__title { display: flex; } }
 
-  .menu__dot { width: var(--menu-dot); height: var(--menu-dot); border-radius: var(--radius-pill); background: var(--bg-accent); }
 
   .menu__link {
     position: relative;
@@ -293,11 +289,18 @@ const offerPrice = price(offer.model, offer.package);
       const cy = r.top + r.height / 2 - p.top;
       const far = Math.max(Math.hypot(cx, cy), Math.hypot(p.width - cx, cy), Math.hypot(cx, p.height - cy), Math.hypot(p.width - cx, p.height - cy));
       set('--cx', `${cx}px`); set('--cy', `${cy}px`); set('--cr', `${far + 80}px`); // +80 keeps the shadow
-      // The cross's resting place: the panel's top-right corner, inside its padding.
+      // The cross's resting place: centred in the 44 × 44 close button at the
+      // top-right of the panel's content box (Figma 373:162).
       const ps = getComputedStyle(panel);
-      const gw = parseFloat(getComputedStyle(menu).getPropertyValue('--gw')) || 32;
-      set('--gx', `${p.right - parseFloat(ps.paddingRight) - gw}px`);
-      set('--gy', `${p.top + parseFloat(ps.paddingTop)}px`);
+      const ms_ = getComputedStyle(menu);
+      const px = (v: string) => parseFloat(v) || 0;
+      const size = px(ms_.getPropertyValue('--menu-x-size'));
+      const gw = px(ms_.getPropertyValue('--gw'));
+      const gh = px(ms_.getPropertyValue('--gh'));
+      const right = p.right - px(ps.borderRightWidth) - px(ps.paddingRight);
+      const top = p.top + px(ps.borderTopWidth) + px(ps.paddingTop);
+      set('--gx', `${right - size / 2 - gw / 2}px`);
+      set('--gy', `${top + size / 2 - gh / 2}px`);
     };
 
     const focusables = () =>
