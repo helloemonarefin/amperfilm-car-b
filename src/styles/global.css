@@ -1,0 +1,159 @@
+/* =========================================================================
+   global.css — reset, page defaults, layout helpers (container, rails, grid),
+   glass system, glows, section meta bar, focus ring, utilities.
+   Values come from tokens.css only.
+   ========================================================================= */
+
+/* ---------- Reset (BOILERPLATE §3) ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+img, picture, svg, video { display: block; max-width: 100%; }
+input, button, textarea, select { font: inherit; color: inherit; }
+button { background: none; border: 0; padding: 0; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+ul[role="list"], ol[role="list"] { list-style: none; padding: 0; }
+p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; font-weight: inherit; font-size: inherit; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  min-height: 100dvh;
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* The giant wordmark and the glows must never create a sideways scroll. */
+  overflow-x: clip;
+}
+
+/* ---------- Page frame and container ----------
+   The frame is 1440 at desktop (40 + 1360 + 40). Above that, content stays
+   centred and backgrounds stay full-bleed. */
+.container {
+  width: 100%;
+  max-width: calc(var(--content-max) + 2 * var(--side-pad));
+  margin-inline: auto;
+  padding-inline: var(--side-pad);
+}
+/* Full frame width with no side padding (rails, split sections). */
+.frame {
+  width: 100%;
+  max-width: calc(var(--content-max) + 2 * var(--side-pad));
+  margin-inline: auto;
+}
+
+/* ---------- Sections ---------- */
+.section { position: relative; padding-bottom: var(--section-pad-bottom); }
+
+/* Section meta bar (DESIGN_SYSTEM §6): full width, 41 tall, top border,
+   (0n) index left and label right, both meta / tertiary. */
+.section-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  min-height: var(--meta-bar-h);
+  padding: var(--space-6) var(--side-pad) 0;
+  border-top: 1px solid var(--border-rail);
+  color: var(--text-tertiary);
+}
+
+/* Section header row: two-tone headline left, intro right; stacks on mobile. */
+.section-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--section-head-pad);
+}
+@media (min-width: 1024px) {
+  .section-head { flex-direction: row; justify-content: space-between; align-items: flex-end; gap: var(--space-10); }
+}
+
+/* ---------- Rails (DESIGN_SYSTEM §6) ----------
+   200 | 1040 | 200 at desktop, separated by vertical rail borders.
+   Below 1024 the side rails collapse: add .rails__side--collapse to a side
+   whose content moves into the meta bar. */
+.rails { display: grid; grid-template-columns: minmax(0, 1fr); }
+.rails__main { min-width: 0; }
+.rails__side--collapse { display: none; }
+@media (min-width: 1024px) {
+  .rails { grid-template-columns: var(--rail-w) minmax(0, 1fr) var(--rail-w); }
+  .rails__side--collapse { display: block; }
+  .rails__main { border-inline: 1px solid var(--border-rail); }
+}
+
+/* ---------- 12-column grid (12px gutter) ---------- */
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+}
+
+/* ---------- Glass (DESIGN_SYSTEM §4) ----------
+   Always over a photo or a dark/blue area, never on paper. */
+.glass {
+  --glass-bg: var(--glass-md-bg);
+  --glass-blur: var(--glass-md-blur);
+  --glass-radius: var(--radius-lg);
+  background: var(--glass-bg);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--glass-radius);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  color: var(--text-on-dark);
+}
+.glass--sm   { --glass-bg: var(--glass-sm-bg); --glass-blur: var(--glass-sm-blur); --glass-radius: var(--radius-md); }
+.glass--md   { --glass-bg: var(--glass-md-bg); --glass-blur: var(--glass-md-blur); --glass-radius: var(--radius-lg); }
+.glass--lg   { --glass-bg: var(--glass-lg-bg); --glass-blur: var(--glass-lg-blur); --glass-radius: var(--radius-xl); }
+.glass--menu { --glass-bg: var(--glass-menu-bg); --glass-blur: var(--glass-menu-blur); --glass-radius: var(--radius-menu); box-shadow: var(--shadow-menu); }
+.glass--pill { --glass-radius: var(--radius-pill); }
+
+/* No backdrop-filter support: a darker fill keeps the text readable. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass { background: var(--glass-fallback-bg); }
+}
+
+/* ---------- Glows (DESIGN_SYSTEM §4) ----------
+   Decorative: always aria-hidden. The parent clips them (overflow: hidden).
+   Size and position come from the placing component. */
+.glow {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  background: var(--glow-hero-bg);
+  filter: blur(var(--glow-hero-blur));
+}
+.glow--panel   { background: var(--glow-panel-bg); filter: blur(var(--glow-panel-blur)); }
+.glow--diagram { background: var(--glow-diagram-bg); filter: blur(var(--glow-diagram-blur)); }
+
+/* ---------- Media ---------- */
+.media { position: relative; overflow: hidden; border-radius: var(--radius-media); }
+.media > img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ---------- Text colour helpers ---------- */
+.c-secondary { color: var(--text-secondary); }
+.c-tertiary  { color: var(--text-tertiary); }
+.c-strong    { color: var(--text-strong); }
+
+/* ---------- Focus ring ---------- */
+:focus-visible {
+  outline: var(--focus-width) solid var(--focus-color);
+  outline-offset: var(--focus-offset);
+}
+:focus:not(:focus-visible) { outline: none; }
+
+/* ---------- Utilities ---------- */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* Skip link: hidden until focused (keyboard users). */
+.skip-link {
+  position: absolute; left: var(--space-4); top: var(--space-4); z-index: 100;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-card); color: var(--text-primary);
+  border-radius: var(--radius-pill);
+  translate: 0 -200%;
+}
+.skip-link:focus-visible { translate: 0 0; }

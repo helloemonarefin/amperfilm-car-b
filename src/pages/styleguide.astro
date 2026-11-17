@@ -1,0 +1,308 @@
+---
+// Private styleguide (BUILD_PROMPT Phase 1): noindex, excluded from the sitemap,
+// linked from nowhere. Shows every token and role at its real size.
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import photo from '../assets/images/home/delivery-week.jpg';
+import { site } from '../content/site';
+
+const colours = [
+  { group: 'Brand (per client)', tokens: ['--brand-paper', '--brand-ink', '--brand-accent', '--brand-accent-soft'] },
+  { group: 'Surfaces', tokens: ['--bg-page', '--bg-card', '--bg-inverse', '--bg-accent', '--bg-accent-soft', '--bg-backdrop'] },
+  { group: 'Text on light', tokens: ['--text-primary', '--text-strong', '--text-secondary', '--text-tertiary', '--text-faint'] },
+  { group: 'Text on dark', dark: true, tokens: ['--text-on-dark', '--text-on-dark-strong', '--text-on-dark-secondary', '--text-on-dark-tertiary'] },
+  { group: 'Borders on light', border: true, tokens: ['--border-rail', '--border-default', '--border-strong', '--border-line'] },
+  { group: 'Borders on dark', dark: true, border: true, tokens: ['--border-on-dark', '--border-on-dark-strong', '--border-pill-on-dark', '--border-glass', '--border-menu'] },
+];
+
+// DESIGN_SYSTEM §5: role, use, desktop px, mobile px, weight.
+const roles: { role: string; sample: string; d: string; m: string; w: string; dark?: boolean }[] = [
+  { role: 'wordmark', sample: 'amperfilm®', d: '128', m: '64', w: 'Regular' },
+  { role: 'num-xl', sample: '48', d: '150', m: '96', w: 'Light' },
+  { role: 'num-lg', sample: '60', d: '130', m: '88', w: 'Light' },
+  { role: 'num-md', sample: '4.9', d: '96', m: '64', w: 'Light' },
+  { role: 'price-xl', sample: '$1,790', d: '88', m: '56', w: 'Light' },
+  { role: 'hero', sample: 'Protect your EV in 48 hours.', d: '68', m: '40', w: 'Regular' },
+  { role: 'h2-xl', sample: 'Signature offer headline', d: '64', m: '40', w: 'Regular' },
+  { role: 'h2', sample: 'Real EVs. Real installs.', d: '60', m: '38', w: 'Regular' },
+  { role: 'h2-dark', sample: 'Guarantee headline on dark', d: '56', m: '36', w: 'Regular', dark: true },
+  { role: 'stat', sample: '1,200+', d: '52', m: '40', w: 'Light' },
+  { role: 'h2-sm', sample: 'Footer statement', d: '48', m: '34', w: 'Regular' },
+  { role: 'h3-lg', sample: 'Solution title', d: '40', m: '30', w: 'Regular' },
+  { role: 'price-md', sample: '$2,590', d: '36', m: '28', w: 'Light' },
+  { role: 'quote', sample: '“A review quote reads at this size.”', d: '30', m: '24', w: 'Regular' },
+  { role: 'h3', sample: 'Diagram point, menu link', d: '28', m: '24', w: 'Regular' },
+  { role: 'unit', sample: 'hrs', d: '28', m: '20', w: 'Regular' },
+  { role: 'h4', sample: 'Service card title', d: '26', m: '22', w: 'Regular' },
+  { role: 'h5', sample: 'Step title', d: '24', m: '21', w: 'Regular' },
+  { role: 'faq-q', sample: 'How long does an install take?', d: '22', m: '20', w: 'Regular' },
+  { role: 'title', sample: 'Tesla Model Y', d: '20', m: '18', w: 'Regular' },
+  { role: 'spec', sample: 'Model-specific', d: '20', m: '18', w: 'Light' },
+  { role: 'body-xl', sample: 'Offer intro paragraph at body-xl.', d: '20', m: '18', w: 'Regular' },
+  { role: 'body-lg', sample: 'Dark-section paragraph at body-lg.', d: '17', m: '16', w: 'Regular' },
+  { role: 'body', sample: 'FAQ answer at body size.', d: '16', m: '16', w: 'Regular' },
+  { role: 'name', sample: 'Reviewer Name', d: '17 / 16', m: '16', w: 'Medium' },
+  { role: 'body-sm', sample: 'Section intro paragraph at body-sm.', d: '15', m: '15', w: 'Regular' },
+  { role: 'small', sample: 'Caption and card text at small.', d: '14', m: '14', w: 'Regular' },
+  { role: 'link', sample: 'Explore PPF', d: '14', m: '14', w: 'Medium' },
+  { role: 'meta', sample: '(01)   Section label', d: '13', m: '13', w: 'Regular / Medium' },
+  { role: 'tag', sample: 'PPF', d: '13', m: '13', w: 'Medium' },
+  { role: 'button', sample: 'Get my price', d: '13', m: '13', w: 'SemiBold UPPER' },
+  { role: 'eyebrow', sample: 'Ceramic tint', d: '11', m: '11', w: 'SemiBold UPPER' },
+  { role: 'eyebrow-sm', sample: 'Delivery week', d: '10', m: '10', w: 'SemiBold UPPER' },
+  { role: 'micro', sample: 'Spec label', d: '12', m: '12', w: 'Regular' },
+];
+
+const spaces = [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 14, 16, 18, 20, 28];
+const radii = ['--radius-xs', '--radius-media', '--radius-card-sm', '--radius-sm', '--radius-md', '--radius-glass-md', '--radius-lg', '--radius-xl', '--radius-menu', '--radius-pill'];
+const glasses = [
+  { cls: 'glass--sm', name: 'glass-sm', note: '14% · blur 12 · r12' },
+  { cls: 'glass--md', name: 'glass-md', note: '16% · blur 16 · r16' },
+  { cls: 'glass--lg', name: 'glass-lg', note: '22% · blur 24 · r20' },
+];
+---
+
+<Base title="Styleguide" noindex>
+  <main id="main" class="sg">
+    <header class="container sg__head">
+      <p class="t-meta c-tertiary">Private · noindex · not in sitemap</p>
+      <h1 class="t-h2">Master D <span class="t-faint">styleguide.</span></h1>
+      <button class="sg__grid-toggle t-button" type="button" aria-pressed="false" data-grid-toggle>Grid overlay</button>
+    </header>
+
+    <!-- Colours -->
+    <section class="sg__section" aria-labelledby="sg-colour">
+      <div class="section-meta t-meta"><span>(01)</span><span>Colour</span></div>
+      <div class="container">
+        <h2 id="sg-colour" class="t-h3 sg__title">Colour</h2>
+        {colours.map((g) => (
+          <div class="sg__group">
+            <h3 class="t-meta c-tertiary">{g.group}</h3>
+            <ul class:list={['sg__swatches', { 'sg__swatches--dark': g.dark, 'sg__swatches--border': g.border }]} role="list">
+              {g.tokens.map((t) => (
+                <li class="sg__swatch">
+                  <span class="sg__chip" style={`--c: var(${t})`} />
+                  <code class="t-small">{t}</code>
+                  <span class="t-micro sg__val" data-token-value={t} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Type -->
+    <section class="sg__section" aria-labelledby="sg-type">
+      <div class="section-meta t-meta"><span>(02)</span><span>Typography · DM Sans 300/400/500/600</span></div>
+      <div class="container">
+        <h2 id="sg-type" class="t-h3 sg__title">Type roles</h2>
+        <p class="t-small c-secondary sg__note">Sizes are fluid from 390 to 1440. Resize the window to see the mobile end. Line heights tighten at 1024.</p>
+        <ul class="sg__types" role="list">
+          {roles.map((r) => (
+            <li class:list={['sg__type', { 'sg__type--dark': r.dark }]}>
+              <div class="sg__type-meta t-micro">
+                <code>.t-{r.role}</code>
+                <span>D {r.d} · M {r.m}</span>
+                <span>{r.w}</span>
+                <span class="sg__live" data-live-size />
+              </div>
+              <p class={`t-${r.role}`}>{r.sample}</p>
+            </li>
+          ))}
+          <li class="sg__type">
+            <div class="sg__type-meta t-micro"><code>.t-wordmark-xl</code><span>D 304 · M fills width</span><span>Regular</span><span class="sg__live" data-live-size /></div>
+            <p class="t-wordmark-xl sg__wm-xl">amperfilm®</p>
+          </li>
+          <li class="sg__type">
+            <div class="sg__type-meta t-micro"><code>two-tone .t-h2 + .t-faint</code><span>D 60 · M 38</span><span>Regular</span></div>
+            <p class="t-h2">Real EVs. Real installs. <span class="t-faint">Straight from our Austin bay.</span></p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Spacing + radius -->
+    <section class="sg__section" aria-labelledby="sg-space">
+      <div class="section-meta t-meta"><span>(03)</span><span>Spacing · Radius</span></div>
+      <div class="container sg__two">
+        <div>
+          <h2 id="sg-space" class="t-h3 sg__title">Spacing</h2>
+          <ul class="sg__spaces" role="list">
+            {spaces.map((n) => (
+              <li class="sg__space">
+                <code class="t-small">--space-{n}</code>
+                <span class="sg__bar" style={`--w: var(--space-${n})`} />
+                <span class="t-micro c-tertiary" data-token-value={`--space-${n}`} />
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h2 class="t-h3 sg__title">Radius</h2>
+          <ul class="sg__radii" role="list">
+            {radii.map((r) => (
+              <li class="sg__radius">
+                <span class="sg__rbox" style={`--r: var(${r})`} />
+                <code class="t-micro">{r}</code>
+                <span class="t-micro c-tertiary" data-token-value={r} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Glass + glow -->
+    <section class="sg__section" aria-labelledby="sg-glass">
+      <div class="section-meta t-meta"><span>(04)</span><span>Glass · Glow</span></div>
+      <div class="container">
+        <h2 id="sg-glass" class="t-h3 sg__title">Glass on a photo</h2>
+        <div class="sg__photo media">
+          <Image src={photo} alt="" widths={[720, 1360, 2400]} sizes="(min-width: 1440px) 1360px, 100vw" />
+          <div class="sg__glasses">
+            {glasses.map((g) => (
+              <div class={`glass ${g.cls} sg__glass`}>
+                <span class="t-eyebrow">{g.name}</span>
+                <span class="t-spec">{g.note}</span>
+              </div>
+            ))}
+            <span class="glass glass--sm glass--pill sg__pill t-eyebrow">Ceramic tint</span>
+          </div>
+        </div>
+
+        <h2 class="t-h3 sg__title">Glows</h2>
+        <div class="sg__glows">
+          <div class="sg__glowbox">
+            <span class="glow sg__glow-hero" aria-hidden="true"></span>
+            <span class="t-micro sg__glow-label">Hero glow · 760 × 620 · accent 55% · blur 220</span>
+          </div>
+          <div class="sg__glowbox">
+            <span class="glow glow--panel sg__glow-panel" aria-hidden="true"></span>
+            <span class="t-micro sg__glow-label">Panel glow · ~700 × 500 · accent 60% · blur 180</span>
+          </div>
+          <div class="sg__glowbox sg__glowbox--paper">
+            <span class="glow glow--diagram sg__glow-diagram" aria-hidden="true"></span>
+            <span class="t-micro sg__glow-label sg__glow-label--ink">Diagram glow · radial accent 100 → 55% · blur 90</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Rails + grid -->
+    <section class="sg__section" aria-labelledby="sg-rails">
+      <div class="section-meta t-meta"><span>(05)</span><span>Rails · Grid</span></div>
+      <div class="container">
+        <h2 id="sg-rails" class="t-h3 sg__title">Rails</h2>
+        <p class="t-small c-secondary sg__note">200 | 1040 | 200 at 1024+. Below 1024 the side rails collapse into the meta bar.</p>
+      </div>
+      <div class="frame">
+        <div class="rails sg__rails">
+          <div class="rails__side rails__side--collapse sg__rail t-meta c-tertiary">(01)</div>
+          <div class="rails__main sg__rail sg__rail--main t-small c-secondary">Centre 1040</div>
+          <div class="rails__side rails__side--collapse sg__rail t-meta c-tertiary">©{site.year}</div>
+        </div>
+      </div>
+      <div class="container">
+        <h2 class="t-h3 sg__title">12-column grid · 12px gutter</h2>
+        <div class="grid-12 sg__grid">
+          {Array.from({ length: 12 }, (_, i) => <span class="t-micro">{i + 1}</span>)}
+        </div>
+      </div>
+    </section>
+
+    <!-- Page-wide grid overlay (toggle) -->
+    <div class="sg__overlay" data-grid-overlay hidden aria-hidden="true">
+      <div class="container grid-12">
+        {Array.from({ length: 12 }, () => <span />)}
+      </div>
+    </div>
+  </main>
+</Base>
+
+<script>
+  // Fill in each token's computed value, and the live font size of each role.
+  const root = getComputedStyle(document.documentElement);
+  document.querySelectorAll<HTMLElement>('[data-token-value]').forEach((el) => {
+    el.textContent = root.getPropertyValue(el.dataset.tokenValue!).trim();
+  });
+  const updateSizes = () =>
+    document.querySelectorAll<HTMLElement>('[data-live-size]').forEach((el) => {
+      const sample = el.closest('li')?.querySelector('p');
+      if (sample) el.textContent = `now ${Math.round(parseFloat(getComputedStyle(sample).fontSize))}px`;
+    });
+  updateSizes();
+  addEventListener('resize', updateSizes);
+
+  const toggle = document.querySelector<HTMLButtonElement>('[data-grid-toggle]');
+  const overlay = document.querySelector<HTMLElement>('[data-grid-overlay]');
+  toggle?.addEventListener('click', () => {
+    const on = toggle.getAttribute('aria-pressed') !== 'true';
+    toggle.setAttribute('aria-pressed', String(on));
+    if (overlay) overlay.hidden = !on;
+  });
+</script>
+
+<style>
+  /* Styleguide-only layout. Values still come from tokens. */
+  .sg { padding-bottom: var(--section-pad-bottom); }
+  .sg__head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: var(--space-4); padding-block: var(--space-16) var(--space-10); }
+  .sg__head p { flex-basis: 100%; }
+  .sg__grid-toggle { height: var(--btn-h-sm); padding-inline: var(--btn-pad-x); border-radius: var(--radius-pill); border: 1px solid var(--border-strong); }
+  .sg__grid-toggle[aria-pressed='true'] { background: var(--bg-inverse); color: var(--text-on-dark); }
+  .sg__section { padding-bottom: var(--space-16); }
+  .sg__title { padding-block: var(--space-8) var(--space-4); }
+  .sg__note { max-width: 65ch; margin-bottom: var(--space-6); }
+  .sg__group { margin-bottom: var(--space-6); }
+  .sg__group h3 { margin-bottom: var(--space-2); }
+
+  .sg__swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: var(--space-3); }
+  .sg__swatches--dark { background: var(--bg-inverse); color: var(--text-on-dark); padding: var(--space-3); border-radius: var(--radius-md); }
+  .sg__swatch { display: grid; gap: var(--space-1); }
+  .sg__chip { height: var(--space-16); border-radius: var(--radius-sm); background: var(--c); border: 1px solid var(--border-rail); }
+  /* Border tokens: shown as a thick outline instead of a fill. */
+  .sg__swatches--border .sg__chip { background: transparent; border: var(--space-1) solid var(--c); }
+  .sg__val { opacity: 0.7; word-break: break-all; }
+
+  .sg__types { display: grid; }
+  .sg__type { display: grid; gap: var(--space-2); padding-block: var(--space-5); border-top: 1px solid var(--border-rail); }
+  .sg__type--dark { background: var(--bg-inverse); color: var(--text-on-dark); padding-inline: var(--space-5); }
+  .sg__type-meta { display: flex; flex-wrap: wrap; gap: var(--space-4); color: var(--text-tertiary); }
+  .sg__type--dark .sg__type-meta { color: var(--text-on-dark-tertiary); }
+  .sg__live { color: var(--brand-accent); }
+  .sg__wm-xl { overflow: hidden; }
+
+  .sg__two { display: grid; gap: var(--space-10); }
+  @media (min-width: 1024px) { .sg__two { grid-template-columns: 1fr 1fr; } }
+  .sg__spaces { display: grid; gap: var(--space-2); }
+  .sg__space { display: grid; grid-template-columns: 6rem 1fr 3rem; align-items: center; gap: var(--space-3); }
+  .sg__bar { height: var(--space-3); width: var(--w); background: var(--brand-accent); border-radius: var(--radius-xs); }
+  .sg__radii { display: grid; grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr)); gap: var(--space-4); }
+  .sg__radius { display: grid; gap: var(--space-1); }
+  .sg__rbox { height: var(--space-20); background: var(--bg-card); border: 1px solid var(--border-strong); border-radius: var(--r); }
+
+  .sg__photo { aspect-ratio: 3 / 2; max-height: 40rem; width: 100%; }
+  .sg__photo > img { position: absolute; inset: 0; }
+  .sg__glasses { position: absolute; inset: 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-4); padding: var(--space-5); }
+  .sg__glass { display: grid; gap: var(--space-2); padding: var(--space-5); min-width: 12rem; }
+  .sg__pill { padding: var(--space-2) var(--space-3); }
+
+  .sg__glows { display: grid; gap: var(--space-3); }
+  @media (min-width: 1024px) { .sg__glows { grid-template-columns: repeat(3, 1fr); } }
+  .sg__glowbox { position: relative; overflow: hidden; height: 24rem; border-radius: var(--radius-md); background: var(--bg-inverse); isolation: isolate; }
+  .sg__glowbox--paper { background: var(--bg-page); border: 1px solid var(--border-rail); }
+  .sg__glow-hero { width: 760px; height: 620px; left: 50%; top: 50%; translate: -50% -50%; }
+  .sg__glow-panel { width: 700px; height: 500px; left: 50%; top: 50%; translate: -50% -50%; }
+  .sg__glow-diagram { width: 700px; height: 700px; left: 50%; top: 50%; translate: -50% -50%; scale: 0.5; }
+  .sg__glow-label { position: absolute; left: var(--space-4); bottom: var(--space-4); color: var(--text-on-dark-strong); }
+  .sg__glow-label--ink { color: var(--text-secondary); }
+
+  .sg__rails { border-block: 1px solid var(--border-rail); }
+  .sg__rail { min-height: var(--space-28); padding: var(--space-6); }
+  .sg__rail--main { display: grid; place-items: center; background: rgb(var(--brand-accent-rgb) / 0.06); }
+  .sg__grid > span { height: var(--space-20); display: grid; place-items: center; background: rgb(var(--brand-accent-rgb) / 0.12); color: var(--brand-accent); }
+
+  .sg__overlay { position: fixed; inset: 0; z-index: 50; pointer-events: none; }
+  .sg__overlay .grid-12 { height: 100%; }
+  .sg__overlay span { background: rgb(var(--brand-accent-rgb) / 0.08); border-inline: 1px solid rgb(var(--brand-accent-rgb) / 0.25); }
+</style>

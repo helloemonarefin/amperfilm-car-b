@@ -1,0 +1,77 @@
+---
+// Base layout: <head> meta, Open Graph, favicons, fonts, global CSS and the
+// global scripts (BOILERPLATE §4.7). One <h1> per page lives in the hero.
+import { Font } from 'astro:assets';
+import '../styles/tokens.css';
+import '../styles/typography.css';
+import '../styles/global.css';
+import '../styles/motion.css';
+import { site, wordmark } from '../content/site';
+
+interface Props {
+  /** Page title; the brand is appended unless it's already in it. */
+  title: string;
+  description?: string;
+  /** Private pages (styleguide): noindex + excluded from the sitemap. */
+  noindex?: boolean;
+  /** Absolute or root-relative OG image; defaults to the generated /og.png. */
+  image?: string;
+}
+
+const { title, description = site.description, noindex = false, image = '/og.png' } = Astro.props;
+const fullTitle = title.includes(site.brand) ? title : `${title} · ${wordmark}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
+const ogImage = new URL(image, Astro.site ?? site.url).href;
+---
+
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {noindex ? <meta name="robots" content="noindex, nofollow" /> : <link rel="canonical" href={canonical} />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={wordmark} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Placeholder icons generated from site.ts + tokens.css: replace per client. -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Arm scroll reveals before first paint, only when motion is allowed. -->
+    <script is:inline>
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('reveal-on');
+    </script>
+    <Font
+      cssVariable="--font-dm-sans"
+      preload={[
+        { weight: 300, style: 'normal', subset: 'latin' },
+        { weight: 400, style: 'normal', subset: 'latin' },
+      ]}
+    />
+  </head>
+  <body id="top">
+    <a class="skip-link t-button" href="#main">Skip to content</a>
+    <slot />
+    <script>
+      import { initScroll } from '../scripts/scroll';
+      import { initReveal } from '../scripts/reveal';
+      initScroll();
+      initReveal();
+    </script>
+  </body>
+</html>

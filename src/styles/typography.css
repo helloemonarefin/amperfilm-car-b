@@ -1,0 +1,62 @@
+/* =========================================================================
+   typography.css — one class per role (DESIGN_SYSTEM §5, BOILERPLATE §6).
+   Sizes, line heights and tracking are tokens in tokens.css (fluid 390 → 1440).
+   Components use a role class, never a pixel size. The tag and the role are
+   independent: an <h2> may use .t-h3 when the design needs it.
+   ========================================================================= */
+
+html { font-family: var(--font-sans); font-optical-sizing: auto; }
+
+/* ---------- Display: wordmarks and big numbers ---------- */
+.t-wordmark-xl { font-size: var(--fs-wordmark-xl); line-height: var(--lh-wordmark-xl); letter-spacing: var(--ls-wordmark-xl); font-weight: var(--fw-regular); white-space: nowrap; }
+.t-wordmark    { font-size: var(--fs-wordmark);    line-height: var(--lh-wordmark);    letter-spacing: var(--ls-wordmark);    font-weight: var(--fw-regular); white-space: nowrap; }
+.t-num-xl      { font-size: var(--fs-num-xl);      line-height: var(--lh-num);         letter-spacing: var(--ls-num);         font-weight: var(--fw-light); }
+.t-num-lg      { font-size: var(--fs-num-lg);      line-height: var(--lh-num);         letter-spacing: var(--ls-num);         font-weight: var(--fw-light); }
+.t-num-md      { font-size: var(--fs-num-md);      line-height: var(--lh-num);         letter-spacing: var(--ls-num-md);      font-weight: var(--fw-light); }
+.t-price-xl    { font-size: var(--fs-price-xl);    line-height: var(--lh-price-xl);    letter-spacing: var(--ls-price-xl);    font-weight: var(--fw-light); }
+
+/* ---------- Headings ---------- */
+.t-hero    { font-size: var(--fs-hero);    line-height: var(--lh-hero);   letter-spacing: var(--ls-display); font-weight: var(--fw-regular); text-wrap: balance; }
+.t-h2-xl   { font-size: var(--fs-h2-xl);   line-height: var(--lh-h2);     letter-spacing: var(--ls-display); font-weight: var(--fw-regular); text-wrap: balance; }
+.t-h2      { font-size: var(--fs-h2);      line-height: var(--lh-h2);     letter-spacing: var(--ls-display); font-weight: var(--fw-regular); text-wrap: balance; }
+.t-h2-dark { font-size: var(--fs-h2-dark); line-height: var(--lh-h2);     letter-spacing: var(--ls-display); font-weight: var(--fw-regular); text-wrap: balance; }
+.t-stat    { font-size: var(--fs-stat);    line-height: var(--lh-stat);   letter-spacing: var(--ls-display); font-weight: var(--fw-light); }
+.t-h2-sm   { font-size: var(--fs-h2-sm);   line-height: var(--lh-h2);     letter-spacing: var(--ls-display); font-weight: var(--fw-regular); text-wrap: balance; }
+.t-h3-lg   { font-size: var(--fs-h3-lg);   line-height: var(--lh-h3-lg);  letter-spacing: var(--ls-h3-lg);   font-weight: var(--fw-regular); text-wrap: balance; }
+.t-price-md{ font-size: var(--fs-price-md);line-height: var(--lh-tight);  letter-spacing: var(--ls-display); font-weight: var(--fw-light); }
+.t-quote   { font-size: var(--fs-quote);   line-height: var(--lh-quote);  letter-spacing: var(--ls-quote);   font-weight: var(--fw-regular); text-wrap: pretty; }
+.t-h3      { font-size: var(--fs-h3);      line-height: var(--lh-h3);     letter-spacing: var(--ls-h3);      font-weight: var(--fw-regular); text-wrap: balance; }
+.t-unit    { font-size: var(--fs-unit);    line-height: var(--lh-tight);  letter-spacing: var(--ls-unit);    font-weight: var(--fw-regular); }
+.t-h4      { font-size: var(--fs-h4);      line-height: var(--lh-h4);     letter-spacing: var(--ls-h3);      font-weight: var(--fw-regular); text-wrap: balance; }
+.t-h5      { font-size: var(--fs-h5);      line-height: var(--lh-h5);     letter-spacing: var(--ls-h5);      font-weight: var(--fw-regular); text-wrap: balance; }
+.t-faq-q   { font-size: var(--fs-faq-q);   line-height: var(--lh-faq-q);  letter-spacing: var(--ls-faq-q);   font-weight: var(--fw-regular); text-wrap: balance; }
+.t-title   { font-size: var(--fs-title);   line-height: var(--lh-title);  letter-spacing: var(--ls-faq-q);   font-weight: var(--fw-regular); }
+/* spec: same size as title (20 → 18), Light. Shares tokens with title/h4/h5. */
+.t-spec    { font-size: var(--fs-title);   line-height: var(--lh-h4);     letter-spacing: var(--ls-h5);      font-weight: var(--fw-light); }
+
+/* ---------- Body ---------- */
+.t-body-xl { font-size: var(--fs-body-xl); line-height: var(--lh-body-xl); letter-spacing: var(--ls-body-xl); font-weight: var(--fw-regular); text-wrap: pretty; }
+.t-body-lg { font-size: var(--fs-body-lg); line-height: var(--lh-body-lg); letter-spacing: var(--ls-body-lg); font-weight: var(--fw-regular); text-wrap: pretty; }
+.t-body    { font-size: var(--fs-body);    line-height: var(--lh-body);    letter-spacing: var(--ls-body);    font-weight: var(--fw-regular); text-wrap: pretty; }
+/* name: 17 (reviewer) / 16 (bullet titles) → shares the body-lg size (17 → 16). */
+.t-name    { font-size: var(--fs-body-lg); line-height: var(--lh-ui);      letter-spacing: var(--ls-name);    font-weight: var(--fw-medium); }
+.t-body-sm { font-size: var(--fs-body-sm); line-height: var(--lh-body);    letter-spacing: var(--ls-body);    font-weight: var(--fw-regular); text-wrap: pretty; }
+.t-small   { font-size: var(--fs-small);   line-height: var(--lh-small);   letter-spacing: var(--ls-body);    font-weight: var(--fw-regular); text-wrap: pretty; }
+
+/* ---------- UI labels ---------- */
+.t-link       { font-size: var(--fs-small);      line-height: var(--lh-ui);    letter-spacing: var(--ls-body);    font-weight: var(--fw-medium); }
+.t-meta       { font-size: var(--fs-meta);       line-height: var(--lh-ui);    letter-spacing: 0;                 font-weight: var(--fw-regular); }
+.t-tag        { font-size: var(--fs-meta);       line-height: var(--lh-tight); letter-spacing: var(--ls-tag);     font-weight: var(--fw-medium); }
+.t-button     { font-size: var(--fs-button);     line-height: var(--lh-tight); letter-spacing: var(--ls-button);  font-weight: var(--fw-semibold); text-transform: uppercase; }
+.t-eyebrow    { font-size: var(--fs-eyebrow);    line-height: var(--lh-tight); letter-spacing: var(--ls-eyebrow); font-weight: var(--fw-semibold); text-transform: uppercase; }
+.t-eyebrow-sm { font-size: var(--fs-eyebrow-sm); line-height: var(--lh-tight); letter-spacing: var(--ls-eyebrow); font-weight: var(--fw-semibold); text-transform: uppercase; }
+.t-micro      { font-size: var(--fs-micro);      line-height: var(--lh-ui);    letter-spacing: 0;                 font-weight: var(--fw-regular); }
+
+/* ---------- Weight modifiers (BOILERPLATE §4.0) ---------- */
+.t-light   { font-weight: var(--fw-light); }
+.t-regular { font-weight: var(--fw-regular); }
+.t-medium  { font-weight: var(--fw-medium); }
+
+/* ---------- Two-tone headlines (DESIGN_SYSTEM §3) ----------
+   One heading; the second sentence is a <span class="t-faint">. */
+.t-faint { color: var(--text-faint); }

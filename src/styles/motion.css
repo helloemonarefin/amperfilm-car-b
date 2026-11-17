@@ -1,0 +1,47 @@
+/* =========================================================================
+   motion.css — BOILERPLATE §7: one keyframe, page-load intro, scroll reveal,
+   smooth scroll and scroll lock, reduced motion.
+   Every value reads from the motion control panel in tokens.css.
+   ========================================================================= */
+
+/* ---------- One shared keyframe (§7.3) ---------- */
+@keyframes rise-in {
+  from { opacity: 0.001; translate: 0 var(--rise-from, 20px); }
+  to   { opacity: 1;     translate: 0 0; }
+}
+
+/* ---------- Page-load intro (§7.4) ----------
+   CSS only. Add data-intro + style="--i:n" in reading order. */
+[data-intro] {
+  --rise-from: var(--m-intro-distance);
+  animation: rise-in var(--m-intro-time) var(--m-intro-ease)
+             calc(var(--m-intro-delay) + var(--i, 0) * var(--m-intro-stagger)) both;
+}
+
+/* ---------- Scroll reveal (§7.6) ----------
+   Armed by .reveal-on on <html> (inline script in Base, motion allowed only).
+   0.001 looks the same as 0 but still counts for LCP. */
+.reveal-on [data-reveal] { opacity: 0.001; }
+.reveal-on [data-reveal].is-revealed {
+  --rise-from: var(--m-reveal-distance);
+  opacity: 1;
+  animation: rise-in var(--m-reveal-time) var(--m-reveal-ease) var(--reveal-delay, 0s) both;
+}
+
+/* ---------- Smooth scroll and scroll lock (§1.13) ---------- */
+html { scroll-behavior: smooth; }
+html.is-locked { overflow: hidden; }
+
+/* ---------- Reduced motion (§1.12, §7.7) ----------
+   Every element shows its end state at once. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+}

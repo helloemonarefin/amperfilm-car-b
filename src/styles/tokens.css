@@ -1,0 +1,196 @@
+/* =========================================================================
+   tokens.css — every design value lives here, so a reskin touches one file.
+   Part 1: DESIGN_SYSTEM-MASTER-D.md §11, copied exactly.
+   Part 2: motion control panel, BOILERPLATE §7.2.
+   Part 3: project extensions (logged in CLAUDE.md → Decisions log).
+   ========================================================================= */
+
+:root {
+  /* ---------- Brand (change per client) ---------- */
+  --brand-paper: #F8F8F3;
+  --brand-ink: #121212;
+  --brand-accent: #3355FF;
+  --brand-accent-soft: #E8EDFF;
+  --brand-ink-rgb: 18 18 18;
+  --brand-accent-rgb: 51 85 255;
+
+  /* ---------- Surfaces ---------- */
+  --bg-page: var(--brand-paper);
+  --bg-card: #FFFFFF;
+  --bg-inverse: var(--brand-ink);
+  --bg-accent: var(--brand-accent);
+  --bg-accent-soft: var(--brand-accent-soft);
+  --bg-backdrop: rgb(5 8 20 / 0.35);
+
+  /* ---------- Text ---------- */
+  --text-primary: var(--brand-ink);
+  --text-strong: rgb(var(--brand-ink-rgb) / 0.88);
+  --text-secondary: rgb(var(--brand-ink-rgb) / 0.60);
+  --text-tertiary: rgb(var(--brand-ink-rgb) / 0.55);
+  --text-faint: rgb(var(--brand-ink-rgb) / 0.30);
+  --text-on-dark: #FFFFFF;
+  --text-on-dark-strong: rgb(255 255 255 / 0.85);
+  --text-on-dark-secondary: rgb(255 255 255 / 0.72);
+  --text-on-dark-tertiary: rgb(255 255 255 / 0.50);
+  --text-on-accent: #FFFFFF;
+
+  /* ---------- Borders ---------- */
+  --border-rail: rgb(var(--brand-ink-rgb) / 0.10);
+  --border-default: rgb(var(--brand-ink-rgb) / 0.15);
+  --border-strong: rgb(var(--brand-ink-rgb) / 0.20);
+  --border-line: rgb(var(--brand-ink-rgb) / 0.25);
+  --border-on-dark: rgb(255 255 255 / 0.25);
+  --border-on-dark-strong: rgb(255 255 255 / 0.40);
+  --border-pill-on-dark: rgb(255 255 255 / 0.30);
+  --border-glass: rgb(255 255 255 / 0.30);
+  --border-menu: rgb(255 255 255 / 0.14);
+  --icon-stroke: 1.8px;
+
+  /* ---------- Glass ---------- */
+  --glass-sm-bg: rgb(255 255 255 / 0.14);  --glass-sm-blur: 12px;
+  --glass-md-bg: rgb(255 255 255 / 0.16);  --glass-md-blur: 16px;
+  --glass-lg-bg: rgb(255 255 255 / 0.22);  --glass-lg-blur: 24px;
+  --glass-menu-bg: linear-gradient(180deg, rgb(255 255 255 / 0.20), rgb(255 255 255 / 0.08));
+  --glass-menu-blur: 48px;
+  --glass-fallback-bg: rgb(var(--brand-ink-rgb) / 0.55);
+  --shadow-menu: 0 24px 60px rgb(0 0 26 / 0.30);
+
+  /* ---------- Overlays ---------- */
+  --overlay-hero: linear-gradient(180deg, rgb(0 0 0 / 0.35) 0%, rgb(0 0 0 / 0.05) 45%, rgb(0 0 0 / 0.70) 100%);
+  --overlay-card: linear-gradient(180deg, rgb(0 0 0 / 0) 0%, rgb(0 0 0 / 0.55) 100%);
+  --tint-accent: rgb(var(--brand-accent-rgb) / 0.22);
+
+  /* ---------- Radius ---------- */
+  --radius-xs: 3px;  --radius-media: 4px; --radius-card-sm: 6px; --radius-sm: 8px;
+  --radius-md: 12px; --radius-glass-md: 14px; --radius-lg: 16px; --radius-xl: 20px;
+  --radius-menu: 24px; --radius-pill: 999px;
+
+  /* ---------- Spacing ---------- */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px; --space-5: 20px;
+  --space-6: 24px; --space-7: 28px; --space-8: 32px; --space-10: 40px; --space-11: 44px;
+  --space-14: 56px; --space-16: 64px; --space-18: 72px; --space-20: 80px; --space-28: 112px;
+
+  /* ---------- Layout (mobile first; desktop below) ---------- */
+  --side-pad: 20px;
+  --content-max: 1360px;
+  --grid-gutter: 12px;
+  --rail-w: 0px;
+  --section-pad-bottom: 72px;
+  --section-head-pad: 40px 0 32px;
+  --meta-bar-h: 41px;
+
+  /* ---------- Component tokens ---------- */
+  --btn-h-sm: 42px; --btn-h-md: 48px; --btn-h-lg: 52px; --btn-h-cta: 56px; --btn-pad-x: 22px;
+  --icon-badge: 44px; --round-btn: 28px; --avatar: 36px;
+  --menu-w: 520px; --menu-inset: 16px;
+
+  /* ---------- Typography ---------- */
+  --font-sans: var(--font-dm-sans, "DM Sans"), system-ui, -apple-system, sans-serif;
+  --fw-light: 300; --fw-regular: 400; --fw-medium: 500; --fw-semibold: 600;
+
+  --fs-wordmark-xl: clamp(5rem, 21.1vw, 19rem);
+  --fs-wordmark: clamp(4rem, 2.5143rem + 6.0952vw, 8rem);
+  --fs-num-xl:   clamp(6rem, 4.7464rem + 5.1429vw, 9.375rem);
+  --fs-num-lg:   clamp(5.5rem, 4.525rem + 4vw, 8.125rem);
+  --fs-num-md:   clamp(4rem, 3.2571rem + 3.0476vw, 6rem);
+  --fs-price-xl: clamp(3.5rem, 2.7571rem + 3.0476vw, 5.5rem);
+  --fs-hero:     clamp(2.5rem, 1.85rem + 2.6667vw, 4.25rem);
+  --fs-h2-xl:    clamp(2.5rem, 1.9429rem + 2.2857vw, 4rem);
+  --fs-h2:       clamp(2.375rem, 1.8643rem + 2.0952vw, 3.75rem);
+  --fs-h2-dark:  clamp(2.25rem, 1.7857rem + 1.9048vw, 3.5rem);
+  --fs-stat:     clamp(2.5rem, 2.2214rem + 1.1429vw, 3.25rem);
+  --fs-h2-sm:    clamp(2.125rem, 1.8rem + 1.3333vw, 3rem);
+  --fs-h3-lg:    clamp(1.875rem, 1.6429rem + 0.9524vw, 2.5rem);
+  --fs-price-md: clamp(1.75rem, 1.5643rem + 0.7619vw, 2.25rem);
+  --fs-quote:    clamp(1.5rem, 1.3607rem + 0.5714vw, 1.875rem);
+  --fs-h3:       clamp(1.5rem, 1.4071rem + 0.381vw, 1.75rem);
+  --fs-unit:     clamp(1.25rem, 1.0643rem + 0.7619vw, 1.75rem);
+  --fs-h4:       clamp(1.375rem, 1.2821rem + 0.381vw, 1.625rem);
+  --fs-h5:       clamp(1.3125rem, 1.2429rem + 0.2857vw, 1.5rem);
+  --fs-faq-q:    clamp(1.25rem, 1.2036rem + 0.1905vw, 1.375rem);
+  --fs-title:    clamp(1.125rem, 1.0786rem + 0.1905vw, 1.25rem);
+  --fs-body-xl:  clamp(1.125rem, 1.0786rem + 0.1905vw, 1.25rem);
+  --fs-body-lg:  clamp(1rem, 0.9768rem + 0.0952vw, 1.0625rem);
+  --fs-body: 1rem;  --fs-body-sm: 0.9375rem; --fs-small: 0.875rem; --fs-meta: 0.8125rem;
+  --fs-button: 0.8125rem; --fs-eyebrow: 0.6875rem; --fs-eyebrow-sm: 0.625rem; --fs-micro: 0.75rem;
+
+  /* Line heights: mobile values first */
+  --lh-wordmark-xl: 0.86; --lh-wordmark: 1; --lh-num: 0.9; --lh-price-xl: 0.95;
+  --lh-hero: 1.05; --lh-h2: 1.08; --lh-stat: 1; --lh-h3-lg: 1.1; --lh-quote: 1.3;
+  --lh-h3: 1.2; --lh-h4: 1.2; --lh-h5: 1.2; --lh-faq-q: 1.25; --lh-title: 1.2;
+  --lh-body-xl: 1.45; --lh-body-lg: 1.55; --lh-body: 1.5; --lh-small: 1.45; --lh-ui: 1.2; --lh-tight: 1;
+
+  /* Tracking (Figma % → em) */
+  --ls-wordmark-xl: -0.06em; --ls-wordmark: -0.05em; --ls-num: -0.06em; --ls-num-md: -0.05em;
+  --ls-price-xl: -0.05em; --ls-display: -0.04em; --ls-h3-lg: -0.03em; --ls-quote: -0.025em;
+  --ls-h3: -0.025em; --ls-unit: -0.02em; --ls-h5: -0.02em; --ls-faq-q: -0.015em; --ls-name: -0.01em;
+  --ls-body-xl: -0.01em; --ls-body-lg: -0.005em; --ls-body: -0.003em; --ls-tag: -0.005em;
+  --ls-button: 0.02em; --ls-eyebrow: 0.04em;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --side-pad: 40px;
+    --rail-w: 200px;
+    --section-pad-bottom: 112px;
+    --section-head-pad: 56px 0 56px;
+
+    --lh-hero: 1; --lh-h2: 1.04; --lh-h3-lg: 1.04; --lh-quote: 1.25; --lh-h3: 1.15; --lh-h4: 1.15; --lh-h5: 1.15;
+  }
+}
+
+/* ---------- Motion control panel (BOILERPLATE §7.2) ----------
+   To change the feel of the whole site, edit only this block. */
+:root {
+  /* Easing presets: pick one per animation */
+  --ease-linear:   linear;
+  --ease-standard: cubic-bezier(.25, .1, .25, 1);   /* CSS "ease" */
+  --ease-in:       cubic-bezier(.42, 0, 1, 1);      /* slow start (exits only) */
+  --ease-out:      cubic-bezier(0, 0, .58, 1);      /* CSS "ease-out" */
+  --ease-in-out:   cubic-bezier(.42, 0, .58, 1);    /* things that move and stop on screen */
+  --ease-expo-out: cubic-bezier(.16, 1, .3, 1);     /* stronger, snappier ease-out */
+  --ease-smooth:   cubic-bezier(.22, 1, .36, 1);    /* DEFAULT for entrances */
+  --ease-drop:     cubic-bezier(0, .77, .56, 1);    /* nav drop-in (unused: no nav intro) */
+
+  /* Page-load intro (hero content) */
+  --m-intro-ease:     var(--ease-smooth);
+  --m-intro-time:     0.7s;
+  --m-intro-delay:    0.1s;
+  --m-intro-stagger:  0.07s;
+  --m-intro-distance: 20px;
+
+  /* Nav intro: kept for completeness; Master D has no inline nav (BUILD_PROMPT §3). */
+  --m-nav-ease:       var(--ease-drop);
+  --m-nav-time:       0.6s;
+  --m-nav-delay:      0.1s;
+  --m-nav-stagger:    0.05s;
+  --m-nav-button-gap: 0.1s;
+  --m-nav-distance:   24px;
+
+  /* Scroll reveal (everything below the fold) */
+  --m-reveal-ease:     var(--ease-smooth);
+  --m-reveal-time:     0.6s;
+  --m-reveal-stagger:  0.05s;
+  --m-reveal-distance: 24px;
+  --m-reveal-stagger-max: 0.4s;
+}
+
+/* ---------- Project extensions (see Decisions log) ---------- */
+:root {
+  /* Interaction: button hover is a colour change only, 200ms (BUILD_PROMPT §3). */
+  --m-hover-time: 200ms;
+  --m-hover-ease: var(--ease-standard);
+
+  /* Focus ring (boilerplate per-project input). */
+  --focus-color: var(--brand-accent);
+  --focus-width: 2px;
+  --focus-offset: 2px;
+
+  /* Glows (DESIGN_SYSTEM §4). Size and position are set per placement. */
+  --glow-hero-bg: rgb(var(--brand-accent-rgb) / 0.55);
+  --glow-hero-blur: 220px;
+  --glow-panel-bg: rgb(var(--brand-accent-rgb) / 0.60);
+  --glow-panel-blur: 180px;
+  --glow-diagram-bg: radial-gradient(closest-side, var(--brand-accent), rgb(var(--brand-accent-rgb) / 0.55));
+  --glow-diagram-blur: 90px;
+}
