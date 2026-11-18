@@ -109,15 +109,22 @@ const offerPrice = price(offer.model, offer.package);
      beats the finished intro animation's opacity. */
   :global(.is-menu-source) { opacity: 0 !important; }
 
+  /* Phones: no blur on the backdrop — it's only the 8px rim around the panel
+     there, and a full-screen backdrop-filter fading in flickers in mobile
+     Safari (owner report, 2026-11-18). Blur from 768. */
   .menu__backdrop {
     position: absolute; inset: 0;
     background: var(--bg-backdrop);
-    -webkit-backdrop-filter: blur(calc(var(--backdrop-blur) / 2));
-    backdrop-filter: blur(calc(var(--backdrop-blur) / 2));
     opacity: 0;
     transition: opacity var(--menu-close) var(--ease-in);
   }
   .is-open .menu__backdrop { opacity: 1; transition: opacity var(--m-menu-time) var(--m-menu-ease); }
+  @media (min-width: 768px) {
+    .menu__backdrop {
+      -webkit-backdrop-filter: blur(calc(var(--backdrop-blur) / 2));
+      backdrop-filter: blur(calc(var(--backdrop-blur) / 2));
+    }
+  }
 
   .menu__panel {
     position: absolute;
@@ -129,8 +136,12 @@ const offerPrice = price(offer.model, offer.package);
     border-color: var(--border-glass);
     overflow-y: auto;
     overscroll-behavior: contain;
-    /* Background grows out of the menu button (--cx/--cy/--cr set by JS). */
+    /* Background grows out of the menu button (--cx/--cy/--cr set by JS).
+       Its own compositing layer keeps Safari from flashing the unblurred
+       page while the clip-path animates over the glass blur. */
     clip-path: circle(0px at var(--cx, 100%) var(--cy, 0%));
+    will-change: clip-path;
+    transform: translateZ(0);
     transition: clip-path var(--menu-close) var(--ease-in);
   }
   .is-open .menu__panel {

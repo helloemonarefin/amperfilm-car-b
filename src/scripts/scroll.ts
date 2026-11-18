@@ -31,29 +31,25 @@ const blockKeys = (e: KeyboardEvent) => {
 
 /**
  * Lock / unlock page scrolling (menu panel). Overlays add data-lenis-prevent.
- * Where the scrollbar takes space (Windows, macOS with a mouse), hiding it
- * would make the page ~15px wider and re-lay everything out under the menu's
- * open animation — the flicker the owner saw (2026-11-18). There the
- * scrollbar stays and wheel / touch / scroll keys are blocked instead.
- * Overlay scrollbars (phones, trackpad Macs) keep the plain overflow lock.
+ * The page's overflow is never changed (owner reports, 2026-11-18): hiding it
+ * made the page ~15px wider where scrollbars take space, and on iPhones it
+ * makes Safari's toolbar spring back and resize the screen — both flickered
+ * under the menu's open animation. Instead Lenis stops and wheel / touch /
+ * scroll keys are blocked outside the menu's own scroll area.
  */
 export function lockScroll(locked: boolean): void {
   const root = document.documentElement;
   if (locked) {
-    const keepBar = window.innerWidth - root.clientWidth > 0;
-    root.classList.toggle('is-scrollbar-lock', keepBar);
-    if (keepBar) {
-      window.addEventListener('wheel', blockWheel, { passive: false });
-      window.addEventListener('touchmove', blockWheel, { passive: false });
-      window.addEventListener('keydown', blockKeys);
-    }
+    window.addEventListener('wheel', blockWheel, { passive: false });
+    window.addEventListener('touchmove', blockWheel, { passive: false });
+    window.addEventListener('keydown', blockKeys);
     root.classList.add('is-locked');
     lenis?.stop();
   } else {
     window.removeEventListener('wheel', blockWheel);
     window.removeEventListener('touchmove', blockWheel);
     window.removeEventListener('keydown', blockKeys);
-    root.classList.remove('is-locked', 'is-scrollbar-lock');
+    root.classList.remove('is-locked');
     lenis?.start();
   }
 }
