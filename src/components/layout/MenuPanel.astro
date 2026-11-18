@@ -180,7 +180,7 @@ const offerPrice = price(offer.model, offer.package);
      "Menu" label (hidden in Figma) — it stays as the dialog's name. */
   .menu__head {
     min-height: var(--menu-x-size);
-    margin-bottom: var(--space-7);
+    margin-bottom: var(--menu-head-gap);
   }
 
 
@@ -216,7 +216,7 @@ const offerPrice = price(offer.model, offer.package);
   .menu__link:focus-visible { color: var(--text-on-dark); }
   .menu__link:focus-visible::before { opacity: 1; }
 
-  .menu__spacer { flex: 1 0 var(--space-8); }
+  .menu__spacer { flex: 1 0 var(--menu-spacer-min); }
 
   .menu__offer {
     display: flex; align-items: center; gap: var(--menu-card-gap);
@@ -246,10 +246,10 @@ const offerPrice = price(offer.model, offer.package);
   @media (hover: hover) and (pointer: fine) { .menu__col-text a:hover { text-decoration-color: currentColor; } }
   .menu__col-text a:focus-visible { text-decoration-color: currentColor; }
 
-  @media (max-width: 479px) {
-    .menu__contact { grid-template-columns: 1fr; gap: var(--space-5); }
-    .menu__col + .menu__col { padding-left: 0; border-left: 0; }
-  }
+  /* Phones: no contact block, so the whole menu fits without scrolling
+     (owner, 2026-11-18). The footer still carries phone, email and address. */
+  .menu__contact { display: none; }
+  @media (min-width: 768px) { .menu__contact { display: grid; } }
 </style>
 
 <script>

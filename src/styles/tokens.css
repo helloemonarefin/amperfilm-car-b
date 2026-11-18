@@ -275,6 +275,8 @@
   --menu-x-nudge: 6px;            /* owner: cross 6px further right, every size */
   --menu-x-len: 40px; --menu-x-bar: 3px; --menu-x-h: 20px;   /* phones */
   --menu-link-py: 9px;
+  --menu-spacer-min: 32px;        /* links → offer card, at least */
+  --menu-head-gap: 28px;          /* close row → links (Figma) */
   --menu-link-gap: 16px;   /* index → label */
   --menu-card-gap: 14px;
   --menu-thumb: 64px;
@@ -447,5 +449,15 @@
     --menu-pad: 28px 28px 28px 32px;
     --menu-pad-bottom: 28px;
     --menu-x-len: 50px; --menu-x-bar: 4.17px; --menu-x-h: 24px;
+  }
+}
+
+/* Short phone screens (iPhone SE, small Androids): a little less space between
+   menu rows so the whole menu fits without scrolling (owner, 2026-11-18). */
+@media (max-width: 767px) and (max-height: 700px) {
+  :root {
+    --menu-link-py: 6px;
+    --menu-spacer-min: 16px;
+    --menu-head-gap: 20px;
   }
 }
