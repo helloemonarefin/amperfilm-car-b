@@ -141,8 +141,12 @@ const offerPrice = price(offer.model, offer.package);
        page while the clip-path animates over the glass blur. */
     clip-path: circle(0px at var(--cx, 100%) var(--cy, 0%));
     will-change: clip-path;
-    transform: translateZ(0);
     transition: clip-path var(--menu-close) var(--ease-in);
+  }
+  /* Phones: no live blur on the panel (it flickered in mobile Safari while the
+     circle reveal animated); a solid dark glass instead. Blur from 768. */
+  @media (max-width: 767px) {
+    .menu__panel { background: var(--glass-menu-bg-m); -webkit-backdrop-filter: none; backdrop-filter: none; }
   }
   .is-open .menu__panel {
     clip-path: circle(var(--cr, 150%) at var(--cx, 100%) var(--cy, 0%));
