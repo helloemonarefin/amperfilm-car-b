@@ -146,14 +146,13 @@ const offerPrice = price(offer.model, offer.package);
     transition: clip-path var(--menu-close) var(--ease-in);
   }
   /* Phones (owner, 2026-11-18): mobile Safari flickers when a backdrop-filter
-     element animates, so the panel itself has no blur. While the circle
-     reveal runs it shows a solid fill (::before); once open, the static
-     .menu__frost layer under it switches on and the fill fades out, leaving
-     the same frosted glass as desktop. Closing reverses that before the
-     circle shrinks. Nothing with a blur ever animates. */
+     element animates, so the panel itself has no blur there. The blur lives
+     on .menu__frost, a static layer the size of the panel that simply
+     switches on the moment the menu opens (no animation) and off once the
+     panel has closed; the clear glass panel's circle reveal runs over it.
+     Nothing with a blur ever animates, and no solid fill ever shows. */
   .menu__frost { display: none; }
   @media (max-width: 767px) {
-    .menu { transition-delay: calc(max(var(--menu-close), var(--m-menu-x-time)) + var(--m-frost-time)); }
     .menu__frost {
       display: block;
       position: absolute;
@@ -163,26 +162,11 @@ const offerPrice = price(offer.model, offer.package);
       -webkit-backdrop-filter: blur(calc(var(--glass-menu-blur) / 2));
       backdrop-filter: blur(calc(var(--glass-menu-blur) / 2));
       visibility: hidden;
-      /* Hide only once the solid fill is back over it. */
-      transition: visibility 0s linear var(--m-frost-time);
+      /* Off only after the panel's circle has closed. */
+      transition: visibility 0s linear var(--menu-close);
     }
-    .is-frosted .menu__frost { visibility: visible; transition: visibility 0s; }
-    .menu__panel {
-      isolation: isolate;
-      -webkit-backdrop-filter: none; backdrop-filter: none;
-      transition: clip-path var(--menu-close) var(--ease-in) var(--m-frost-time);
-    }
-    .menu__panel::before {
-      content: ''; position: absolute; inset: 0; z-index: -1;
-      border-radius: inherit;
-      background: var(--glass-menu-bg-m);
-      pointer-events: none;
-      transition: opacity var(--m-frost-time) var(--m-menu-ease);
-    }
-    .is-frosted .menu__panel::before { opacity: 0; }
-    /* The dim behind waits for the panel too. */
-    .menu__backdrop { transition-delay: var(--m-frost-time); }
-    .is-open .menu__backdrop { transition-delay: 0s; }
+    .is-open .menu__frost { visibility: visible; transition: visibility 0s; }
+    .menu__panel { -webkit-backdrop-filter: none; backdrop-filter: none; }
   }
   .is-open .menu__panel {
     clip-path: circle(var(--cr, 150%) at var(--cx, 100%) var(--cy, 0%));
@@ -315,8 +299,7 @@ const offerPrice = price(offer.model, offer.package);
     const ms = (name: string) => parseFloat(css.getPropertyValue(name)) * (css.getPropertyValue(name).trim().endsWith('ms') ? 1 : 1000) || 0;
     let opener: HTMLElement | null = null;
     let closeTimer = 0;
-    let frostTimer = 0;
-    const phone = window.matchMedia('(max-width: 767px)');
+
 
     // Copy the clicked button's box onto the stand-in, and aim the panel's
     // circular reveal at the button's centre.
@@ -366,7 +349,6 @@ const offerPrice = price(offer.model, offer.package);
 
     const setOpen = (open: boolean, returnFocus = true) => {
       window.clearTimeout(closeTimer);
-      window.clearTimeout(frostTimer);
       toggles().forEach((t) => {
         t.setAttribute('aria-expanded', String(open));
         t.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
@@ -379,18 +361,15 @@ const offerPrice = price(offer.model, offer.package);
         menu.classList.add('is-open');
         // Next frame: morph into the cross (the stand-in starts as the hamburger).
         requestAnimationFrame(() => requestAnimationFrame(() => menu.classList.add('is-morph')));
-        // Phones: frost on once the circle reveal has finished (see CSS).
-        frostTimer = window.setTimeout(() => menu.classList.add('is-frosted'), ms('--m-menu-reveal-time'));
         ghost.focus({ preventScroll: true });
       } else {
-        menu.classList.remove('is-morph', 'is-open', 'is-frosted');
+        menu.classList.remove('is-morph', 'is-open');
         menu.inert = true;
         lockScroll(false);
         const src = opener;
         if (returnFocus) src?.focus({ preventScroll: true });
         // Swap back to the real button once the cross is a hamburger again.
-        const frost = phone.matches ? ms('--m-frost-time') : 0;
-        closeTimer = window.setTimeout(() => src?.classList.remove('is-menu-source'), Math.max(ms('--m-burger-time'), ms('--m-menu-x-time'), ms('--m-menu-reveal-time') * 0.6 + frost));
+        closeTimer = window.setTimeout(() => src?.classList.remove('is-menu-source'), Math.max(ms('--m-burger-time'), ms('--m-menu-x-time'), ms('--m-menu-reveal-time') * 0.6));
       }
     };
 

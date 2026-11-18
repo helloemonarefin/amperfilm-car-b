@@ -52,12 +52,6 @@
   --glass-lg-bg: rgb(255 255 255 / 0.22);  --glass-lg-blur: 24px;
   --glass-menu-bg: linear-gradient(180deg, rgb(255 255 255 / 0.20), rgb(255 255 255 / 0.08));
   --glass-menu-blur: 48px;
-  /* Phones (< 768): while the menu panel's circle reveal animates it shows
-     this solid fill; once fully open a static frosted layer switches on under
-     it and the fill fades out (mobile Safari flickers when a backdrop-filter
-     animates — owner, 2026-11-18). */
-  --glass-menu-bg-m: linear-gradient(180deg, rgb(46 48 58), rgb(22 23 29));
-  --m-frost-time: 0.25s;
   --glass-fallback-bg: rgb(var(--brand-ink-rgb) / 0.55);
   --shadow-menu: 0 24px 60px rgb(0 0 26 / 0.30);
 
