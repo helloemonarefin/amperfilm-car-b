@@ -447,6 +447,8 @@ Source: `src/components/layout/Nav.astro` (the menu lives inside the nav compone
 
 **Scroll lock:** `lockScroll()` adds `html.is-locked { overflow: hidden }` and stops Lenis. The panel has `data-lenis-prevent`, so it can still scroll internally.
 
+> **New projects: use §1.14 instead.** The `overflow: hidden` lock above caused visible flicker in the Master D build (desktop width jump, iPhone toolbar resize).
+
 ```html
 <button class="nav__menu" type="button" aria-label="Open menu" aria-expanded="false"
         aria-controls="mobile-menu" data-menu-toggle>
@@ -799,6 +801,111 @@ html.is-locked { overflow: hidden; }
 ```
 
 Rule: any scrollable overlay (modal, menu panel) gets `data-lenis-prevent` so it scrolls natively while Lenis is stopped.
+
+> **Superseded for new projects by §1.14.** `html.is-locked { overflow: hidden }` (and Lenis's own `overflow: clip` while stopped) is what made menus and modals flicker in the Master D build. Keep `initScroll()`, but replace `lockScroll()` and the `.is-locked` CSS with §1.14.
+
+### 1.14 Flicker-free scroll lock and frosted overlays (proven on Master D, 2026-11-18)
+
+Added by hand after fixing a menu that flickered while opening and closing. It applies to **any overlay**: menu panel, modal, drawer, sheet. The final version was confirmed smooth on a real phone and on desktop.
+
+**What caused the flicker (four separate causes; fix all four in every project):**
+
+| # | Cause | Where it shows | Fix |
+|---|---|---|---|
+| 1 | `overflow: hidden` on `<html>` removes the scrollbar where it takes space (Windows, macOS with a mouse), so the page gets ~15px wider and every centred/right-aligned item, and any `vw`-based size, jumps while the overlay animates. | Desktop | Never change the page's overflow to lock it (below). |
+| 2 | `overflow: hidden` on `<html>` makes iPhone Safari's toolbar spring back, which resizes the screen for a moment. | iPhone | Same: never change the page's overflow. |
+| 3 | `lenis/dist/lenis.css` sets `overflow: clip` on `<html>` whenever Lenis is stopped, so cause 1 and 2 come back even if your own CSS doesn't hide the overflow. | Both | Override it (CSS below). |
+| 4 | Mobile Safari redraws a `backdrop-filter` (frosted glass) frame by frame when that element, or anything clipping it, is animating (clip-path, opacity, transform). | Phones | The element that animates has **no** blur; the blur lives on a separate **static** layer that only switches on/off (below). |
+
+**1. The scroll lock: block the input, not the overflow** (`src/scripts/scroll.ts`)
+
+```ts
+// Keys that scroll the page. Space is left alone: on the overlay's buttons and
+// links it activates them, and the focus trap keeps focus inside the overlay.
+const SCROLL_KEYS = new Set(['PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'ArrowDown']);
+const inScrollArea = (t: EventTarget | null) => t instanceof Element && !!t.closest('[data-lenis-prevent]');
+const blockWheel = (e: Event) => { if (!inScrollArea(e.target)) e.preventDefault(); };
+const blockKeys = (e: KeyboardEvent) => {
+  const t = e.target as Element | null;
+  if (SCROLL_KEYS.has(e.key) && !t?.closest('input, select, textarea, [data-lenis-prevent]')) e.preventDefault();
+};
+
+/** Lock / unlock page scrolling. The page's overflow is never changed. */
+export function lockScroll(locked: boolean): void {
+  const root = document.documentElement;
+  if (locked) {
+    window.addEventListener('wheel', blockWheel, { passive: false });
+    window.addEventListener('touchmove', blockWheel, { passive: false });
+    window.addEventListener('keydown', blockKeys);
+    root.classList.add('is-locked');
+    lenis?.stop();
+  } else {
+    window.removeEventListener('wheel', blockWheel);
+    window.removeEventListener('touchmove', blockWheel);
+    window.removeEventListener('keydown', blockKeys);
+    root.classList.remove('is-locked');
+    lenis?.start();
+  }
+}
+```
+
+```css
+/* motion.css: replaces html.is-locked { overflow: hidden } */
+html.lenis.lenis-stopped:not(.lenis-autoToggle) { overflow: visible; } /* beats lenis.css (0,3,0) */
+html.is-locked { overscroll-behavior: none; }                          /* no pull-to-refresh behind the overlay */
+```
+
+- The overlay's own scroll area keeps `data-lenis-prevent` (lenis.css gives it `overscroll-behavior: contain`), so it still scrolls.
+- **Lock first, then measure.** Call `lockScroll(true)` before reading any element positions for the opening animation (e.g. the button a panel grows out of).
+- **Don't use `scrollbar-gutter: stable` as the fix.** It stops the jump, but it shows a light empty strip at the right edge (next to the open overlay on desktop, and in headless phone tests).
+- **Known gap:** dragging the desktop scrollbar itself still scrolls the page behind the overlay. That's acceptable.
+
+**2. Frosted glass on an animated overlay: a static frost layer** (phones; desktop can keep the blur on the panel)
+
+```astro
+<div class="menu" data-menu inert>
+  <div class="menu__backdrop" data-menu-close aria-hidden="true"></div>
+  <!-- The panel's blur, on a layer that never animates. -->
+  <div class="menu__frost" aria-hidden="true"></div>
+  <div class="menu__panel glass glass--menu" role="dialog" aria-modal="true" data-lenis-prevent>…</div>
+</div>
+```
+
+```css
+.menu__frost { display: none; }
+@media (max-width: 767px) {
+  .menu__frost {
+    display: block;
+    position: absolute;
+    /* exactly the panel's box */
+    top: var(--menu-inset); right: var(--menu-inset); bottom: var(--menu-inset);
+    width: min(var(--menu-w), calc(100% - 2 * var(--menu-inset)));
+    border-radius: var(--radius-menu);
+    -webkit-backdrop-filter: blur(calc(var(--glass-menu-blur) / 2));
+    backdrop-filter: blur(calc(var(--glass-menu-blur) / 2));
+    visibility: hidden;
+    transition: visibility 0s linear var(--menu-close); /* off only after the panel has closed */
+  }
+  .is-open .menu__frost { visibility: visible; transition: visibility 0s; } /* on from the first frame */
+  .menu__panel { -webkit-backdrop-filter: none; backdrop-filter: none; }   /* the animated panel: tint only */
+  .menu__backdrop { -webkit-backdrop-filter: none; backdrop-filter: none; } /* no full-screen blur fading in */
+}
+```
+
+How it looks: on tap, the area behind the panel blurs at once (the frost switches on, no animation). The clear, tinted glass panel then does its own reveal over it (circle clip-path, slide, anything). On close, the panel animates away first, then the frost switches off.
+
+**Rules for any frosted overlay:**
+- **Never animate an element that has `backdrop-filter`**, or an ancestor that clips it (no clip-path/opacity/transform transitions on it). Animate a blur-free element above a static frost layer instead.
+- **Don't fade a solid colour over the glass to hide the switch.** It was tried: a grey panel that turns frosted after opening "doesn't look good at all" (owner).
+- **Don't fade in a full-screen blurred backdrop on phones.** Dim it with a plain `opacity` fade instead.
+- **No `transform: translateZ(0)` / `will-change: transform` hacks on the glass.** They didn't help.
+
+**Testing (what actually works):**
+- **Desktop scrollbar jump:** Playwright hides scrollbars by default. Launch with `chromium.launch({ ignoreDefaultArgs: ['--hide-scrollbars'] })`, then compare `document.documentElement.clientWidth` and a right-aligned element's `left` before and while opening. Nothing may move.
+- **Lock:** with the overlay open, wheel, PageDown and a touch swipe (`Input.synthesizeScrollGesture` over CDP, `gestureSourceType: 'touch'`) must leave `scrollY` unchanged. After closing, scrolling must work again.
+- **Frame-by-frame:** use CDP `Page.startScreencast` while the overlay opens and look for sudden brightness jumps between frames.
+- **Trap:** Playwright's WebKit does **not render `backdrop-filter` at all** (a blurred box over text shows the text sharp), and Chromium never shows cause 4. **Only a real iPhone shows the glass flicker**, so check overlays on a real phone after deploying.
+
 
 ---
 
@@ -1810,6 +1917,121 @@ Where to put `data-reveal`: one per visual item, not one per section.
 - [ ] JS disabled: everything is visible.
 - [ ] Lighthouse: LCP not delayed by the hero animation (the 0.001 start).
 - [ ] Changing one token in §7.2 (e.g. `--m-reveal-time`) changes it everywhere.
+- [ ] Granularity audit (§7.9) finds no reveal block with 2+ visible pieces, apart from the listed exceptions.
+
+### 7.9 Per-element entrance: the standard (from Master D, owner-approved 2026-11-17/18)
+
+The rule the owner set, after asking for it three times: **every visible piece animates on its own, one after another, in reading order, with a subtle stagger, everywhere: hero, every section, every card, the footer.** A whole card, list or button group appearing at once "doesn't look good at all". This section **supersedes** these older rules:
+- §7.4: "two buttons can share one index";
+- §7.6: "don't reveal parent and child";
+- §7.6: "Footer columns" as one reveal.
+
+**Tokens (Master D values; these replace the §7.2 defaults):**
+
+```css
+--m-intro-stagger: 0.05s;       /* every hero element, 0.05s apart */
+--m-reveal-stagger: 0.05s;
+--m-reveal-stagger-max: 1.6s;   /* long sections still cascade item by item; 0.4s cut them short */
+--m-hero-scale-from: 1.1;       /* hero settle, below */
+--m-hero-scale-time: 1s;
+--m-hero-scale-ease: cubic-bezier(0, .81, .56, 1);
+--m-count-time: 1.6s;           /* count-up numbers, below */
+```
+
+**1. How fine to go.** Give each of these its own `data-reveal`:
+- **Text:** each heading and each paragraph.
+- **Lines:**
+  - each line of a multi-line statement (render the lines as `display: block` spans);
+  - each line of a caption.
+- **Lists and labels:**
+  - each item of an inline list, e.g. every town in "Serving Austin · Round Rock · …" (the spans need `display: inline-block`; see the inline note below);
+  - each list row;
+  - each pill or tag;
+  - each axis label.
+- **Number pairs:** a number and its unit ("48" / "hrs", "$1,790" / "all in").
+- **Form fields:** the field's label and its input, separately (Master D's `Field` takes a `reveal` prop for this).
+- **Inside a card or glass panel:** every element (icon, eyebrow, name, warranty pill, divider, each spec value and each spec label, button).
+- **FAQ:** each item's question, its toggle and its answer.
+- **Footer:**
+  - each heading and each link;
+  - "©YEAR Name" and "All rights reserved" as two pieces;
+  - each field part and the button;
+  - the giant wordmark.
+
+**Keep as one unit:**
+- wordmarks and logos;
+- a single heading, even a two-tone one;
+- one two-tone paragraph;
+- the layers of one decorative visual (e.g. a ring and its glow).
+
+**2. Order and grouping:**
+- **Reading order:** top-left → top-right → bottom. In a section: heading → intro on the right → content. In a two-column block: the left column item by item, then the right.
+- **`reveal.ts` sorts every batch by DOM order** (`compareDocumentPosition`) before giving out delays, so source order = animation order. Write the markup in reading order.
+- **Containers with a background or border reveal first, then their contents.** Nested `data-reveal` is fine: the card fades up, then its pieces follow.
+- **Horizontal scroll rows** (scroll-snap): items off-screen sideways get no delay, so they're ready when swiped in.
+
+```ts
+// reveal.ts: show()
+const show = (els: HTMLElement[]) => {
+  const s = readSeconds('--m-reveal-stagger', 0.05);
+  const max = readSeconds('--m-reveal-stagger-max', 0.4);
+  els
+    .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1))
+    .map((el) => ({ el, r: el.getBoundingClientRect() }))
+    .forEach(({ el, r }, i) => {
+      const offscreen = r.right < 0 || r.left > window.innerWidth;
+      el.style.setProperty('--reveal-delay', `${offscreen ? 0 : Math.min(i * s, max)}s`);
+      el.classList.add('is-revealed');
+    });
+};
+// Time tokens may compute as "0.05s" OR "50ms": always convert both
+// (reading "50ms" as 50 s once capped every delay at the maximum).
+const readSeconds = (name: string, fallback: number) => {
+  const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const n = parseFloat(raw);
+  return Number.isNaN(n) ? fallback : raw.endsWith('ms') ? n / 1000 : n;
+};
+```
+
+**Inline pieces need a box:** `translate` does nothing on a plain inline element (it would only fade). Any `span`/`a` that gets `data-reveal` and isn't already a flex/grid item or block needs `display: inline-block` (or `block` for lines). When splitting lines or list items into spans, keep a space between them (`{i > 0 && ' '}`) so screen readers don't run words together.
+
+**3. Hero intro (page load, CSS only, §7.4 mechanics):**
+- **Every element gets its own `--i`, 0.05s apart:**
+  1. the wordmark;
+  2. the menu button;
+  3. the glass card, then its tag, then its text;
+  4. each headline line (render lines as block spans);
+  5. each chip;
+  6. each button;
+  7. the intro paragraph.
+
+  The hero's **order** is top-left → top-right → bottom-left → bottom-right.
+- **The header row (logo, menu) drops in from above** (`data-intro="down"` → negative `--rise-from`). Everything else rises.
+- **Hero settle:** on load, the hero's layers (photo, decor, content), which all share the hero's box, scale from 1.1 to 1 in 1s. Put the animation on the layers, not the hero, so the hero's `overflow: hidden` clips them and it never grows over the next section. This runs on top of the per-element intro.
+
+```css
+@keyframes settle-in { from { scale: var(--m-hero-scale-from); } }
+.hero > * { animation: settle-in var(--m-hero-scale-time) var(--m-hero-scale-ease) both; }
+```
+
+**4. Count-up numbers** (stats strips: "4.9★", "2,100+", "48 hrs"): add `data-count` to the value element. `countUp.ts` animates only the first number in the text.
+- **Range and pace:** it counts from 0 to the value over `--m-count-time` with an ease-out. Prefix and suffix (★, +, " hrs"), decimals and thousands separators stay as in the original.
+- **Timing:** it starts with the element's own reveal delay.
+- **No wobble:** it holds the final width (`min-width` + `font-variant-numeric: tabular-nums` while counting; centre the parent's text) and writes the exact original text at the end.
+- **Screen readers:** the animated element is `aria-hidden`, and an `sr-only` copy carries the final value.
+- **Fallback:** the server renders the real number, so with no JS or with reduced motion nothing counts.
+
+**5. Scroll-linked text reveal** (one big statement headline per page, at most): render each word as a `.tr-word` span server-side, and add `data-text-reveal` to the heading.
+- **The fill:** as the heading's top moves from 90% to 35% of the viewport height, the words fill one by one from a ghost opacity (0.12) to full ink. The owner wants **one tone**: the soft half of a two-tone heading fills to full ink too.
+- **Fallback:** with no JS or reduced motion, the heading shows its normal (two-tone) colours.
+- **No double motion:** the heading gets no rise reveal on top.
+
+**6. The granularity audit** (run before reporting any section). In Playwright, for every page:
+1. Collect the visible "pieces": elements with their own non-empty text nodes, plus img/input/select/canvas.
+2. Group them by their nearest animated ancestor (`[data-reveal]`, `[data-intro]` or `[data-text-reveal]`). Count `<br>` lines as extra pieces.
+3. Report any group with **2+ pieces**, and any piece with **no** animated ancestor.
+
+Split everything it finds except the "keep as one unit" list above. Also list `[data-reveal]` elements whose computed `display` is `inline`; they won't rise.
 
 ---
 
