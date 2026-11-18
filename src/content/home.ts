@@ -27,6 +27,8 @@ const heroImage = heroMatches[0].default;
 export const hero: HeroProps = {
   image: heroImage,
   imagePosition: 'center',
+  // Phones: the car's front (left of the photo) instead of its roof (owner, 2026-11-18).
+  imagePositionMobile: '14% center',
   overlay: false, // Hero v2.2 has no dark gradient over the photo
   quality: 90, // the owner's photo has smooth gradients that band at 80
   headline: ['Protect your EV in 48 hours.', 'Before the first rock chip.'],

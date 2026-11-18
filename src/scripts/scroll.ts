@@ -19,9 +19,41 @@ export function initScroll(): Lenis | null {
   return lenis;
 }
 
-/** Lock / unlock page scrolling (menu panel). Overlays add data-lenis-prevent. */
+// Page keys that scroll. Space is left alone: on the menu's buttons and links
+// it activates them, and focus never leaves the menu while it's open.
+const SCROLL_KEYS = new Set(['PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'ArrowDown']);
+const inScrollArea = (t: EventTarget | null) => t instanceof Element && !!t.closest('[data-lenis-prevent]');
+const blockWheel = (e: Event) => { if (!inScrollArea(e.target)) e.preventDefault(); };
+const blockKeys = (e: KeyboardEvent) => {
+  const t = e.target as Element | null;
+  if (SCROLL_KEYS.has(e.key) && !t?.closest('input, select, textarea, [data-lenis-prevent]')) e.preventDefault();
+};
+
+/**
+ * Lock / unlock page scrolling (menu panel). Overlays add data-lenis-prevent.
+ * Where the scrollbar takes space (Windows, macOS with a mouse), hiding it
+ * would make the page ~15px wider and re-lay everything out under the menu's
+ * open animation — the flicker the owner saw (2026-11-18). There the
+ * scrollbar stays and wheel / touch / scroll keys are blocked instead.
+ * Overlay scrollbars (phones, trackpad Macs) keep the plain overflow lock.
+ */
 export function lockScroll(locked: boolean): void {
-  document.documentElement.classList.toggle('is-locked', locked);
-  if (locked) lenis?.stop();
-  else lenis?.start();
+  const root = document.documentElement;
+  if (locked) {
+    const keepBar = window.innerWidth - root.clientWidth > 0;
+    root.classList.toggle('is-scrollbar-lock', keepBar);
+    if (keepBar) {
+      window.addEventListener('wheel', blockWheel, { passive: false });
+      window.addEventListener('touchmove', blockWheel, { passive: false });
+      window.addEventListener('keydown', blockKeys);
+    }
+    root.classList.add('is-locked');
+    lenis?.stop();
+  } else {
+    window.removeEventListener('wheel', blockWheel);
+    window.removeEventListener('touchmove', blockWheel);
+    window.removeEventListener('keydown', blockKeys);
+    root.classList.remove('is-locked', 'is-scrollbar-lock');
+    lenis?.start();
+  }
 }

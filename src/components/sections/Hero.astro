@@ -32,8 +32,10 @@ export interface HeroProps {
   actions: { label: string; href: string; variant: 'ghost-white' | 'white' }[];
   /** Right-aligned intro, ≤ 160 characters (3 lines at 430px). */
   intro?: string;
-  /** CSS object-position for the photo crop (e.g. "70% center" on phones). */
+  /** CSS object-position for the photo crop. */
   imagePosition?: string;
+  /** Crop on phones only (< 768), e.g. to keep the front of the car in view. Defaults to imagePosition. */
+  imagePositionMobile?: string;
   /** Dark top/bottom gradient over the photo (v2.1). Home v2.2 has none. */
   overlay?: boolean;
   /** WebP quality. 80 keeps the mobile hero light (Lighthouse ≥ 95); raise it
@@ -41,7 +43,7 @@ export interface HeroProps {
   quality?: number;
 }
 
-const { image, imageAlt = '', imagePosition = 'center', overlay = true, quality = 80, headline, chips = [], card, actions, intro } = Astro.props as HeroProps;
+const { image, imageAlt = '', imagePosition = 'center', imagePositionMobile, overlay = true, quality = 80, headline, chips = [], card, actions, intro } = Astro.props as HeroProps;
 
 // Page-load order (owner, 2026-11-17): top-left → top-right → bottom-left
 // (card, then each headline line) → bottom-right (each chip, each button,
@@ -73,7 +75,7 @@ const widths = [640, 960, 1280, 1600, 1920, 2560].filter((w) => w < image.width)
       widths={widths}
       sizes="100vw"
       quality={quality}
-      style={`object-position: ${imagePosition}`}
+      style={`--pos: ${imagePosition}; --pos-m: ${imagePositionMobile ?? imagePosition}`}
       loading="eager"
       fetchpriority="high"
     />
@@ -144,7 +146,8 @@ const widths = [640, 960, 1280, 1600, 1920, 2560].filter((w) => w < image.width)
      hero itself keeps its size and never covers the next section. */
   .hero > * { animation: settle-in var(--m-hero-scale-time) var(--m-hero-scale-ease) both; }
   .hero__bg { position: absolute; inset: 0; z-index: -2; }
-  .hero__bg :global(.hero__img) { width: 100%; height: 100%; object-fit: cover; }
+  .hero__bg :global(.hero__img) { width: 100%; height: 100%; object-fit: cover; object-position: var(--pos-m); }
+  @media (min-width: 768px) { .hero__bg :global(.hero__img) { object-position: var(--pos); } }
   .hero--overlay .hero__bg::after { content: ''; position: absolute; inset: 0; background: var(--overlay-hero); }
 
   .hero__decor { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
