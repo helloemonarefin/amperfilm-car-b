@@ -54,6 +54,11 @@
 /* ---------- Smooth scroll and scroll lock (§1.13) ---------- */
 html { scroll-behavior: smooth; }
 html.is-locked { overflow: hidden; }
+/* Keep the scrollbar's space while the menu locks the page: otherwise, where
+   scrollbars take space (Windows, macOS with a mouse), the page grows ~15px
+   wider the moment the menu opens and everything re-lays out under the
+   animation — the "flicker" the owner saw (2026-11-18). */
+html { scrollbar-gutter: stable; }
 
 /* ---------- Reduced motion (§1.12, §7.7) ----------
    Every element shows its end state at once. */

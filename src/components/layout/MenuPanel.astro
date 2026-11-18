@@ -318,11 +318,11 @@ const offerPrice = price(offer.model, offer.package);
         t.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
       });
       if (open) {
+        lockScroll(true); // first, so the button is measured where it will stay
         place();
         opener?.classList.add('is-menu-source');
         menu.inert = false;
         menu.classList.add('is-open');
-        lockScroll(true);
         // Next frame: morph into the cross (the stand-in starts as the hamburger).
         requestAnimationFrame(() => requestAnimationFrame(() => menu.classList.add('is-morph')));
         ghost.focus({ preventScroll: true });
