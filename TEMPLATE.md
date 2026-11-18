@@ -21,7 +21,7 @@ Every other colour is derived from these. Leave type sizes, spacing and motion a
 Change `name` (any Fontsource family) and `cssVariable`, then point `--font-sans` in `tokens.css` at the new variable. Use a **variable** font (`weights: ['300 600']`) so large headings render at their designed width.
 
 ### 3. Brand name, contact details and domain: `src/content/site.ts`
-- `brand` + `mark` make up the wordmark everywhere: hero, menu, footer and sticky bar. The favicon, apple-touch icon and social-share image are also generated from them.
+- `brand` + `mark` make up the wordmark everywhere: hero, menu, footer and sticky bar. The social-share image is also generated from them.
 - `phone`, `email`, `address`, `hours`, `serviceArea`, `rating`, `reviewCount`, `installsCount`, `turnaroundHours` and `quoteHours` feed every section that shows them.
 - `url` **and** `site` in `astro.config.mjs` must both be the live domain. Canonical URLs, the sitemap and `robots.txt` are built from it.
 - `nav` (menu) and `footer.columns` list the pages. Update them when you add or remove a page.
@@ -63,7 +63,9 @@ Copy an entry and change `slug` (the URL becomes `/models/<slug>`), the hero cop
 - **Sizing:** Astro makes the responsive sizes and WebP versions. Hero quality is 80 by default; raise `quality` on a hero only if its photo has smooth gradients that band.
 
 ### 9. Icons and social image
-`/favicon.svg`, `/favicon.ico`, `/apple-touch-icon.png` and `/og.png` are generated from the brand letter, the brand colours and the Home hero photo. To use real files from the client, put them in `public/` and delete the matching endpoint in `src/pages/`.
+- **Favicons:** replace `public/favicon.svg` and `public/favicon.ico` with the client's files, keeping the same names.
+- **iPhone home-screen icon:** `/apple-touch-icon.png` is built from `favicon.svg` on the brand paper colour, so it updates on its own.
+- **Social-share image:** `/og.png` is generated from the wordmark, the brand colours and the Home hero photo.
 
 ### 10. Check before handing over
 - `npm run check`: 0 errors.
